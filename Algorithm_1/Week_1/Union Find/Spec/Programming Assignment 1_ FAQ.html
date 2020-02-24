@@ -1,0 +1,572 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- saved from url=(0071)https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="./Programming Assignment 1_ FAQ_files/assignments.css">
+    <link rel="stylesheet" type="text/css" href="./Programming Assignment 1_ FAQ_files/link-icons.css">
+    <script type="text/javascript" src="./Programming Assignment 1_ FAQ_files/MathJax.js.download"></script>
+    <script type="text/javascript" src="./Programming Assignment 1_ FAQ_files/TJKToggleDL.js.download"></script><link href="./Programming Assignment 1_ FAQ_files/TJK_ToggleDL.css" type="text/css" rel="stylesheet"><link href="./Programming Assignment 1_ FAQ_files/TJK_ToggleDL_ie5mac.css" type="text/css" rel="stylesheet">
+    <title>Programming Assignment 1: FAQ</title>
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+
+<body onload="TJK_ToggleDL()" class="faq" data-gr-c-s-loaded="true"><div id="MathJax_Message" style="display: none;"></div>
+
+<div id="nav2">
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/specification.php" id="logo"> <img src="./Programming Assignment 1_ FAQ_files/logo.png"> Percolation</a>
+
+<ul id="links">
+<li><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/specification.php">Spec</a></li>
+<li><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php" id="here">FAQ</a></li>
+<li><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/percolation.zip">Project</a></li>
+<li><a href="https://www.coursera.org/learn/algorithms-part1/programming/Lhp5z/percolation/submission" target="_blank">Submit</a></li>
+</ul>
+</div>
+
+
+  <a class="button" id="TJK_ToggleON" title="Show all answers" href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#">Expand All</a>
+  <a class="button" id="TJK_ToggleOFF" title="Hide all answers" href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#">Collapse All</a>
+
+<p><br>
+
+</p><dl id="TJK_DL">
+
+<!---------------------------------------------------------------------------------------------------- -->
+
+<div class="faq-header" id="general">Java</div>
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(0);return false" title="Show/hide the answer">Which Java programming environment should I use?</a></dt>
+<dd class="hideDD">
+We recommend our customized <em>IntelliJ</em> programming environment for
+<a href="http://lift.cs.princeton.edu/java/mac">Mac OS X</a>,
+<a href="http://lift.cs.princeton.edu/java/windows">Windows</a>,
+and
+<a href="http://lift.cs.princeton.edu/java/linux">Linux</a>.
+If you followed our step-by-step 
+instructions, then everything should be configured and ready to go.
+<p>
+If you prefer to use another environment (such as Eclipse or Sublime), that’s 
+perfectly fine—just be sure that you know how to do the following:
+</p><ul>
+<p></p><li>Add <code>algs4.jar</code> to your Java classpath.
+<p></p></li><li>Enter command-line arguments.
+<p></p></li><li>Use standard input and standard output (and, ideally, redirect them to or from a file).
+</li></ul>
+</dd>
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(1);return false" title="Show/hide the answer">Which version of Java must I use?</a></dt>
+<dd class="hideDD">Any version of Java 8, Java 9, Java 10, or Java 11 should be fine.
+Our autograder uses Java 8, so, if you use a more recent version,
+be sure to use only Java 8 features.
+We have configured the <em>IntelliJ</em> projects to enforce this constraint.
+</dd>
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(2);return false" title="Show/hide the answer">What’s the Project link?</a></dt>
+<dd class="hideDD">
+It contains an <em>IntelliJ</em> project that you can use to develop your program.
+It may also contain supplemental data files (which you will use even if you do not use <em>IntelliJ</em>).
+</dd>
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(3);return false" title="Show/hide the answer">I haven’t programmed in Java in a while. Which material do I need to remember?</a></dt>
+<dd class="hideDD">For a review of our Java programming model (including our input and output libraries),
+read Sections 1.1 and 1.2 of  <em>Algorithms, 4th Edition</em>.
+</dd>
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(4);return false" title="Show/hide the answer">I’ve never programmed in Java before. Should I continue with the course?</a></dt>
+<dd class="hideDD">
+That depends. You will need to write your programs in Java to receive feedback from
+the autograder. Perhaps you can use this course as an opportunity to learn Java.
+</dd>
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(5);return false" title="Show/hide the answer">Where can I find the Java source code and documentation
+for the algorithms, data structures, and I/O libraries from lecture and the textbook?</a></dt>
+<dd class="hideDD">They are in <code>algs4.jar</code>.
+Here are links to the <a href="https://algs4.cs.princeton.edu/code/">source code and Javadoc</a><a>.
+</a></dd><a>
+
+
+
+<!---------------------------------------------------------------------------------------------------- -->
+
+<div class="faq-header" id="submission">Submission and Feedback</div>
+
+<!--
+<dt>What are the goals of this programming assignment?</dt>
+<dd>
+<ul>
+<p><li> Set up a Java programming environment.
+
+<p><li> Use our input and output libraries.
+
+<p><li> Learn about a scientific application of the union&ndash;find data structure.
+
+<p><li> Measure the running time of a program and use the doubling hypothesis
+to make predictions.
+
+<p><li> Measure the amount of memory used by a data structure.
+
+<p><li>Submit your assignments and received feedback.
+
+</ul>
+</dd>
+-->
+
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(6);return false" title="Show/hide the answer">How do I create a zip file for submission to Coursera?</a></dt>
+<dd class="hideDD">
+Here are three approaches:
+
+<ul>
+<p></p><li><em>Mac OS X.</em>
+<ul>
+<li>Select the required files in the <em>Finder</em>.
+</li><li>Right-click and select <em>Compress 5 Items</em>.
+</li><li>Rename the resulting file to <code>percolation.zip</code>.
+</li></ul>
+
+
+<p></p></li><li><em>Windows.</em>
+<ul>
+<li>Select the required files in Windows Explorer.
+</li><li>Right-click and select <em>Send to -&gt; Compressed (zipped) folder</em>.
+</li><li>Rename the resulting file to <code>percolation</code> (the .zip extension is automatic).
+</li></ul>
+
+
+<p></p></li><li><em>Command line (Linux or Mac OS X or Windows Git Bash).</em>
+<ul>
+<li>Change to the directory containing the required .java files.
+</li><li>Execute the command: <code>zip percolation.zip *.java</code>.
+</li></ul>
+
+</li></ul>
+</dd>
+
+
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(7);return false" title="Show/hide the answer">Can I add (or remove) methods to (or from) the prescribed APIs?</a></dt>
+<dd class="hideDD">
+No. You must implement each API exactly as specified, with the 
+identical set of public methods and signatures or your assignment will not be graded.
+However, you are
+encouraged to add private methods that enhance the readability, maintainability,
+and modularity of your program.
+The one exception is <code>main()</code>—you are always permitted to
+add this method to test your code, but we will not call it unless we specify
+it in our API.
+</dd>
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(8);return false" title="Show/hide the answer">Why is it so important to implement the prescribed API?</a></dt>
+<dd class="hideDD">
+Writing to an API is an important skill to master
+because it is an essential component of modular programming,
+whether you are developing software by yourself or as part of a group. When 
+you develop a module that properly implements an API, anyone using that module (including 
+yourself, perhaps at some later time) does not need to revisit the details of the
+code for that module when using it.
+This approach greatly simplifies writing large programs, developing 
+software as part of a group, or developing software for use by others.
+
+<p>
+Most important, when you properly implement an API, others can write
+software to use your module or to test it.
+We do this regularly when grading your programs. For example, your 
+<code>PercolationStats</code> client should work with our
+<code>Percolation</code> data type and vice versa. If you add an extra public
+method to <code>Percolation</code> and call them from <code>PercolationStats</code>,
+then your client won’t work with our <code>Percolation</code> data type.
+Conversely, our <code>PercolationStats</code> client may not work with your 
+<code>Percolation</code> data type if you remove a public method.
+</p></dd>
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(9);return false" title="Show/hide the answer">Which style and bug checkers does the autograder use? How can I configure my system to use them?</a></dt>
+</a><dd class="hideDD"><a>
+The autograder uses the following tools:
+</a><ul><a>
+<p></p></a><li><a>
+</a><a href="https://checkstyle.sourceforge.net/">Checkstyle 8.21</a>
+checks the style of your Java programs.
+Here is a list of available 
+<a href="http://checkstyle.sourceforge.net/checks.html">Checkstyle checks</a>
+and the configuration file
+<a href="https://algs4.cs.princeton.edu/mac/checkstyle-coursera.xml">checkstyle-coursera.xml</a>
+that the autograder uses.
+
+<p></p></li><li>
+<a href="https://spotbugs.github.io/">SpotBugs 3.12</a>
+identifies common bug patterns in your code.
+Here is a summary of
+<a href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html">SpotBugs bug descriptions</a>
+and the configuration file 
+<a href="https://algs4.cs.princeton.edu/mac/spotbugs.xml">spotbugs.xml</a>
+that the autograder uses.
+
+</li></ul>
+
+<p>
+Here is some guidance for installing on your system.
+</p><ul>
+<p></p><li><em>IntelliJ.</em> Our custom <em>IntelliJ</em> environment is preconfigured to use
+<em>Checkstyle</em> and <em>SpotBugs</em>.
+
+<p></p></li><li><em>Command line.</em>
+Our custom <em>IntelliJ</em> environment installs command-line versions of these tools.
+
+<p></p></li><li><em>Eclipse.</em>
+there is a <a href="https://checkstyle.org/eclipse-cs">Checkstyle plugin for Eclipse</a>
+and a <a href="http://spotbugs.readthedocs.io/en/latest/eclipse.html">SpotBugs plugin for Eclipse</a>.
+
+</li></ul>
+
+Note that Checkstyle inspects the source code; SpotBugs inspects the compiled code.
+
+</dd>
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(10);return false" title="Show/hide the answer">Will I receive a deduction if I don’t adhere to the course rules for formatting and
+commenting my code?</a></dt>
+<dd class="hideDD">
+The autograder (and <em>IntelliJ</em>) provide style feedback to help you become a better programmer.
+The autograder, however, does not typically deduct for stylistic flaws.
+</dd>
+
+
+
+
+<!---------------------------------------------------------------------------------------------------- -->
+
+<div class="faq-header" id="Percolation">Percolation</div>
+
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(11);return false" title="Show/hide the answer">Can my Percolation data type assume the row and column
+indices are between 0 and n−1?</a></dt>
+<dd class="hideDD">
+No. The API specifies that valid row and column indices are between 1 and <em>n</em>.
+</dd>
+
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(12);return false" title="Show/hide the answer">How do I throw a <code>IndexOutOfBoundsException?</code></a></dt>
+<dd class="hideDD">Use a <code>throw</code> statement such as the following:
+
+<blockquote>
+<pre>if (i &lt;= 0 || i &gt; n) throw new IndexOutOfBoundsException("row index i out of bounds");</pre>
+</blockquote>
+
+<p>Your code should not attempt to catch any exceptions—this will interfere
+with our grading scripts.
+</p></dd>
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(13);return false" title="Show/hide the answer">How many lines of code should my program be?</a></dt>
+<dd class="hideDD">
+You should strive for clarity and efficiency. Our reference solution for
+<code>Percolation.java</code> is about 70 lines, plus a test client.
+<!-- Our <code>PercolationStats.java</code> client is about 50 lines. -->
+If you are re-implementing the union–find data structure
+(instead of reusing the implementations provided), you are on the wrong track.
+</dd>
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(14);return false" title="Show/hide the answer">After the system has percolated, my <code>PercolationVisualizer</code> colors in light blue
+all sites connected to open sites on the bottom (in addition to those connected to open sites
+on the top). Is this “backwash” acceptable?</a></dt>
+<dd class="hideDD">
+No, this is likely a bug in <code>Percolation</code>. It is only a minor deduction
+(because it impacts only the visualizer and not the experiment to estimate
+the percolation threshold), so don’t go crazy trying to get this detail.
+However, many students consider this to be the most challenging and creative
+part of the assignment (especially if you limit yourself to one union–find object).
+
+<blockquote>
+<pre class="terminal"><span class="prompt">~/Desktop/percolation&gt;</span> <span class="command">java-algs4 PercolationVisualizer input10.txt</span>
+</pre>
+
+<p>
+<img src="./Programming Assignment 1_ FAQ_files/percolation-backwash.png" alt="Percolation backwash">
+</p></blockquote>
+</dd>
+
+
+
+
+<!---------------------------------------------------------------------------------------------------- -->
+
+<div class="faq-header" id="PeroclationStats">PercolationStats</div>
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(15);return false" title="Show/hide the answer">What should <code>stddev()</code> return if <em>trials</em> equals 1?</a></dt>
+<dd class="hideDD">
+The sample standard deviation is undefined. We recommend returning <code>Double.NaN</code>.
+</dd>
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(16);return false" title="Show/hide the answer">How do I generate a site uniformly at random among all blocked sites?</a></dt>
+<dd class="hideDD">
+Pick a site at random (by using <code>StdRandom</code> to generate two
+integers between 1 and <em>n</em>) and use this site if it is blocked; if not, repeat.
+</dd>
+
+<dt class="DTplus"><a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/faq.php#" onclick="TJK_doToggleDL(17);return false" title="Show/hide the answer">I don’t get reliable timing information when <em>n</em> = 200. What should I do?</a></dt>
+<dd class="hideDD">
+Increase the size of <em>n</em> (say to 400, 800, and 1600), until
+the mean running time exceeds its standard deviation.
+</dd>
+
+
+
+<!---------------------------------------------------------------------------------------------------- -->
+
+</dl>
+
+
+
+
+<h2>Testing</h2>
+
+
+<p><b>Testing.</b>
+
+We provide two clients that serve as large-scale visual traces.
+We highly recommend using them for testing and debugging your 
+<code>Percolation</code> implementation.
+
+</p><p><b>Visualization client.</b>
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/files/PercolationVisualizer.java">PercolationVisualizer.java</a> animates the
+results of opening sites in a percolation system specified by a file by performing the following steps:
+
+</p><ul>
+
+<p></p><li>
+Read the grid size <em>n</em> from the file.
+
+<p></p></li><li>
+Create an <em>n</em>-by-<em>n</em> grid of sites (initially all blocked).
+
+<p></p></li><li>
+Read in a sequence of sites (row <em>i</em>, column <em>j</em>) to open from the file.
+After each site is opened, draw full sites in light blue, open sites (that aren’t full) in white, and
+blocked sites in black using <em>standard draw</em>, with with site (1, 1) in the upper left-hand corner.
+
+</li></ul>
+
+The program should behave as in 
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/percolation20-by-20.mov">this movie</a> and the following snapshots
+when used with <a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/files/input20.txt">input20.txt</a>.
+
+<blockquote><pre>% <b>java PercolationVisualizer input20.txt</b>
+</pre></blockquote>
+
+<table border="0" cellpadding="2" cellspacing="0">
+<tbody><tr>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td><img src="./Programming Assignment 1_ FAQ_files/percolation-50.png" alt="Percolation 50 sites">
+<br><center><font size="-1"><em>50 open sites</em></font></center>
+</td><td><img src="./Programming Assignment 1_ FAQ_files/percolation-100.png" alt="Percolation 100 sites">
+<br><center><font size="-1"><em>100 open sites</em></font></center>
+</td><td><img src="./Programming Assignment 1_ FAQ_files/percolation-150.png" alt="Percolation 150 sites">
+<br><center><font size="-1"><em>150 open sites</em></font></center>
+</td><td><img src="./Programming Assignment 1_ FAQ_files/percolation-204.png" alt="Percolation 204 sites">
+<br><center><font size="-1"><em>204 open sites</em></font></center>
+</td><td><img src="./Programming Assignment 1_ FAQ_files/percolation-250.png" alt="Percolation 250 sites">
+<br><center><font size="-1"><em>250 open sites</em></font></center>
+</td></tr>
+</tbody></table>
+
+
+<p><b>Sample data files.</b>
+The zip file
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/percolation.zip">percolation.zip</a>
+contains some sample files for use with the visualization client.
+Associated with each input <code>.txt</code> file is an output <code>.png</code> file that contains the
+desired graphical output at the end of the animation.
+
+
+</p><p><b>InteractiveVisualization client.</b>
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/percolation/files/InteractivePercolationVisualizer.java">InteractivePercolationVisualizer.java</a> is similar
+to the first test client except that the input comes from a mouse (instead of from a file).
+It takes an integer command-line argument <em>n</em> that specifies the lattice size.
+As a bonus, it writes to standard output the sequence of sites opened in the same format used by
+<code>PercolationVisualizer</code>, so you can use it to prepare interesting files for testing.
+If you design an interesting data file, feel free to share it with us and your classmates by posting it
+in the discussion forums.
+
+</p><h2>Possible Progress Steps</h2>
+
+These are purely suggestions for how you might make progress.  You do
+not have to follow these steps.
+
+<ol>
+
+<p></p><li><b>Consider not worrying about backwash for your first attempt.</b>
+If you’re feeling overwhelmed, don’t worry about backwash when following the possible progress steps below. You 
+can revise your implementation once you have a better handle on the problem and have solved the problem without 
+handling backwash.
+
+<p></p></li><li><b>For each method in <code>Percolation</code> that you must implement
+(<code>open()</code>, <code>percolates()</code>, etc.), make a list of which <code>WeightedQuickUnionUF</code>
+methods might be useful for implementing that method.</b>
+This should help solidify what you’re attempting to accomplish. 
+
+<p></p></li><li><b>Using the list of methods above as a guide, choose instance variables that
+you’ll need to solve the problem.</b>
+Don't overthink this, you can always change them later. Instead, use your list of instance variables to guide 
+your thinking as you follow the steps below, and make changes to your instance variables as you go. Hint: At 
+minimum, you'll need to store the grid size, which sites are open, and which sites are connected to which other 
+sites. The last of these is exactly what the union–find data structure is designed for.
+
+<p></p></li><li>
+<b>Plan how you're going to map from a 2-dimensional (row, column) pair
+to a 1-dimensional union find object index.</b>
+You will need to come up with a scheme for uniquely 
+mapping 2D coordinates to 1D coordinates. We recommend writing a private method with a 
+signature along the lines of <code>int xyTo1D(int, int)</code> that performs this conversion. You 
+will need to utilize the percolation grid size when writing this method. Writing such a 
+private method (instead of copying and pasting a conversion formula multiple times throughout 
+your code) will greatly improve the readability and maintainability of your code. In general, 
+we encourage you to write such modules wherever possible. Directly test this method using the 
+main() function of Percolation.
+
+<p></p></li><li><b>Write a private method for validating indices.</b>
+Since each method is supposed to throw an exception for invalid indices, you should write a private 
+method which performs this validation process.
+
+<p></p></li><li><b>Write the <code>open()</code> method and the <code>Percolation()</code> constructor.</b>
+The open() method should do three things. First, it should validate the indices of the site that it 
+receives. Second, it should somehow mark the site as open. Third, it should perform some sequence of 
+<code>WeightedQuickUnionUF</code> operations that links the site in question to its open neighbors. 
+The constructor and instance variables should facilitate the <code>open()</code> method's ability to 
+do its job.
+
+<p></p></li><li><b>Test the <code>open()</code> method and the <code>Percolation()</code> constructor.</b>
+These tests should be in <code>main()</code>. An example of a simple test is to call
+<code>open(1, 1)</code> and <code>open(1, 2)</code>, and then to ensure that the two corresponding
+entries are connected (using <code>.connected()</code> in <code>WeightedQuickUnionUF</code>).
+
+<p></p></li><li><b>Write the <code>percolates()</code>, <code>isOpen()</code>, and <code>isFull()</code> methods.</b>
+ These should be very simple methods. 
+
+<p></p></li><li><b>Test your complete implementation using the visualization clients.</b> 
+
+<p></p></li><li><b>Write and test the PercolationStats class.</b> 
+
+</li></ol>
+
+<h2>Programming Tricks and Common Pitfalls</h2>
+
+
+<ol>
+<p></p><li>
+<b>Do not write your own union–find data structure. Use <code>WeightedQuickUnionUF</code> instead.</b>
+
+<p></p></li><li>
+<b>Your <code>Percolation</code> class must use
+<a href="https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/WeightedQuickUnionUF.html"><code>WeightedQuickUnionUF</code></a>.</b>
+Otherwise, it will fail the timing tests, as the autograder intercepts and counts calls to methods in 
+<code>WeightedQuickUnionUF</code>.
+
+<p></p></li><li>
+
+<b>It's OK to use an extra row and/or column to deal with the 1-based indexing of the percolation grid.</b> 
+Though it is slightly inefficient, it's fine to use arrays or union–find objects that are slightly larger 
+than strictly necessary. Doing this results in cleaner code at the cost of slightly greater memory usage. 
+
+<p></p></li><li>
+<b>Each of the methods (except the constructor) in <code>Percolation</code> must use a constant 
+number of union–find operations.</b>
+If you have a <code>for</code> loop inside of one of your 
+<code>Percolation</code> methods, you're probably doing it wrong. Don't forget about the virtual-top / 
+virtual-bottom trick described in lecture.
+    
+</li></ol>
+
+
+
+</body></html>
