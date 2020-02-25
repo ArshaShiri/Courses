@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Union Find.iml" filepath="$PROJECT_DIR$/Union Find.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Percolation.iml" filepath="$PROJECT_DIR$/Percolation.iml" />
     </modules>
   </component>
 </project>
