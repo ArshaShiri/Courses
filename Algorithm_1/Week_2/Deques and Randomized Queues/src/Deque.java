@@ -39,7 +39,7 @@ public class Deque<Item> implements Iterable<Item> {
     }
 
     // *** *** *** *** *** Public methods *** *** *** *** *** //
-    
+
     // construct an empty deque
     public Deque() {
     }
