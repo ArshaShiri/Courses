@@ -1,0 +1,542 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- saved from url=(0077)https://coursera.cs.princeton.edu/algs4/assignments/wordnet/specification.php -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="./Programming Assignment 1_ WordNet_files/assignments.css">
+    <link rel="stylesheet" type="text/css" href="./Programming Assignment 1_ WordNet_files/link-icons.css">
+    <script type="text/javascript" src="./Programming Assignment 1_ WordNet_files/MathJax.js.download"></script>
+    <title>Programming Assignment 1: WordNet</title>
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+
+<body class="specification" data-gr-c-s-loaded="true"><div id="MathJax_Message" style="display: none;"></div>
+
+
+<div id="nav2">
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/wordnet/specification.php" id="logo"> <img src="./Programming Assignment 1_ WordNet_files/logo.png"> WordNet</a>
+<ul id="links">
+<li><a href="https://coursera.cs.princeton.edu/algs4/assignments/wordnet/specification.php" id="here">Spec</a></li>
+<li><a href="https://coursera.cs.princeton.edu/algs4/assignments/wordnet/faq.php">FAQ</a></li>
+<li><a href="https://coursera.cs.princeton.edu/algs4/assignments/wordnet/wordnet.zip">Project</a></li>
+<li><a href="https://www.coursera.org/learn/algorithms-part2/programming/BCNsp/wordnet/submission" target="_blank">Submit</a></li>
+</ul>
+</div>
+
+<p> <a href="http://wordnet.princeton.edu/">WordNet</a> is a semantic lexicon for the
+English language that computational linguists and cognitive scientists use extensively.
+For example, WordNet was a key component in IBM’s Jeopardy-playing
+<a href="http://en.wikipedia.org/wiki/Watson_(computer)">Watson</a> computer system.
+WordNet groups words into sets of synonyms called <em>synsets</em>.
+For example, { <em>AND circuit</em>, <em>AND gate</em> } is a synset that represent
+a logical gate that fires only when all of its inputs fire.
+WordNet also describes semantic relationships between synsets.
+One such relationship is the <em>is-a</em> relationship, which connects a <em>hyponym</em>
+(more specific synset) to a <em>hypernym</em> (more general synset).
+For example, the synset { <em>gate</em>, <em>logic gate</em> } is a hypernym of
+{ <em>AND circuit</em>, <em>AND gate</em> } because 
+an AND gate is a kind of logic gate.
+
+</p><p><b>The WordNet digraph.</b>
+Your first task is to build the WordNet digraph: each vertex <em>v</em> 
+is an integer that represents a synset, and each directed edge <em>v→w</em> 
+represents that <em>w</em> is a hypernym of <em>v</em>.
+The WordNet digraph is a <em>rooted DAG</em>:
+it is acyclic and has one vertex—the <em>root</em>—that
+is an ancestor of every other vertex.
+However, it is not necessarily a tree because a synset can have more than one
+hypernym. A small subgraph of the WordNet digraph appears below.
+
+</p><p>
+</p><div style="text-align:center;"><img src="./Programming Assignment 1_ WordNet_files/wordnet-event.png" width="500"></div>
+
+
+<p><b>The WordNet input file formats.</b>
+We now describe the two data files that you will use to create the WordNet digraph.
+The files are in <em>comma-separated values</em> (CSV) format:
+each line contains a sequence of fields, separated by commas.
+
+</p><ul>
+<li><em>List of synsets.</em>
+The file <a href="https://coursera.cs.princeton.edu/algs4/assignments/wordnet/files/synsets.txt">synsets.txt</a>
+contains all noun synsets in WordNet, one per line.
+Line <em>i</em> of the file (counting from 0) contains the information for synset <em>i</em>.
+The first field is the <em>synset id</em>, which is always the integer <em>i</em>;
+the second field is the synonym set (or <em>synset</em>); and the
+third field is its dictionary definition (or <em>gloss</em>), which is not relevant
+to this assignment.
+
+<p>
+</p><div style="text-align:center;"><img src="./Programming Assignment 1_ WordNet_files/wordnet-synsets.png" width="600"></div>
+
+For example, line 36 means
+that the synset { <code>AND_circuit</code>, <code>AND_gate</code> }
+has an id number of 36 and its gloss is
+<code>a circuit in a computer that fires only when all of its inputs fire</code>.
+The individual nouns that constitute a synset are separated by spaces.
+If a noun contains more than one word, the underscore character connects
+the words (and not the space character).
+
+</li>
+
+
+<p></p><li><em>List of hypernyms.</em>
+The file <a href="https://coursera.cs.princeton.edu/algs4/assignments/wordnet/files/hypernyms.txt">hypernyms.txt</a>
+contains the hypernym relationships.
+Line <em>i</em> of the file (counting from 0) contains the hypernyms of synset <em>i</em>.
+The first field is the synset id, which is always the integer <em>i</em>;
+subsequent fields are the id numbers of the synset’s hypernyms.
+
+<p>
+</p><div style="text-align:center;"><img src="./Programming Assignment 1_ WordNet_files/wordnet-hypernyms.png" width="195"></div>
+
+For example, line 36 means that synset 36 (<code>AND_circuit AND_Gate</code>)
+has 42338 (<code>gate logic_gate</code>) as its only hypernym. Line 34 means that
+synset 34 (<code>AIDS acquired_immune_deficiency_syndrome</code>) has two hypernyms:
+47569 (<code>immunodeficiency</code>) and 48084 (<code>infectious_disease</code>).
+
+</li></ul>
+
+
+<p><b>WordNet data type.</b>
+Implement an immutable data type <code>WordNet</code> with the following API:
+
+</p><blockquote>
+<pre><b>public class WordNet {</b>
+
+   <font color="gray">// constructor takes the name of the two input files</font>
+   <b>public WordNet(String synsets, String hypernyms)</b>
+
+   <font color="gray">// returns all WordNet nouns</font>
+   <b>public Iterable&lt;String&gt; nouns()</b>
+
+   <font color="gray">// is the word a WordNet noun?</font>
+   <b>public boolean isNoun(String word)</b>
+
+   <font color="gray">// distance between nounA and nounB (defined below)</font>
+   <b>public int distance(String nounA, String nounB)</b>
+
+   <font color="gray">// a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB</font>
+   <font color="gray">// in a shortest ancestral path (defined below)</font>
+   <b>public String sap(String nounA, String nounB)</b>
+
+   <font color="gray">// do unit testing of this class</font>
+   <b>public static void main(String[] args)</b>
+<b>}</b>
+</pre></blockquote>
+
+
+<em>Corner cases.&nbsp;</em>
+Throw an <code>IllegalArgumentException</code> in the following situations:
+<ul>
+
+<li>Any argument to the constructor or an instance method is <code>null</code>
+
+</li><li> The input to the constructor does not correspond to a rooted DAG.
+
+</li><li>
+Any of the noun arguments in <code>distance()</code> or <code>sap()</code>
+is not a WordNet noun.
+</li></ul>
+
+You may assume that the input files are in the specified format.
+
+<p>
+<em>Performance requirements.&nbsp;</em>
+Your data type should use space linear in the input size
+(size of synsets and hypernyms files).
+The constructor should take time linearithmic (or better) in the input size.
+The method <code>isNoun()</code> should run in time logarithmic (or better) in
+the number of nouns.
+<!--
+The method <code>glosses()</code> should run in time logarithmic (or better) in
+the number of synsets and nouns, per gloss returned.
+-->
+The methods <code>distance()</code> and <code>sap()</code> should run in time linear in the
+size of the WordNet digraph.
+For the analysis, assume that the number of nouns per synset
+is bounded by a constant.
+
+
+</p><p><b>Shortest ancestral path.</b>
+An <em>ancestral path</em> between two vertices
+<em>v</em> and <em>w</em> in a digraph is a directed path from
+<em>v</em> to a common ancestor <em>x</em>, together with
+a directed path from <em>w</em> to the same ancestor <em>x</em>. 
+A <em>shortest ancestral path</em> is an ancestral path of minimum total length.
+We refer to the common ancestor in a shortest ancestral path as a
+<em>shortest common ancestor</em>.
+<!-- Note that a shortest common ancestor always exists
+because the root is an ancestor of every vertex.
+-->
+Note also that an ancestral path is a path, but not a directed path.
+
+</p><div style="text-align:center;"><img src="./Programming Assignment 1_ WordNet_files/wordnet-sca.png" width="500"></div>
+
+<p>
+We generalize the notion of shortest common ancestor to <em>subsets</em> of vertices.
+A shortest ancestral path of two subsets of vertices <em>A</em> and <em>B</em>
+is a shortest ancestral path over all pairs of vertices <em>v</em> and <em>w</em>, with <em>v</em>
+in <em>A</em> and <em>w</em> in <em>B</em>.
+The figure (<a href="https://coursera.cs.princeton.edu/algs4/assignments/wordnet/files/digraph25.txt">digraph25.txt</a>)
+below shows an example in which, for two
+subsets, red and blue, we have computed several (but not all) ancestral paths, including the
+shortest one.
+
+</p><div style="text-align:center;"><img src="./Programming Assignment 1_ WordNet_files/wordnet-sca-set.png" width="500"></div>
+
+
+
+<!--
+<p><b>Shortest ancestral path.</b>
+An <em>ancestral path</em> between two vertices
+<em>v</em> and <em>w</em> in a digraph is a directed path from
+<em>v</em> to a common ancestor <em>x</em>, together with
+a directed path from <em>w</em> to the same ancestor <em>x</em>. 
+
+A <em>shortest ancestral path</em> is an ancestral path of minimum total length.
+For example, in the digraph at left
+(<a href = "files/digraph1.txt">digraph1.txt</a>),
+the shortest ancestral path between
+3 and 11 has length 4 (with common ancestor 1).
+In the digraph at right (<a href = "files/digraph2.txt">digraph2.txt</a>),
+one ancestral path between 1 and 5 has length 4
+(with common ancestor 5), but the shortest ancestral path has length 2
+(with common ancestor 0).
+
+<div style="text-align:center;"><img src="wordnet-sap.png"></div>
+-->
+
+<p><br><b>SAP data type.</b>
+Implement an immutable data type <code>SAP</code> with the following API:
+
+</p><blockquote><pre><b>public class SAP {</b>
+
+   <font color="gray">// constructor takes a digraph (not necessarily a DAG)</font>
+   <b>public SAP(Digraph G)</b>
+
+   <font color="gray">// length of shortest ancestral path between v and w; -1 if no such path</font>
+   <b>public int length(int v, int w)</b>
+
+   <font color="gray">// a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path</font>
+   <b>public int ancestor(int v, int w)</b>
+
+   <font color="gray">// length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path</font>
+   <b>public int length(Iterable&lt;Integer&gt; v, Iterable&lt;Integer&gt; w)</b>
+
+   <font color="gray">// a common ancestor that participates in shortest ancestral path; -1 if no such path</font>
+   <b>public int ancestor(Iterable&lt;Integer&gt; v, Iterable&lt;Integer&gt; w)</b>
+
+   <font color="gray">// do unit testing of this class</font>
+   <b>public static void main(String[] args)</b>
+<b>}</b>
+
+</pre></blockquote>
+
+
+<p>
+<em>Corner cases.&nbsp;</em>
+Throw an <code>IllegalArgumentException</code> in the following situations:
+</p><ul>
+<li>Any argument is <code>null</code>
+</li><li>Any vertex argument is outside its prescribed range
+<!-- <li>Any iterable argument contains zero vertices -->
+</li><li>Any iterable argument contains a <code>null</code> item
+</li></ul>
+
+<!--
+<p>
+<em>Corner cases.&nbsp;</em>
+All methods should throw an <code>IllegalArgumentException</code> if any argument is null or
+if any argument vertex is invalid&mdash;not between <code>0</code> and <code>G.V() - 1</code>. 
+-->
+
+<p>
+<em>Performance requirements.&nbsp;</em>
+All methods (and the constructor) should take time at most
+proportional to <em>E</em> + <em>V</em>
+in the worst case, where <em>E</em> and <em>V</em> are the number of edges and vertices
+in the digraph, respectively.
+Your data type should use space proportional to <em>E</em> + <em>V</em>.
+
+</p><p><b>Test client.</b>
+The following test client takes the name of a digraph input file as
+as a command-line argument, constructs the digraph,
+reads in vertex pairs from standard input,
+and prints out the length of the shortest ancestral path between the two vertices
+and a common ancestor that participates in that path:
+
+</p><blockquote><pre>public static void main(String[] args) {
+    In in = new In(args[0]);
+    Digraph G = new Digraph(in);
+    SAP sap = new SAP(G);
+    while (!StdIn.isEmpty()) {
+        int v = StdIn.readInt();
+        int w = StdIn.readInt();
+        int length   = sap.length(v, w);
+        int ancestor = sap.ancestor(v, w);
+        StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
+    }
+}
+</pre></blockquote>
+
+Here is a sample execution:
+
+<blockquote><pre>% <b>cat digraph1.txt</b>              % <b>java-algs4 SAP digraph1.txt</b>
+13                              <b>3 11</b>
+11                              length = 4, ancestor = 1
+ 7  3                            
+ 8  3                           <b>9 12</b>
+ 3  1                           length = 3, ancestor = 5
+ 4  1
+ 5  1                           <b>7 2</b>
+ 9  5                           length = 4, ancestor = 0
+10  5
+11 10                           <b>1 6</b>
+12 10                           length = -1, ancestor = -1
+ 1  0
+ 2  0
+</pre></blockquote><p><b>Measuring the semantic relatedness of two nouns</b>.
+Semantic relatedness refers to the degree to which two concepts are related. Measuring 
+semantic relatedness is a challenging problem. For example, you consider
+<em>George W. Bush</em> and <em>John F. Kennedy</em> (two U.S. presidents)
+to be more closely related than <em>George W. Bush</em> and <em>chimpanzee</em> (two primates).
+It might not be clear whether <em>George W. Bush</em> 
+and <em>Eric Arthur Blair</em> are more related than two arbitrary people.
+However, both <em>George W. Bush</em> and <em>Eric Arthur Blair</em>
+(a.k.a. George Orwell) are famous communicators and, therefore, closely related.
+
+</p><p>
+We define the semantic relatedness
+of two WordNet nouns <em>x</em> and <em>y</em> as follows:
+
+
+</p><ul>
+
+<p></p><li> <em>A</em> = set of synsets in which <em>x</em> appears
+
+<p></p></li><li> <em>B</em> = set of synsets in which <em>y</em> appears
+
+<p></p></li><li> <em>distance</em>(<em>x, y</em>) = length of shortest ancestral path of subsets <em>A</em> and <em>B</em>
+
+<p></p></li><li> <em>sca</em>(<em>x, y</em>) = a shortest common ancestor of subsets <em>A</em> and <em>B</em>
+
+</li></ul><p>
+This is the notion of distance that you will use to implement the
+<code>distance()</code> and <code>sap()</code> methods in the <code>WordNet</code> data type.
+
+</p><p>
+</p><div style="text-align:center;"><img src="./Programming Assignment 1_ WordNet_files/wordnet-distance.png" width="500"></div><p><b>Outcast detection.</b>
+Given a list of WordNet nouns <em>x</em><sub>1</sub>, <em>x</em><sub>2</sub>,
+..., <em>x</em><sub><em>n</em></sub>, which noun
+is the least related to the others? To identify <em>an outcast</em>,
+<!-- compute the sum of the squares of the distance between each noun and every other one: -->
+compute the sum of the distances between each noun and every other one:
+
+<!--
+<blockquote>
+(<em>d</em><sub><em>i</em></sub>)<sup>2</sup> =
+(dist(<em>x</em><sub>i</sub>, <em>x</em><sub>1</sub>))<sup>2</sup> +
+(dist(<em>x</em><sub>i</sub>, <em>x</em><sub>2</sub>))<sup>2</sup> + ... + 
+(dist(<em>x</em><sub>i</sub>, <em>x</em><sub>n</sub>))<sup>2</sup>
+</blockquote>
+-->
+
+</p><blockquote>
+<em>d</em><sub><em>i</em></sub> &nbsp; = &nbsp;
+<em>distance</em>(<em>x</em><sub><em>i</em></sub>, <em>x</em><sub>1</sub>) &nbsp; + &nbsp;
+<em>distance</em>(<em>x</em><sub><em>i</em></sub>, <em>x</em><sub>2</sub>) &nbsp; + &nbsp; ... &nbsp; + &nbsp; 
+<em>distance</em>(<em>x</em><sub><em>i</em></sub>, <em>x</em><sub><em>n</em></sub>)
+</blockquote>
+
+and return a noun <em>x</em><sub><em>t</em></sub>
+for which <em>d</em><sub><em>t</em></sub> is maximum.
+Note that <em>distance</em>(<em>x</em><sub><em>i</em></sub>, <em>x</em><sub><em>i</em></sub>) = 0, so
+it will not contribute to the sum.
+
+<p>
+
+Implement an immutable data type <code>Outcast</code> with the following API:
+
+</p><blockquote><pre><b>public class Outcast {</b>
+   <b>public Outcast(WordNet wordnet)</b>         <font color="gray">// constructor takes a WordNet object</font>
+   <b>public String outcast(String[] nouns)</b>   <font color="gray">// given an array of WordNet nouns, return an outcast</font>
+   <b>public static void main(String[] args)</b>  <font color="gray">// see test client below</font>
+<b>}</b>
+</pre></blockquote>
+
+
+Assume that argument to <code>outcast()</code> contains only valid wordnet
+nouns (and that it contains at least two such nouns).
+
+<p>
+The following test client takes from the command line the 
+name of a synset file, the name of a hypernym file, followed by the
+names of outcast files, and prints out an outcast in each file:
+
+</p><blockquote><pre>public static void main(String[] args) {
+    WordNet wordnet = new WordNet(args[0], args[1]);
+    Outcast outcast = new Outcast(wordnet);
+    for (int t = 2; t &lt; args.length; t++) {
+        In in = new In(args[t]);
+        String[] nouns = in.readAllStrings();
+        StdOut.println(args[t] + ": " + outcast.outcast(nouns));
+    }
+}
+</pre></blockquote>
+
+Here is a sample execution:
+
+<blockquote><pre>% <b>cat outcast5.txt</b>
+horse zebra cat bear table
+
+% <b>cat outcast8.txt</b>
+water soda bed orange_juice milk apple_juice tea coffee
+
+% <b>cat outcast11.txt</b>
+apple pear peach banana lime lemon blueberry strawberry mango watermelon potato
+
+
+% <b>java-algs4 Outcast synsets.txt hypernyms.txt outcast5.txt outcast8.txt outcast11.txt</b>
+outcast5.txt: table
+outcast8.txt: bed
+outcast11.txt: potato
+</pre></blockquote><p><b>Analysis of running time (optional).</b>
+Analyze the effectiveness of your approach to this problem by giving estimates of 
+its time requirements. 
+
+</p><ul>
+
+<p></p><li>Give the order of growth of the <em>worst-case</em>
+running time of the <code>length()</code> and <code>ancestor()</code> methods
+in <code>SAP</code> as a function of the number of
+vertices <em>V</em> and the number of edges <em>E</em> in the digraph.
+
+<p></p></li><li> Give the order of growth of the <em>best-case</em> running time of
+the same methods.
+
+</li></ul><p><b>Web submission.</b>
+Submit a .zip file containing 
+<code>WordNet.java</code>, <code>SAP.java</code>, <code>Outcast.java</code>,
+any other supporting files (excluding <code>algs4.jar</code>).
+You may not call any library functions except those in
+<code>java.lang</code>, <code>java.util</code>, and <code>algs4.jar</code>.
+
+</p><p><br>
+
+
+</p><address><small>
+This assignment was developed by Alina Ene and Kevin Wayne.
+<br>Copyright © 2006.
+</small>
+</address><table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</table></body></html>
