@@ -1,0 +1,126 @@
+import edu.princeton.cs.algs4.In;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+
+public class FastCollinearPoints {
+    // *** *** *** *** *** Private attributes *** *** *** *** *** //
+
+    private ArrayList<LineSegment> lineSegments_ = new ArrayList<LineSegment>();
+
+    // *** *** *** *** *** Private methods *** *** *** *** *** //
+
+    private void checkForDuplicatePoints_(Point[] points) {
+        for (int index = 0; index < points.length - 1; ++index) {
+            if (points[index].compareTo(points[index + 1]) == 0) {
+                throw new IllegalArgumentException("Array has duplicate points!");
+            }
+        }
+    }
+
+    private boolean isSLopeAlreadyFound_(double slope, ArrayList<Double> slopes) {
+        Iterator<Double> iter = slopes.iterator();
+        while (iter.hasNext()) {
+            if (slope == iter.next()) return true;
+        }
+        return false;
+    }
+
+    // *** *** *** *** *** Public methods *** *** *** *** *** //
+
+    // finds all line segments containing 4 or more points
+    public FastCollinearPoints(Point[] points) {
+        if (points == null) {
+            throw new IllegalArgumentException("Points container cannot be null!");
+        }
+        int counter = 1;
+        for (Point point : points) {
+            if (point == null) throw new IllegalArgumentException("A null point cannot be accepted!");
+        }
+
+        Point[] pointsCopy = points.clone();
+        Arrays.sort(pointsCopy);
+        checkForDuplicatePoints_(pointsCopy);
+        int size = pointsCopy.length;
+
+        ArrayList<Point> visitedOrigins = new ArrayList<>();
+        for (int index = 0; index < size; ++index) {
+            int sizeOfSubArray = size - index;
+            Point[] pointsSubarray = new Point[sizeOfSubArray];
+            for (int indexForCopy = 0; indexForCopy < sizeOfSubArray; ++indexForCopy) {
+                pointsSubarray[indexForCopy] = pointsCopy[index + indexForCopy];
+            }
+
+            Point origin = pointsSubarray[0];
+            ArrayList<Double> slopeOfCurrentOriginToPreviousOrigins = new ArrayList<>();
+            if (!visitedOrigins.isEmpty()) {
+                for (Point previousOrigin : visitedOrigins) {
+                    slopeOfCurrentOriginToPreviousOrigins.add(previousOrigin.slopeTo(origin));
+                }
+            }
+
+            visitedOrigins.add(origin);
+            Arrays.sort(pointsSubarray, origin.slopeOrder());
+            ArrayList<Double> foundSlopesForThisOrigin = new ArrayList<>();
+
+            // Explain:
+            for (int subArrayIndex = 1; subArrayIndex < pointsSubarray.length - 1; ++subArrayIndex) {
+                int numberOfCollinearPoints = 2;
+                double currentSlope = origin.slopeTo(pointsSubarray[subArrayIndex]);
+                if (//foundSlopesForThisOrigin.contains(currentSlope) ||
+                        slopeOfCurrentOriginToPreviousOrigins.contains(currentSlope))
+                    continue;
+                foundSlopesForThisOrigin.add(currentSlope);
+
+                for (int subArrayIndex2 = subArrayIndex + 1; subArrayIndex2 < pointsSubarray.length; ++subArrayIndex2) {
+                    double otherSlope = origin.slopeTo(pointsSubarray[subArrayIndex2]);
+                    if (currentSlope == otherSlope) {
+                        numberOfCollinearPoints++;
+                        boolean endOfSubArrayHasReached = subArrayIndex2 == pointsSubarray.length - 1;
+                        if (endOfSubArrayHasReached && numberOfCollinearPoints > 3) {
+                            LineSegment lineSegment = new LineSegment(origin, pointsSubarray[subArrayIndex2]);
+                            lineSegments_.add(lineSegment);
+                        }
+                    } else {
+                        if (numberOfCollinearPoints > 3) {
+                            LineSegment lineSegment = new LineSegment(origin, pointsSubarray[subArrayIndex2 - 1]);
+                            lineSegments_.add(lineSegment);
+                            subArrayIndex = subArrayIndex2 + 1;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // the number of line segments
+    public int numberOfSegments() {
+        return lineSegments_.size();
+    }
+
+    // the line segments
+    public LineSegment[] segments() {
+        return lineSegments_.toArray(new LineSegment[this.numberOfSegments()]);
+    }
+
+    public static void main(String[] args) {
+        In in = new In(args[0]);
+        int n = in.readInt();
+        Point[] points = new Point[n];
+        for (int i = 0; i < n; i++) {
+            int x = in.readInt();
+            int y = in.readInt();
+            points[i] = new Point(x, y);
+        }
+
+        FastCollinearPoints fastCollinearPoints = new FastCollinearPoints(points);
+        System.out.println(fastCollinearPoints.numberOfSegments());
+        LineSegment[] segments = fastCollinearPoints.segments();
+
+        for (LineSegment segment : segments) {
+            System.out.println(segment.toString());
+        }
+    }
+}

@@ -1,0 +1,74 @@
+/* wayne s18 hacked this to fix hanging indent with multiline questions */
+div.faq-header {
+    text-indent: -2.2em;
+    color: #4e6994;
+    margin: 15px 0px;
+    font-weight:bold;
+    font-size:16px;
+}
+
+dl {
+ margin-left: 2.5em;
+ text-indent: -1.1em;
+}
+dl dd {
+ text-indent: 0em;
+}
+
+.button {
+    background-color: #E8F2FB;
+    border-style: solid;
+    border-width: 1px;
+    border-color: gray;
+    border-radius: 8px;
+    color: black;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 4px;
+    cursor: pointer;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+.button:hover {
+    background-color: #EFFFF4;
+    color: black;
+    text-decoration: none;
+}
+
+
+/*  "Show All" + "Hide All" links */
+#TJK_ToggleON,#TJK_ToggleOFF {padding:3px 7px;margin-right:5px}
+/* zeroing out padding and margin */
+#TJK_DL dd,#TJK_DL dt {margin:0;padding:0} 
+/* margin for the DTs (shorthand) */
+#TJK_DL dt {margin:7px 0}
+
+/* image and left padding for DDs = answers */
+/* wayne s18 updated this */
+/* #TJK_DL dd {background:url(answer.gif) no-repeat;padding-left:55px} */
+#TJK_DL dd {padding-left:20px}
+
+/* styling all anchors in the DTs */
+#TJK_DL dt a {background:0 50% no-repeat;padding-left:32px;color:#000;text-decoration:none}
+#TJK_DL dt a:visited {color:#666}
+#TJK_DL dt a:visited:hover,
+#TJK_DL dt a:hover,
+#TJK_DL dt a:active,
+#TJK_DL dt a:focus {font-weight:bold}
+
+/* the + and - gif in the anchors */
+/* [wayne s18] updated these to use arrows instead of plus and minus symbols */
+#TJK_DL .DTplus a {background-image:url(right.png);  font-weight:bold; background-size: 10px auto; padding: 5px 5px 5px 15px }
+#TJK_DL .DTminus a {background-image:url(down.png);  font-weight:bold; background-size: 10px auto; padding: 5px 5px 5px 15px }
+/* #TJK_DL .DTplus a {background-image:url(toggleDLplus.gif)}   */
+/* #TJK_DL .DTminus a {background-image:url(toggleDLminus.gif)} */
+
+/**********************************/
+/**********************************/
+#TJK_DL .showDD {position:relative;top:0}
+#TJK_DL dd,.hideDD{top:-9999px;position:absolute}
+#TJK_ToggleON,#TJK_ToggleOFF {display:inline;cursor:pointer;cursor:hand}
