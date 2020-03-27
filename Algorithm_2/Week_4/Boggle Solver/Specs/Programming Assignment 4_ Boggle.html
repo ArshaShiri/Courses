@@ -1,0 +1,496 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- saved from url=(0076)https://coursera.cs.princeton.edu/algs4/assignments/boggle/specification.php -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="./Programming Assignment 4_ Boggle_files/assignments.css">
+    <link rel="stylesheet" type="text/css" href="./Programming Assignment 4_ Boggle_files/link-icons.css">
+    <script type="text/javascript" src="./Programming Assignment 4_ Boggle_files/MathJax.js.download"></script>
+    <title>Programming Assignment 4: Boggle</title>
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+
+<body class="specification" data-gr-c-s-loaded="true"><div id="MathJax_Message" style="display: none;"></div>
+
+
+<div id="nav2">
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/specification.php" id="logo-noborder"> <img src="./Programming Assignment 4_ Boggle_files/logo.png"> Boggle</a>
+<ul id="links">
+<li><a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/specification.php" id="here">Spec</a></li>
+<li><a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/faq.php">FAQ</a></li>
+<li><a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/boggle.zip">Project</a></li>
+<li><a href="https://www.coursera.org/learn/algorithms-part2/programming/9GqJs/boggle/submission" target="_blank">Submit</a></li>
+</ul>
+</div>
+
+<p>
+Write a program to play the word game Boggle<sup>®</sup>.
+
+</p><p>
+<b>The Boggle game.</b> Boggle is a word game designed by Allan Turoff and distributed by Hasbro.
+It involves a board made up of 16 cubic dice, where each die has a letter printed on each
+of its 6 sides.
+At the beginning of the game, the 16 dice are shaken and randomly
+distributed into a 4-by-4 tray, with only the top sides of the dice visible.
+The players compete to accumulate points by building <em>valid</em> words from the dice,
+according to these rules:
+</p><ul>
+<p></p><li>A valid word must be composed by following a sequence of <em>adjacent dice</em>—two
+dice are adjacent if they are horizontal, vertical, or diagonal neighbors.
+<p></p></li><li>A valid word can use each die at most once.
+<p></p></li><li>A valid word must contain at least 3 letters.
+<p></p></li><li>A valid word must be in the dictionary (which typically does not contain proper nouns).
+</li></ul>
+Here are some examples of valid and invalid words:
+
+<p>
+<table class="image" align="center">
+<tbody><tr><td><img src="./Programming Assignment 4_ Boggle_files/pins.png" width="175" alt="pins" title="pins" align="center"></td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+    <td><img src="./Programming Assignment 4_ Boggle_files/pines.png" width="175" alt="pines" title="pines" align="center"></td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+    <td><img src="./Programming Assignment 4_ Boggle_files/dates.png" width="175" alt="dates" title="dates" align="center"></td></tr>
+<tr><td class="caption" align="center"><code>PINS</code><br>(<em>valid</em>)</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+    <td class="caption" align="center"><code>PINES</code><br>(<em>valid</em>)</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+    <td class="caption" align="center"><code>DATES</code><br>(<em>invalid—dice not adjacent</em>)</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td><img src="./Programming Assignment 4_ Boggle_files/pint.png" width="175" alt="pint" title="pint" align="center"></td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+    <td><img src="./Programming Assignment 4_ Boggle_files/tepee.png" width="175" alt="tepee" title="tepee" align="center"></td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+    <td><img src="./Programming Assignment 4_ Boggle_files/sid.png" width="175" alt="sid" title="sid" align="center"></td></tr>
+<tr><td class="caption" align="center"><code>PINT</code><br>(<em>invalid—path not sequential</em>)</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+    <td class="caption" align="center"><code>TEPEE</code><br>(<em>invalid—die used more than once</em>)</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+    <td class="caption" align="center"><code>SID</code><br>(<em>invalid—word not in dictionary</em>)</td></tr>
+</tbody></table>
+
+</p><p><br><b>Scoring.</b>
+Valid words are scored according to their length, using this table:
+
+</p><p></p><center>
+<blockquote>
+  <table cellspacing="0" cellpadding="3">
+    <tbody><tr class="border_bottom" align="center"><th>word length</th> <th>&nbsp;&nbsp;</th> <th>points</th></tr>
+    <tr align="center"><td>3–4</td> <td></td> <td>1</td></tr>
+    <tr align="center"><td>5</td>   <td></td> <td>2</td></tr>
+    <tr align="center"><td>6</td>   <td></td> <td>3</td></tr>
+    <tr align="center"><td>7</td>   <td></td> <td>5</td></tr>
+    <tr align="center"><td>8+</td>  <td></td> <td>11</td></tr>
+  </tbody></table>
+</blockquote>
+</center>
+
+<p>
+<b>The <i>Qu</i> special case.</b>
+In the English language, the letter <code>Q</code> is almost always followed by the letter
+<code>U</code>.
+Consequently, the side of one die is printed with the two-letter sequence <code>Qu</code>
+instead of <code>Q</code> (and this two-letter sequence must be used together when forming words).
+When scoring, <code>Qu</code> counts as two letters; for example, the word <code>QuEUE</code>
+scores as a 5-letter word even though it is formed by following a sequence of only 4 dice.
+
+</p><p>
+</p><center>
+<img src="./Programming Assignment 4_ Boggle_files/Qu.png" width="60" height="60" alt="Qu" title="Qu">
+</center>
+
+
+<p><br>
+<b>Your task.</b> 
+Your challenge is to write a Boggle solver that finds <em>all</em> valid words in a given Boggle board, using
+a given dictionary.
+Implement an immutable data type <code>BoggleSolver</code> with the following API:
+
+</p><pre><blockquote>
+<b>public class BoggleSolver
+{</b>
+    <font color="gray">// Initializes the data structure using the given array of strings as the dictionary.
+    // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)</font>
+    <b>public BoggleSolver(String[] dictionary)</b>
+
+    <font color="gray">// Returns the set of all valid words in the given Boggle board, as an Iterable.</font>
+    <b>public Iterable&lt;String&gt; getAllValidWords(BoggleBoard board)</b>
+
+    <font color="gray">// Returns the score of the given word if it is in the dictionary, zero otherwise.
+    // (You can assume the word contains only the uppercase letters A through Z.)</font>
+    <b>public int scoreOf(String word)</b>
+<b>}</b>
+</blockquote>
+</pre>
+
+It is up to you how you search for and store the words contained in the board,
+as well as the dictionary used to check them.
+
+<p><br>
+<b>The board data type.</b>
+We provide an immutable data type
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/files/BoggleBoard.java">BoggleBoard.java</a> for
+representing Boggle boards.
+It includes constructors for creating
+Boggle boards from either the 16 Hasbro dice, the distribution of letters in
+the English language, a file, or a character array; methods for accessing
+the individual letters; and a method to print out the board for debugging.
+Here is the full API:
+
+</p><pre><blockquote>
+<b>public class BoggleBoard
+{</b>
+    <font color="gray">// Initializes a random 4-by-4 Boggle board.
+    // (by rolling the Hasbro dice)</font>
+    <b>public BoggleBoard()</b>
+
+    <font color="gray">// Initializes a random m-by-n Boggle board.
+    // (using the frequency of letters in the English language)</font>
+    <b>public BoggleBoard(int m, int n)</b>
+
+    <font color="gray">// Initializes a Boggle board from the specified filename.</font>
+    <b>public BoggleBoard(String filename)</b>
+
+    <font color="gray">// Initializes a Boggle board from the 2d char array.
+    // (with 'Q' representing the two-letter sequence "Qu")</font>
+    <b>public BoggleBoard(char[][] a)</b>
+
+    <font color="gray">// Returns the number of rows.</font>
+    <b>public int rows()</b>
+
+    <font color="gray">// Returns the number of columns.</font>
+    <b>public int cols()</b>
+
+    <font color="gray">// Returns the letter in row i and column j.
+    // (with 'Q' representing the two-letter sequence "Qu")</font>
+    <b>public char getLetter(int i, int j)</b>
+
+    <font color="gray">// Returns a string representation of the board.</font>
+    <b>public String toString()
+}</b>
+</blockquote>
+</pre>
+
+
+<p><b>Testing.</b> 
+The zip file <a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/boggle.zip">boggle.zip</a> contains a number of sample boards
+and test files.
+
+
+</p><ul>
+<p></p><li><em>Dictionaries.</em>
+A dictionary consists of a sequence of words, separated by whitespace, in alphabetical order.
+You can assume that each word contains only the uppercase letters <code>A</code> through <code>Z</code>.
+For example, here are the two files
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/files/dictionary-algs4.txt">dictionary-algs4.txt</a> and
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/files/dictionary-yawl.txt">dictionary-yawl.txt</a>:
+
+<p>
+</p><blockquote>
+<pre class="terminal"><span class="prompt">~/Desktop/boggle&gt;</span> <span class="command">cat dictionary-algs4.txt</span>
+ABACUS
+ABANDON
+ABANDONED
+ABBREVIATE
+...
+QUEUE
+...
+ZOOLOGY
+
+<span class="prompt">~/Desktop/boggle&gt;</span> <span class="command">cat dictionary-yawl.txt</span>
+AA
+AAH
+AAHED
+AAHING
+...
+PNEUMONOULTRAMICROSCOPICSILICOVOLCANOCONIOSIS
+...
+ZYZZYVAS
+</pre>
+</blockquote>
+
+<p>
+The former is a list of 6,013 words that appear in <em>Algorithms 4/e</em>; the latter is a comprehensive
+list of 264,061 English words (known as <em>Yet Another Word List</em>) that is widely used in word-game competitions.
+
+</p><p></p></li><li><em>Boggle boards.</em>
+A boggle board consists of two integers <em>m</em> and <em>n</em>, followed by the
+<em>m</em> × <em>n</em> characters in the board, with the integers and
+characters separated by whitespace.
+You can assume the integers are nonnegative and that the 
+characters are uppercase letters <code>A</code> through <code>Z</code>
+(with the two-letter sequence <code>Qu</code> represented as either <code>Q</code> or <code>Qu</code>).
+For example, here are the files <a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/files/board4x4.txt">board4x4.txt</a>
+and <a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/files/board-q.txt">board-q.txt</a>:
+
+<p>
+</p><blockquote>
+<pre class="terminal"><span class="prompt">~/Desktop/boggle&gt;</span> <span class="command">cat board4x4.txt</span>
+4 4
+A  T  E  E
+A  P  Y  O
+T  I  N  U
+E  D  S  E
+
+<span class="prompt">~/Desktop/boggle&gt;</span> <span class="command">cat board-q.txt</span>
+4 4
+S  N  R  T
+O  I  E  L
+E  Qu T  T
+R  S  A  T
+</pre>
+</blockquote>
+
+
+</li></ul>
+
+
+
+The following test client takes the filename of a dictionary and the filename 
+of a Boggle board as command-line arguments and prints out all valid words for
+the given board using the given dictionary.
+
+<pre><blockquote>
+public static void main(String[] args) {
+    In in = new In(args[0]);
+    String[] dictionary = in.readAllStrings();
+    BoggleSolver solver = new BoggleSolver(dictionary);
+    BoggleBoard board = new BoggleBoard(args[1]);
+    int score = 0;
+    for (String word : solver.getAllValidWords(board)) {
+        StdOut.println(word);
+        score += solver.scoreOf(word);
+    }
+    StdOut.println("Score = " + score);
+}
+</blockquote>
+</pre>
+
+<p>
+Here are two sample executions:
+
+</p><p>
+</p><blockquote>
+<pre class="terminal"><span class="prompt">~/Desktop/boggle&gt;</span> <span class="command">java-algs4 BoggleSolver dictionary-algs4.txt board4x4.txt</span>
+AID
+DIE
+END
+ENDS
+...
+YOU
+Score = 33
+
+<span class="prompt">~/Desktop/boggle&gt;</span> <span class="command">java-algs4 BoggleSolver dictionary-algs4.txt board-q.txt</span>
+EQUATION
+EQUATIONS
+...
+QUERIES
+QUESTION
+QUESTIONS
+...
+TRIES
+Score = 84
+</pre>
+</blockquote>
+
+<p><b>Performance.</b> If you choose your data structures and algorithms judiciously, your program
+can preprocess the dictionary and find all valid words in a random Hasbro board
+(or even a random 10-by-10 board) in a fraction of a second.
+To stress test the performance of your implementation, create one <code>BoggleSolver</code>
+object (from a given dictionary); then, repeatedly generate and
+solve random Hasbro boards. How many random Hasbro boards can you solve per second?
+<em>For full credit, your program must be able to solve thousands of
+random Hasbro boards per second.</em>
+The goal on this assignment is raw speed—for example, it's fine to use 10× more memory if
+the program is 10× faster.
+
+</p><p><b>Interactive game (optional, but fun and no extra work).</b>
+Once you have a working version of <code>BoggleSolver.java</code>,
+download, compile, and run <a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/files/BoggleGame.java">BoggleGame.java</a>
+to play Boggle against a computer opponent.
+To enter a word, either type it in the text box
+or click the corresponding sequence of dice on the board.
+The computer opponent has various levels of difficulty, ranging from finding 
+only words from popular nursery rhymes (easy) to words that appear in <em>Algorithms 4/e</em> (medium)
+to finding every valid word (humbling).
+
+</p><p>
+</p><center>
+<img src="./Programming Assignment 4_ Boggle_files/boggle-gui.png" width="650" alt="Boggle GUI" title="Boggle GUI">
+</center>
+
+
+<p><b>Challenge for the bored.</b> Here are some challenges:
+</p><ul>
+<p></p><li> Find a maximum scoring 4-by-4 Hasbro board.
+Here is the <a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/files/board-points4540.txt">best known board</a> (4540 points),
+which was discovered by Robert McAnany in connection with this Coursera course.
+
+<p></p></li><li> Find a maximum scoring 4-by-4 Hasbro board using the
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/files/dictionary-zingarelli2005.txt">Zinga</a> list
+of 584,983 Italian words.
+
+<p></p></li><li> Find a minimum scoring 4-by-4 Hasbro board.
+
+
+<p></p></li><li> Find a maximum scoring 5-by-5 Deluxe Boggle board.
+
+<p></p></li><li> Find a maximum scoring <em>n</em>-by-<em>n</em> board (not necessarily
+using the Hasbro dice) for different values of <em>n</em>.
+
+<p></p></li><li> Find a board with the most words (or the most words that are 8 letters or longer).
+
+<p></p></li><li> Find a 4-by-4 Hasbro board that scores <em>exactly</em> 2,500, 3,000, 3,500, or 4,000 points.
+
+<p></p></li><li> Design an algorithm to determine whether a given 4-by-4 board can be generated
+by rolling the 16 Hasbro dice.
+
+<p></p></li><li>
+How many words in the dictionary appear in no 4-by-4 Hasbro boards?
+
+<p></p></li><li>
+Add new features to <a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/files/BoggleGame.java">BoggleGame.java</a>.
+
+<p></p></li><li>
+Extend your program to handle arbitrary Unicode letters and dictionaries. You may need to consider
+alternate algorithms and data structures.
+
+<p></p></li><li>
+Extend your program to handle arbitrary strings on the faces of the dice, generalizing your hack for
+dealing with the two-letter sequence <code>Qu</code>.
+
+</li></ul>
+
+Unless otherwise stated, use the <a href="https://coursera.cs.princeton.edu/algs4/assignments/boggle/files/dictionary-yawl.txt">dictionary-yawl.txt</a> dictionary.
+If you discover interesting boards,
+you are encouraged to share and describe them in the Discussion Forums.
+
+<!--
+<p>
+Hint: Brute force will not work efficiently because there are 6^16 outcomes of the
+16 dice and 16! ways to assign the dice to positions in the 4-by-4 tray, which leads to 
+6^16 &times; 16! &ge; 2^85.
+(Actually, there are quite a bit less if you consider the 8-fold symmetry of a 4-by-4 board
+and the fact that many of the 6^16 &times; 16! assignments lead to the same boards.)
+Even so, there are way too many possiblities to try them all.
+Think about what kind of enhancements would improve the running time by excluding boards 
+that can't be maximum scoring board. For example, the maximum scoring board is not going to
+contain a <code>Qu</code>, <code>Z</code>, or <code>X</code>.
+-->
+
+
+<p><b>Web submission.</b>
+Submit a .zip file containing 
+Submit <code>BoggleSolver.java</code> and any
+other supporting files (excluding <code>BoggleBoard.java</code> and <code>algs4.jar</code>).
+You may not call any library functions except those in
+<code>java.lang</code>, <code>java.util</code>, and <code>algs4.jar</code>.
+
+
+
+</p><p><br>
+
+
+</p><address><small>
+This assignment was developed by Matthew Drabick and Kevin Wayne, inspired by 
+Todd Feldman and Julie Zelenski's classic
+<a href="http://www-cs-faculty.stanford.edu/~zelenski/boggle/">Nifty Boggle</a>
+assignment from Stanford.
+
+<br>Copyright © 2013.
+</small>
+</address>
+
+
+</body></html>
