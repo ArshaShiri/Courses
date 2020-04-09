@@ -1,0 +1,528 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- saved from url=(0067)https://coursera.cs.princeton.edu/algs4/assignments/8puzzle/faq.php -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="./Programming Assignment 4_ FAQ_files/assignments.css">
+    <link rel="stylesheet" type="text/css" href="./Programming Assignment 4_ FAQ_files/link-icons.css">
+    <script type="text/javascript" src="./Programming Assignment 4_ FAQ_files/MathJax.js.download"></script>
+    <script type="text/javascript" src="./Programming Assignment 4_ FAQ_files/TJKToggleDL.js.download"></script><link href="./Programming Assignment 4_ FAQ_files/TJK_ToggleDL.css" type="text/css" rel="stylesheet"><link href="./Programming Assignment 4_ FAQ_files/TJK_ToggleDL_ie5mac.css" type="text/css" rel="stylesheet">
+    <title>Programming Assignment 4: FAQ</title>
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+
+<body onload="TJK_ToggleDL()" class="faq" data-gr-c-s-loaded="true"><div id="MathJax_Message" style="display: none;"></div>
+
+<div id="nav2">
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/8puzzle/specification.php" id="logo"> <img src="./Programming Assignment 4_ FAQ_files/logo.png"> Slider Puzzle</a>
+
+<ul id="links">
+<li><a href="https://coursera.cs.princeton.edu/algs4/assignments/8puzzle/specification.php">Spec</a></li>
+<li><a href="https://coursera.cs.princeton.edu/algs4/assignments/8puzzle/faq.php" id="here">FAQ</a></li>
+<li><a href="https://coursera.cs.princeton.edu/algs4/assignments/8puzzle/8puzzle.zip">Project</a></li>
+<li><a href="https://www.coursera.org/learn/algorithms-part1/programming/iqOQi/8-puzzle/submission" target="_blank">Submit</a></li>
+</ul>
+</div>
+
+<h2>Frequently Asked Questions (General)</h2>
+
+<p><b> Can I use different class names, method names,
+or method signatures from those prescribed in the API?</b>
+No. As usual, your assignment will not be graded if it violates the API.
+
+</p><p><b> Is 0 a tile?</b>
+No. The integer 0 represents the blank square. Do not treat it as a tile when computing either
+the Hamming or Manhattan priority functions.
+
+</p><p><b> Can I assume that the puzzle inputs (arguments to the Board constructor and input to Solver)
+are valid?</b>
+Yes, though it never hurts to include some basic error checking.
+
+</p><p><b>Do I have to implement my own stack, queue, and priority queue?</b>
+You must use either <code>MinPQ</code> or <code>MaxPQ</code> for your priority queue (because we will intercept calls in
+order to do performance analysis).
+For the other data types, you may use versions from either <code>algs4.jar</code> or <code>java.util</code>.
+
+
+</p><h2>Frequently Asked Questions (Board)</h2>
+
+<p><b>Should the <code>hamming()</code> and <code>manhattan()</code> methods
+in <code>Board</code> return the Hamming and Manhattan priority functions, respectively?</b>
+No, <code>hamming()</code> should return the number of tiles out of position and 
+<code>manhattan()</code> should return the sum of the Manhattan distances between
+the tiles and their goal positions. Recall that the blank square is not considered a tile.
+You will compute the priority function
+in <code>Solver</code> by calling <code>hamming()</code> or <code>manhattan()</code>
+and adding to it the number of moves.
+
+</p><p><b>How do I return an <code>Iterable&lt;Board&gt;</code>?</b>
+Add the items you want to a <code>Stack&lt;Board&gt;</code>
+or <code>Queue&lt;Board&gt;</code> and return that. Of course, your client code should
+not depend on whether the iterable returned is a stack or queue (because it could be some any iterable).
+
+</p><p><b>How do I implement <code>equals()</code>?</b>
+Java has some arcane rules for implementing <code>equals()</code>,
+discussed on p. 103 of Algorithms, 4th edition.
+Note that the argument to <code>equals()</code> is required to be <code>Object</code>.
+You can also inspect
+<a href="https://algs4.cs.princeton.edu/12oop/Date.java.html">Date.java</a>
+or
+<a href="https://algs4.cs.princeton.edu/12oop/Transaction.java.html">Transaction.java</a>
+for online examples.
+
+
+</p><p><b>Must I implement the <code>toString()</code> method for <code>Board</code> exactly as specified?</b>
+Yes. Be sure to include the board dimension and use 0 for the blank square.
+Use <code>String.format()</code> to format strings—it works like <code>StdOut.printf()</code>, but
+returns the string instead of printing it to standard output.
+For reference, our implementation is below, but yours may vary depending on your choice of
+instance variables.
+
+</p><blockquote>
+<pre>public String toString() {
+    StringBuilder s = new StringBuilder();
+    s.append(n + "\n");
+    for (int i = 0; i &lt; n; i++) {
+        for (int j = 0; j &lt; n; j++) {
+            s.append(String.format("%2d ", tiles[i][j]));
+        }
+        s.append("\n");
+    }
+    return s.toString();
+}
+</pre>
+</blockquote>
+
+<!--
+<p><b>How should I implement the <code>draw()</code> method in <code>Board</code>?</b>
+It is intended primarily for debugging. You should draw a graphical representation of
+the board, similar to the output of the <code>toString()</code> method. You can
+use <code>StdDraw.text(x, y, s)</code> (where <code>s</code> is a string that does not contain newlines) to draw the string <code>s</code>, centered on
+(<em>x</em>, <em>y</em>). You can also use
+<code>StdDraw.setFont(new Font("SansSerif", Font.PLAIN, 24));</code> to change 
+the font size.
+-->
+
+<p><b>Can I use the expression <code>a == b</code> to check whether two arrays <code>a</code> and <code>b</code> are equal?</b>
+No. That expression checks whether the two arrays for reference equality (and not whether the two arrays
+contain the same sequence of values).
+
+</p><p><b>Can I call <code>Arrays.equals(a, b)</code> to check whether two arrays <code>a</code>
+and <code>b</code> are equal?</b>
+It depends.
+If <code>a</code> and <code>b</code> are of type <code>int[]</code>, then
+<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html#equals-int:A-int:A-"><code>Arrays.equals()</code></a>
+works as expected.
+If <code>a</code> and <code>b</code> are of type <code>int[][]</code>,
+then use
+<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html#deepEquals-java.lang.Object:A-java.lang.Object:A-"><co de="">Arrays.deepEquals()</co></a>.
+
+</p><p><b>Can I call <code>Arrays.copyOf()</code> to create an independent copy of an array <code>a</code>?</b>
+It depends.
+If <code>a</code> is of type <code>int[]</code>, then either
+<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html#copyOf-int:A-int-"><code>Arrays.copyOf()</code></a>
+or <code>a.clone()</code> will get the job done.
+However, if <code>a</code> is of type <code>int[][]</code>, then <code>Arrays.copy()</code> will not
+produce an independent copy because it performs a shallow copy.
+Instead, you can write a double nested loop to copy the entries in a two-dimensional array.
+
+</p><p><b>I'm a bit confused about the purpose of the twin() method.</b>
+You will use it to determine whether a puzzle is solvable: exactly one of
+a board and its twin are solvable. A twin is obtained by swapping 
+any pair of tiles (the blank square is not a tile).
+For example, here is a board and several possible  twins.
+Your solver will use only one twin.
+</p><blockquote>
+<pre>    1  3       3  1       1  3       1  3       1  3       6  3
+ 4  2  5    4  2  5    2  4  5    4  5  2    4  2  5    4  2  5
+ 7  8  6    7  8  6    7  8  6    7  8  6    8  7  6    7  8  1
+
+  board      twin       twin       twin       twin       twin
+</pre>
+</blockquote>
+
+
+<h2>Frequently Asked Questions (Solver)</h2>
+
+<p><b> How do I reconstruct the solution once I've dequeued
+the goal search node?</b>
+Since each search node records the predecessor search node to get there,
+you can chase the pointers all the way back to the initial
+search node (and consider them in reverse order).
+
+</p><p><b> Can I terminate the search as soon as a goal search node is enqueued
+(instead of dequeued)?</b>
+No, even though it does lead to a correct solution for the slider
+puzzle problem using the Hamming and Manhattan priority functions,
+it's not technically the A* algorithm (and will not find the correct solution
+for other problems and other priority functions).
+<!--
+Here’s a simple argument that checking the search node
+when it is enqueued (instead of dequeued) 
+is correct here; moreover, it is (nearly) a correct implementation of the A* algorithm here. 
+When a goal search node s* is enqueued, it is because a neighboring search node s
+is one move away from 
+the solution. Assume this neighbor s has hamming (or manhattan) priority k. Since it is one 
+move away, its hamming (or manhattan) distance is 1, so the number of moves to get there is 
+k-1. The goal search node s* has exactly the same priority k: its hamming (or manhattan) distance is 
+0 and its number of moves is k. Thus, if we enqueue s*, the A* algorithm can dequeue s* next 
+(and terminate) because s* has the minimum priority k. I guess, technically, the other 
+neighbors of s should be enqueued, but these will have higher priorities and not be relevant. 
+-->
+
+</p><p><b> I noticed that the priorities of the search nodes
+dequeued from the priority queue
+never decrease. Is this a property of the A* algorithm?</b>
+Yes.
+In the language of the A* algorithm, the Hamming and Manhattan distances (before
+adding in the number of moves so far) are known as <em>heuristics</em>. If
+a heuristic is both <em>admissible</em> (never overestimates the number of moves to
+the goal search node) and <em>consistent</em> (satisfies a certain triangle inequality),
+then this noticed property is guaranteed. 
+The Hamming and Manhattan heuristics are both admissible and consistent.
+You may use this noticed property as a debugging clue: if the priority of the search node dequeued 
+from the priority queue decreases, then you know you did something wrong.
+
+</p><p><b>Even with the critical optimization, the priority queue may contain two or more search nodes
+corresponding to the same board. Should I try to eliminate these?</b>
+In principle, you could do so with a set data type such as <code>SET</code> in <code>algs4.jar</code> or
+<code>java.util.TreeSet</code> or <code>java.util.HashSet</code>
+(provided that the <code>Board</code> data type were either <code>Comparable</code> or had a <code>hashCode()</code>
+method).
+However, almost all of the benefit from avoiding duplicate boards is already
+extracted from the critical optimization and the cost of identifying other duplicate 
+boards will be more than the remaining benefit from doing so.
+
+</p><p><b>Can I put the logic for detecting whether a puzzle is infeasible in
+Board instead of Solver?</b>
+There is a elegant algorithm for determining whether a board is solvable that relies on a
+parity argument (and occasionally we change our API to require this solution).
+However, the current API requires you to detect infeasiblity
+in <code>Solver</code> by using two synchronized A* searches (e.g., using two priority queues).
+
+</p><p><b>I run out of memory when running some of the large sample puzzles. What should I do?</b>
+Be sure to ask Java for additional memory,
+e.g., <code>java -Xmx1600m Solver puzzle36.txt</code>.
+We recommend running from the command line (and not from the DrJava interaction pane).
+You should expect to run out of memory when using the Hamming priority function.
+Be sure not to put the JVM option in the wrong spot or it will be
+treated as a command-line argument, 
+e.g., <code>java Solver -Xmx1600m puzzle36.txt</code>.
+
+
+</p><p><b>My program can't solve some of the 4-by-4 puzzles, even if I give it a
+huge amount of space. What am I doing wrong?</b>
+Probably nothing. The A* algorithm (with the Manhattan priority function)
+will struggle to solve even some 4-by-4 instances.
+
+
+</p><h2>Testing</h2>
+
+<p><b>Input files.</b>
+&nbsp;
+The directory
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/8puzzle/files">8puzzle</a>
+contains many sample puzzle input files.
+For convenience, 
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/8puzzle/8puzzle.zip">8puzzle.zip</a> contains all of these files bundled together.
+
+</p><ul>
+<p></p><li>
+The shortest solution to <code>puzzle[T].txt</code> requires exactly <em>T</em> moves.
+<p></p></li><li>
+The shortest solution to <code>puzzle4x4-hard1.txt</code> and
+<code>puzzle4x4-hard2.txt</code> are 38 and 47, respectively.
+<p></p></li><li>
+Warning: <code>puzzle36.txt</code> is especially difficult.
+</li></ul>
+
+<p><b>Test client.</b>
+A good way to automatically run your program on our sample puzzles
+is to use the client
+<a href="https://coursera.cs.princeton.edu/algs4/assignments/8puzzle/files/PuzzleChecker.java">PuzzleChecker.java</a>.
+
+
+</p><p><b>Priority queue trace.</b>
+</p><ul>
+<p></p><li>
+Here are the contents of our priority queue (sorted by priority)
+just before dequeueing each node when using the Manhattan 
+priority function on <code>puzzle04.txt</code>.
+
+<blockquote>
+<pre>Step 0:    priority  = 4
+           moves     = 0
+           manhattan = 4
+           3            
+            0  1  3     
+            4  2  5     
+            7  8  6     
+
+Step 1:    priority  = 4    priority  = 6
+           moves     = 1    moves     = 1
+           manhattan = 3    manhattan = 5
+           3                3            
+            1  0  3          4  1  3     
+            4  2  5          0  2  5     
+            7  8  6          7  8  6     
+
+Step 2:    priority  = 4    priority  = 6    priority  = 6
+           moves     = 2    moves     = 1    moves     = 2
+           manhattan = 2    manhattan = 5    manhattan = 4
+           3                3                3            
+            1  2  3          4  1  3          1  3  0     
+            4  0  5          0  2  5          4  2  5     
+            7  8  6          7  8  6          7  8  6     
+
+Step 3:    priority  = 4    priority  = 6    priority  = 6    priority  = 6    priority  = 6
+           moves     = 3    moves     = 3    moves     = 2    moves     = 3    moves     = 1
+           manhattan = 1    manhattan = 3    manhattan = 4    manhattan = 3    manhattan = 5
+           3                3                3                3                3            
+            1  2  3          1  2  3          1  3  0          1  2  3          4  1  3     
+            4  5  0          4  8  5          4  2  5          0  4  5          0  2  5     
+            7  8  6          7  0  6          7  8  6          7  8  6          7  8  6     
+
+Step 4:    priority  = 4    priority  = 6    priority  = 6    priority  = 6    priority  = 6    priority  = 6
+           moves     = 4    moves     = 3    moves     = 4    moves     = 2    moves     = 3    moves     = 1
+           manhattan = 0    manhattan = 3    manhattan = 2    manhattan = 4    manhattan = 3    manhattan = 5
+           3                3                3                3                3                3            
+            1  2  3          1  2  3          1  2  0          1  3  0          1  2  3          4  1  3     
+            4  5  6          0  4  5          4  5  3          4  2  5          4  8  5          0  2  5     
+            7  8  0          7  8  6          7  8  6          7  8  6          7  0  6          7  8  6     
+</pre>
+</blockquote>
+
+
+There were a total of 10 search nodes enqueued and 5 search nodes dequeued.
+In general, the number of search nodes enqueued and dequeued may vary slightly, depending
+the order in which the search nodes with equal priorities come off the priority queue,
+which depends on the order in which <code>neighbors()</code>
+returns the neighbors of a board. However, for this input, there are no such ties,
+so you should have exactly 10 search nodes enqueued and 5 search nodes dequeued.
+
+
+<p></p></li><li>
+The contents of our priority queue (sorted by priority)
+just before dequeueing each node when using the Hamming priority function on <code>puzzle04.txt</code> 
+turns out to be identical to the results above: for this input file, throughout the A* algorithm,
+a tile is never more than one position away from its goal position, which implies that the
+Hamming function and the Manhattan functions are equal.
+
+
+</li></ul>
+
+
+
+
+
+
+<h2>Enrichment</h2>
+
+<p><b>How can I reduce the amount of memory a <code>Board</code> uses?</b>
+For starters, recall that an n-by-n <code>int[][]</code> array in Java uses
+about 24 + 32n + 4n^2 bytes; when n equals 3, this is 156 bytes.
+To save memory, consider using an <em>n</em>-by-<em>n</em> <code>char[][]</code> array
+or a length <em>n</em>^2 <code>char[]</code> array.
+You could use a more elaborate representation:
+since each board is a permutation of length n^2, in principle,
+you need only about lg ((n^2)!) bits to represent it;
+when n equals 3, this is only 19 bits.
+
+</p><p><b>Any ways to speed up the algorithm?</b>
+Yes there are many opportunities for optimization here.
+</p><ul>
+<p></p><li> Use a 1d array instead of a 2d array (as suggested above).
+
+<p></p></li><li> Cache either the Manhattan distance of a board (or Manhattan 
+priority of a search node). It is waste to recompute the same quantity over
+and over again.
+
+<p></p></li><li> Exploit the fact that the difference in Manhattan distance 
+between a board and a neighbor is either −1 or +1.
+
+<!--
+<p><li> Use only one PQ to run the A* algorithm on the initial board
+and its twin.
+-->
+
+<p></p></li><li> When two search nodes have the same Manhattan priority,
+you can break ties however you want, e.g., by comparing either 
+the Hamming or Manhattan distances of the two boards.
+
+<p></p></li><li> Use a parity argument to determine whether a puzzle is
+unsolvable (instead of two synchronous A* searches). However,
+this will either break the API or will require a fragile dependence
+on the <code>toString()</code> method, so don't do it.
+
+</li></ul>
+
+<p><b>Why are the boards divided into exactly two equivalence classes with respect
+to reachability?</b>
+Here is one <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.19.1491">proof</a>
+by Aaron Archer.
+
+</p><p><b>Is there an efficient way to solve the 8-puzzle and its generalizations?</b>
+Finding a shortest solution to an <em>n</em>-by-<em>n</em> slider puzzle is
+<a href="http://www.aaai.org/Library/AAAI/1986/aaai86-027.php">NP-hard</a>,
+so it's unlikely that an efficient solution exists.
+
+</p><p><b>What if I'm satisfied with any solution and don't need one 
+that uses the fewest number of moves?</b>
+Yes, change the priority function to put more weight on the
+Manhattan distance, e.g., 100 times the Manhattan distance plus
+the number of moves made already.
+<a href="http://www-cse.ucsd.edu/~ccalabro/essays/15_puzzle.pdf">This paper</a>
+describes an algorithm that guarantees to perform at most N^3 moves.
+
+</p><p><b>Are there better ways to solve 8- and 15-puzzle instances using
+the minimum number of moves?</b>
+Yes, there are a number of approaches.
+
+</p><ul>
+<p></p><li> Use the A* algorithm with a better admissible priority function:
+<ul>
+
+<p></p><li>
+<em>Linear conflict</em>: add two to the Manhattan priority function whenever
+two tiles are in their goal row (or column) but are reversed relative to
+their goal position.
+
+<p></p></li><li>
+<em>Pattern database</em>: For each possible
+configuration of 4 tiles and the blank, determine the minimum number of
+moves to put just these tiles in their proper position and store these
+values in a database. The heuristic value is the maximum over all configurations,
+plus the number of moves made so far.
+This can reduce the number of search nodes examined for random 15-puzzle instances
+by a factor of 1000. 
+</li></ul>
+
+<p></p></li><li> Use a variant of the A* algorithm known as 
+IDA* (for iterative deepening).
+<a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.56.6688">This paper</a>
+describes its application to the 15-slider puzzle.
+
+<p></p></li><li>
+Another approach
+is to use <a href="http://en.wikipedia.org/wiki/Bidirectional_search">bidirectional
+search</a>, where you simultaneously search from the initial board to find the goal board
+and from the goal board to find the initial board, and have the two search trees meet 
+in the middle. Handling the stopping condition is delicate.
+</li></ul>
+
+
+<p><b>Can a puzzle have more than one shortest solution?</b>
+Yes. See <code>puzzle07.txt</code>.
+
+</p><blockquote>
+<pre> Solution 1
+ ------------------------------------------------------------------------------------
+ 1  2  3    1  2  3    1  2  3    1  2  3    1  2  3    1  2  3    1  2  3    1  2  3 
+    7  6    7     6    7  4  6    7  4  6       4  6    4     6    4  5  6    4  5  6 
+ 5  4  8    5  4  8    5     8       5  8    7  5  8    7  5  8    7     8    7  8   
+
+ Solution 2
+ ------------------------------------------------------------------------------------
+ 1  2  3    1  2  3    1  2  3    1  2  3    1  2  3    1  2  3    1  2  3    1  2  3
+    7  6    5  7  6    5  7  6    5     6       5  6    4  5  6    4  5  6    4  5  6 
+ 5  4  8       4  8    4     8    4  7  8    4  7  8       7  8    7     8    7  8  
+</pre>
+</blockquote>
+
+In such cases, you are required to output any one such solution.
+
+
+
+</body></html>
