@@ -6,12 +6,15 @@
 
 #include <GLFW\glfw3.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // Window's dimensions
 const GLint WIDTH = 800;
 const GLint HEIGHT = 600;
 
-GLuint VAO, VBO, shaderProgram, uniformXmove;
+GLuint VAO, VBO, shaderProgram, uniformModel;
 
 bool direction = true;
 float triOffset = 0.0f;
@@ -26,17 +29,17 @@ static const char* vShader = "                              \n\
 #version 330                                                \n\
                                                             \n\
 layout (location = 0) in vec3 pos;                          \n\
-uniform float xMove;                                        \n\
+uniform mat4 model;                                         \n\
 void main()                                                 \n\
 {                                                           \n\
-  gl_Position = vec4(0.4 * pos.x + xMove, 0.4 * pos.y, pos.z, 1.0); \n\
+  gl_Position = model * vec4(0.4 * pos.x, 0.4 * pos.y, pos.z, 1.0); \n\
 }";
 
 // Fragment shader.
 static const char* fShader = "       \n\
 #version 330                         \n\
                                      \n\
-out vec4 color;                    \n\
+out vec4 color;                      \n\
 void main()                          \n\
 {                                    \n\
   color = vec4(1.0, 0.0, 0.0, 1.0);  \n\
@@ -154,7 +157,7 @@ void compileShaders()
     return;
   }
 
-  uniformXmove = glGetUniformLocation(shaderProgram, "xMove");
+  uniformModel = glGetUniformLocation(shaderProgram, "model");
 }
 
 int main()
@@ -239,9 +242,14 @@ int main()
 
     // Use the id of the shader program on our graphic card.
     glUseProgram(shaderProgram);
+    
+    // 4x4  identity matrix.
+    glm::mat4 modelMatrix(1.0f);
+    // Making the translation matrix.
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(triOffset, 0.0f, 0.0f));
 
-    // We want to set this uniform value to the offset.
-    glUniform1f(uniformXmove, triOffset);
+    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
 
     // Every shader and rendering call after glUseProgram will now use this program object 
     // (and thus the shaders).
