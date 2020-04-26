@@ -13,7 +13,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 // Window's dimensions
 const GLint WIDTH = 800;
 const GLint HEIGHT = 600;
@@ -28,6 +27,11 @@ float triIncrement = 0.0005f;
 
 float currentAngle = 0.0f;
 
+bool sizeDirection = true;
+float currentSize = 0.4f;
+float maxSize = 0.8f;
+float minSize = 0.1f;
+
 // Vertex shader.
 // Location of the input variable via layout (location = 0)
 // To set the output of the vertex shader we have to assign the position data to the predefined 
@@ -39,7 +43,7 @@ layout (location = 0) in vec3 pos;                          \n\
 uniform mat4 model;                                         \n\
 void main()                                                 \n\
 {                                                           \n\
-  gl_Position = model * vec4(0.4 * pos.x, 0.4 * pos.y, pos.z, 1.0); \n\
+  gl_Position = model * vec4(pos, 1.0); \n\
 }";
 
 // Fragment shader.
@@ -249,6 +253,20 @@ int main()
       currentAngle -= 360;
     }
 
+    if (sizeDirection)
+    {
+      currentSize += 0.0001f;
+    }
+    else
+    {
+      currentSize -= 0.0001f;
+    }
+
+    if ((currentSize >= maxSize) || (currentSize <= minSize))
+    {
+      sizeDirection = !sizeDirection;
+    }
+
     // Clear window
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -265,9 +283,11 @@ int main()
     modelMatrix = glm::translate(modelMatrix, glm::vec3(triOffset, 0.0f, 0.0f));
 
     // Making the rotation matrix.
-    modelMatrix = glm::rotate(modelMatrix, currentAngle * TO_RAD, glm::vec3(0.0f, 0.0f, 1.0f));
+    // modelMatrix = glm::rotate(modelMatrix, currentAngle * TO_RAD, glm::vec3(0.0f, 0.0f, 1.0f));
 
-    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(currentSize, currentSize, 1.0f));
+
+   glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
 
     // Every shader and rendering call after glUseProgram will now use this program object 
