@@ -1,6 +1,9 @@
+
+#define _USE_MATH_DEFINES
+
 #include <stdio.h>
 #include <string>
-#include <cmath>
+#include <math.h>
 
 #include <GL/glew.h>
 
@@ -10,16 +13,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+
 // Window's dimensions
 const GLint WIDTH = 800;
 const GLint HEIGHT = 600;
 
 GLuint VAO, VBO, shaderProgram, uniformModel;
+const float TO_RAD = M_PI / 180.0f;
 
 bool direction = true;
 float triOffset = 0.0f;
 float triMaxOffset = 0.7f;
 float triIncrement = 0.0005f;
+
+float currentAngle = 0.0f;
 
 // Vertex shader.
 // Location of the input variable via layout (location = 0)
@@ -236,6 +243,12 @@ int main()
       direction = !direction;
     }
 
+    currentAngle += 0.01f;
+    if (currentAngle >= 360)
+    {
+      currentAngle -= 360;
+    }
+
     // Clear window
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -245,8 +258,14 @@ int main()
     
     // 4x4  identity matrix.
     glm::mat4 modelMatrix(1.0f);
+
+    // Think about the order of translation and rotations. The order matters!
+
     // Making the translation matrix.
     modelMatrix = glm::translate(modelMatrix, glm::vec3(triOffset, 0.0f, 0.0f));
+
+    // Making the rotation matrix.
+    modelMatrix = glm::rotate(modelMatrix, currentAngle * TO_RAD, glm::vec3(0.0f, 0.0f, 1.0f));
 
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
