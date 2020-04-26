@@ -1,15 +1,22 @@
 #include <stdio.h>
 #include <string>
+#include <cmath>
 
 #include <GL/glew.h>
 
 #include <GLFW\glfw3.h>
 
+
 // Window's dimensions
 const GLint WIDTH = 800;
 const GLint HEIGHT = 600;
 
-GLuint VAO, VBO, shaderProgram;
+GLuint VAO, VBO, shaderProgram, uniformXmove;
+
+bool direction = true;
+float triOffset = 0.0f;
+float triMaxOffset = 0.7f;
+float triIncrement = 0.0005f;
 
 // Vertex shader.
 // Location of the input variable via layout (location = 0)
@@ -19,9 +26,10 @@ static const char* vShader = "                              \n\
 #version 330                                                \n\
                                                             \n\
 layout (location = 0) in vec3 pos;                          \n\
+uniform float xMove;                                        \n\
 void main()                                                 \n\
 {                                                           \n\
-  gl_Position = vec4(0.4 * pos.x, 0.4 * pos.y, pos.z, 1.0);  \n\
+  gl_Position = vec4(0.4 * pos.x + xMove, 0.4 * pos.y, pos.z, 1.0); \n\
 }";
 
 // Fragment shader.
@@ -145,6 +153,8 @@ void compileShaders()
     printf("Error validating program: '%s'\n", elog);
     return;
   }
+
+  uniformXmove = glGetUniformLocation(shaderProgram, "xMove");
 }
 
 int main()
@@ -209,12 +219,29 @@ int main()
     // Get + handle user input events
     glfwPollEvents();
 
+    if (direction)
+    {
+      triOffset += triIncrement;
+    }
+    else
+    {
+      triOffset -= triIncrement;
+    }
+
+    if (abs(triOffset) >= triMaxOffset)
+    {
+      direction = !direction;
+    }
+
     // Clear window
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Use the id of the shader program on our graphic card.
     glUseProgram(shaderProgram);
+
+    // We want to set this uniform value to the offset.
+    glUniform1f(uniformXmove, triOffset);
 
     // Every shader and rendering call after glUseProgram will now use this program object 
     // (and thus the shaders).
