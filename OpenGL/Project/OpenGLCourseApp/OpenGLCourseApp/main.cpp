@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string>
 #include <math.h>
+#include <vector>
+
 
 #include <GL/glew.h>
 
@@ -13,12 +15,17 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Mesh.h"
+#include <memory>
+
 // Window's dimensions
 const GLint WIDTH = 800;
 const GLint HEIGHT = 600;
 
-GLuint VAO, VBO,IBO, shaderProgram, uniformModel, uniformProjection;
+GLuint shaderProgram, uniformModel, uniformProjection;
 const float TO_RAD = M_PI / 180.0f;
+
+std::vector<std::unique_ptr<Mesh>> meshList;
 
 bool direction = true;
 float triOffset = 0.0f;
@@ -75,46 +82,9 @@ void createPyramid()
     1.0f, -1.0f, 0.0f, 
     0.0f, 1.0f, 0.0f};
 
-  // Creating a vertex array on the graphic card.
-  glGenVertexArrays(1, &VAO);
-  glBindVertexArray(VAO);
-
-  // Index buffer object.
-  glGenBuffers(1, &IBO);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-  // vertex buffer objects (VBO). Memory created on GPU for vertices.
-  // Sending data to the graphics card from the CPU is relatively slow, so wherever we can we try
-  // to send as much data as possible at once.
-  // id = 1
-  glGenBuffers(1, &VBO);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-  // GL_STREAM_DRAW: the data is set only once and used by the GPU at most a few times.
-  // GL_STATIC_DRAW : the data is set only once and used many times.
-  // GL_DYNAMIC_DRAW : the data is changed a lot and used many times.
-  // Copies the vertices data to the associated buffer.
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-  // Take a look at the shader: location: 0
-  // The vertex shader allows us to specify any input we want in the form of vertex attributes and 
-  // while this allows for great flexibility, it does mean we have to manually specify what part of 
-  // our input data goes to which vertex attribute in the vertex shader.This means we have to
-  // specify how OpenGL should interpret the vertex data before rendering.
-
-  // Each vertex attribute takes its data from memory managed by a VBO and which VBO it takes its
-  // data from(you can have multiple VBOs) is determined by the VBO currently bound to 
-  // GL_ARRAY_BUFFER when calling glVertexAttribPointer.Since the previously defined VBO is still
-  // bound before calling glVertexAttribPointer vertex attribute 0 is now associated with its
-  // vertex data.
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(0);
-
-  // Unbinding.
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
+  auto meshObject = std::make_unique<Mesh>();
+  meshObject->createMesh(vertices, indices, 12, 12);
+  meshList.emplace_back(std::move(meshObject));
 }
 
 void addShader(GLuint shaderProgram, const char *shaderCode, GLenum shaderType)
@@ -321,16 +291,8 @@ int main()
     // Every shader and rendering call after glUseProgram will now use this program object 
     // (and thus the shaders).
 
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-
-    // Draw by element ids
-    // 12 indices.
-    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glUseProgram(0);
+   meshList.at(0)->renderMesh();
+   glUseProgram(0);
 
     glfwSwapBuffers(pMainWindow);
   }
