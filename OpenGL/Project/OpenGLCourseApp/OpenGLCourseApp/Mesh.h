@@ -11,7 +11,7 @@ public:
                   const unsigned int * indices,
                   const unsigned int numberOfVertices,
                   const unsigned int numberOfIndices);
-  void renderMesh();
+  void renderMesh() const;
   void clearMesh();
 
   ~Mesh();

@@ -1,11 +1,11 @@
 
 #define _USE_MATH_DEFINES
 
+#include <math.h>
+#include <memory>
 #include <stdio.h>
 #include <string>
-#include <math.h>
 #include <vector>
-
 
 #include <GL/glew.h>
 
@@ -16,16 +16,16 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Mesh.h"
-#include <memory>
+#include "Shader.h"
 
 // Window's dimensions
 const GLint WIDTH = 800;
 const GLint HEIGHT = 600;
 
-GLuint shaderProgram, uniformModel, uniformProjection;
 const float TO_RAD = M_PI / 180.0f;
 
 std::vector<std::unique_ptr<Mesh>> meshList;
+std::vector<std::unique_ptr<Shader>> shaderList;
 
 bool direction = true;
 float triOffset = 0.0f;
@@ -67,7 +67,7 @@ void main()                          \n\
   color = vCol;                      \n\
 }";
 
-void createPyramid()
+void createObjects()
 {
   unsigned indices[] = {
     0, 3, 1,
@@ -82,83 +82,20 @@ void createPyramid()
     1.0f, -1.0f, 0.0f, 
     0.0f, 1.0f, 0.0f};
 
-  auto meshObject = std::make_unique<Mesh>();
-  meshObject->createMesh(vertices, indices, 12, 12);
-  meshList.emplace_back(std::move(meshObject));
+  auto meshObject1 = std::make_unique<Mesh>();
+  meshObject1->createMesh(vertices, indices, 12, 12);
+  meshList.emplace_back(std::move(meshObject1));
+
+  auto meshObject2 = std::make_unique<Mesh>();
+  meshObject2->createMesh(vertices, indices, 12, 12);
+  meshList.emplace_back(std::move(meshObject2));
 }
 
-void addShader(GLuint shaderProgram, const char *shaderCode, GLenum shaderType)
+void createShaders()
 {
-  // Shader id.
-  GLuint theShader = glCreateShader(shaderType);
-
-  const GLchar *theCode[1];
-  theCode[0] = shaderCode;
-
-  GLint codeLength[1];
-  codeLength[0] = strlen(shaderCode);
-  
-  // Attach the shader source code to the shader
-  // The second argument specifies how many strings we're passing as source code
-  glShaderSource(theShader, 1, theCode, codeLength);
-  glCompileShader(theShader);
-
-  GLint result = 0;
-  GLchar elog[1024] = {0};
-
-  // Check if compilation was successful
-  glGetShaderiv(theShader, GL_COMPILE_STATUS, &result);
-  if (!result)
-  {
-    // If compilation failed, we can retrieve the error message.
-    glGetShaderInfoLog(theShader, sizeof(elog), NULL, elog);
-    printf("Error compiling the %d shader: '%s'\n", shaderType, elog);
-    return;
-  }
-
-  glAttachShader(shaderProgram, theShader);
-}
-
-void compileShaders()
-{
-  // creates a program and returns the ID reference to the newly created program object.
-  shaderProgram = glCreateProgram();
-  if (!shaderProgram)
-  {
-    printf("Error in creating the shader program");
-    return;
-  }
-
-  addShader(shaderProgram, vShader, GL_VERTEX_SHADER);
-  addShader(shaderProgram, fShader, GL_FRAGMENT_SHADER);
-
-  GLint result = 0;
-  GLchar elog[1024] = {0};
-
-  glLinkProgram(shaderProgram);
-  // The result is a program object that we can activate by calling glUseProgram with the newly
-  // created program object as its argument.
-
-  glGetProgramiv(shaderProgram, GL_LINK_STATUS, &result);
-  if (!result)
-  {
-    glGetProgramInfoLog(shaderProgram, sizeof(elog), NULL, elog);
-    printf("Error linking program: '%s'\n", elog);
-    return;
-  }
-
-  glValidateProgram(shaderProgram);
-  glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, &result);
-  if (!result)
-  {
-    glGetProgramInfoLog(shaderProgram, sizeof(elog), NULL, elog);
-    printf("Error validating program: '%s'\n", elog);
-    return;
-  }
-
-  // Place the id of the location into their corresponding variable.
-  uniformModel = glGetUniformLocation(shaderProgram, "model");
-  uniformProjection = glGetUniformLocation(shaderProgram, "projection");
+  auto shader1 = std::make_unique<Shader>();
+  shader1->createFromString(vShader, fShader);
+  shaderList.emplace_back(std::move(shader1));
 }
 
 int main()
@@ -218,8 +155,11 @@ int main()
   // Setup viewport size
   glViewport(0, 0, bufferWidth, bufferHeight);
 
-  createPyramid();
-  compileShaders();
+  createObjects();
+  createShaders();
+
+  GLuint uniformProjection = 0;
+  GLuint uniformModel = 0;
 
   // Field of view top to bottom.
   glm::mat4 projectionMatrix =
@@ -270,7 +210,10 @@ int main()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Use the id of the shader program on our graphic card.
-    glUseProgram(shaderProgram);
+    const auto &pShader1 = shaderList.at(0);
+    pShader1->useShader();
+    uniformModel = pShader1->getModelLocation();
+    uniformProjection = pShader1->getProjectionLocation();
     
     // 4x4  identity matrix.
     glm::mat4 modelMatrix(1.0f);
@@ -278,21 +221,21 @@ int main()
     // Think about the order of translation and rotations. The order matters!
 
     // Making the translation matrix.
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -2.5f));
-
-    // Making the rotation matrix.
-    modelMatrix = glm::rotate(modelMatrix, currentAngle * TO_RAD, glm::vec3(0.0f, 1.0f, 0.0f));
-
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(triOffset, 0.0f, -2.5f));
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.4, 0.4, 1.0f));
+    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+    glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+    meshList.at(0)->renderMesh();
 
-   glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-   glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+    modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(-triOffset, 1.0f, -2.5f));
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.4, 0.4, 1.0f));
+    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+    meshList.at(1)->renderMesh();
 
     // Every shader and rendering call after glUseProgram will now use this program object 
     // (and thus the shaders).
-
-   meshList.at(0)->renderMesh();
-   glUseProgram(0);
+    glUseProgram(0);
 
     glfwSwapBuffers(pMainWindow);
   }

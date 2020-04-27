@@ -54,7 +54,7 @@ void Mesh::createMesh(const GLfloat *vertices,
   glBindVertexArray(0);
 }
 
-void Mesh::renderMesh()
+void Mesh::renderMesh() const
 {
   // Every shader and rendering call after glUseProgram will now use this program object 
   // (and thus the shaders).
