@@ -17,7 +17,7 @@
 const GLint WIDTH = 800;
 const GLint HEIGHT = 600;
 
-GLuint VAO, VBO, shaderProgram, uniformModel;
+GLuint VAO, VBO,IBO, shaderProgram, uniformModel;
 const float TO_RAD = M_PI / 180.0f;
 
 bool direction = true;
@@ -59,16 +59,29 @@ void main()                          \n\
   color = vCol;                      \n\
 }";
 
-void createTrinagnle()
+void createPyramid()
 {
+  unsigned indices[] = {
+    0, 3, 1,
+    1, 3, 2,
+    2, 3, 0,
+    0, 1, 2
+  };
+
   GLfloat vertices[] = {
     -1.0f, -1.0f, 0.0f,
+    0.0f, -1.0f, 1.0f,
     1.0f, -1.0f, 0.0f, 
     0.0f, 1.0f, 0.0f};
 
   // Creating a vertex array on the graphic card.
   glGenVertexArrays(1, &VAO);
   glBindVertexArray(VAO);
+
+  // Index buffer object.
+  glGenBuffers(1, &IBO);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
   // vertex buffer objects (VBO). Memory created on GPU for vertices.
   // Sending data to the graphics card from the CPU is relatively slow, so wherever we can we try
@@ -99,6 +112,7 @@ void createTrinagnle()
 
   // Unbinding.
   glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 }
 
@@ -224,10 +238,14 @@ int main()
     return 1;
   }
 
+  // To check which part of the drawn shape is on top of the other parts of the shape.
+  // This makes sure that the drawing is correct.
+  glEnable(GL_DEPTH_TEST);
+
   // Setup viewport size
   glViewport(0, 0, bufferWidth, bufferHeight);
 
-  createTrinagnle();
+  createPyramid();
   compileShaders();
 
   // Loop until window is closed.
@@ -272,7 +290,7 @@ int main()
 
     // Clear window
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Use the id of the shader program on our graphic card.
     glUseProgram(shaderProgram);
@@ -282,11 +300,11 @@ int main()
 
     // Think about the order of translation and rotations. The order matters!
 
+    // Making the rotation matrix.
+    modelMatrix = glm::rotate(modelMatrix, currentAngle * TO_RAD, glm::vec3(0.0f, 1.0f, 0.0f));
+
     // Making the translation matrix.
     // modelMatrix = glm::translate(modelMatrix, glm::vec3(triOffset, 0.0f, 0.0f));
-
-    // Making the rotation matrix.
-    // modelMatrix = glm::rotate(modelMatrix, currentAngle * TO_RAD, glm::vec3(0.0f, 0.0f, 1.0f));
 
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.4, 0.4, 1.0f));
 
@@ -297,9 +315,13 @@ int main()
     // (and thus the shaders).
 
     glBindVertexArray(VAO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // Draw by element ids
+    // 12 indices.
+    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     glUseProgram(0);
 
