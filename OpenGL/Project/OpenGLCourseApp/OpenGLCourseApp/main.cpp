@@ -17,7 +17,7 @@
 const GLint WIDTH = 800;
 const GLint HEIGHT = 600;
 
-GLuint VAO, VBO,IBO, shaderProgram, uniformModel;
+GLuint VAO, VBO,IBO, shaderProgram, uniformModel, uniformProjection;
 const float TO_RAD = M_PI / 180.0f;
 
 bool direction = true;
@@ -42,9 +42,10 @@ static const char* vShader = "                              \n\
 layout (location = 0) in vec3 pos;                          \n\
 out vec4 vCol;                                              \n\
 uniform mat4 model;                                         \n\
+uniform mat4 projection;                                    \n\
 void main()                                                 \n\
 {                                                           \n\
-  gl_Position = model * vec4(pos, 1.0);                     \n\
+  gl_Position = projection * model * vec4(pos, 1.0);        \n\
   vCol = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);                \n\
 }";
 
@@ -185,7 +186,9 @@ void compileShaders()
     return;
   }
 
+  // Place the id of the location into their corresponding variable.
   uniformModel = glGetUniformLocation(shaderProgram, "model");
+  uniformProjection = glGetUniformLocation(shaderProgram, "projection");
 }
 
 int main()
@@ -248,6 +251,10 @@ int main()
   createPyramid();
   compileShaders();
 
+  // Field of view top to bottom.
+  glm::mat4 projectionMatrix =
+    glm::perspective(45.0f, (GLfloat)bufferWidth / (GLfloat)bufferHeight, 0.1f, 100.0f);
+
   // Loop until window is closed.
   while (!glfwWindowShouldClose(pMainWindow))
   {
@@ -300,16 +307,16 @@ int main()
 
     // Think about the order of translation and rotations. The order matters!
 
+    // Making the translation matrix.
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -2.5f));
+
     // Making the rotation matrix.
     modelMatrix = glm::rotate(modelMatrix, currentAngle * TO_RAD, glm::vec3(0.0f, 1.0f, 0.0f));
-
-    // Making the translation matrix.
-    // modelMatrix = glm::translate(modelMatrix, glm::vec3(triOffset, 0.0f, 0.0f));
 
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.4, 0.4, 1.0f));
 
    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-
+   glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
     // Every shader and rendering call after glUseProgram will now use this program object 
     // (and thus the shaders).
