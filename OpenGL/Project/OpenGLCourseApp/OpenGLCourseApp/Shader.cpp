@@ -10,6 +10,14 @@ void Shader::createFromString(const std::string vertexCode, const std::string fr
   compileShader_(vertexCode, fragmanetCode);
 }
 
+void Shader::createFromFiles(const std::string vertexCodeLocation,
+                             const std::string fragmanetCodeLocation)
+{
+  const auto vertexCode = readFile_(vertexCodeLocation);
+  const auto fragmanetCode = readFile_(fragmanetCodeLocation);
+  compileShader_(vertexCode, fragmanetCode);
+}
+
 void Shader::clearShader()
 {
   if (shaderID_ != 0)
@@ -38,7 +46,9 @@ GLuint Shader::getModelLocation() const
   return uniformModel_;
 }
 
-void Shader::addShader_(const GLuint shaderProgram, const std::string shaderCode, const GLenum shaderType) const
+void Shader::addShader_(const GLuint shaderProgram,
+                        const std::string shaderCode,
+                        const GLenum shaderType) const
 {
   // Shader id.
   GLuint theShader = glCreateShader(shaderType);
@@ -107,6 +117,28 @@ void Shader::compileShader_(const std::string vertexCode, const std::string frag
   // Place the id of the location into their corresponding variable.
   uniformModel_ = glGetUniformLocation(shaderID_, "model");
   uniformProjection_ = glGetUniformLocation(shaderID_, "projection");
+}
+
+std::string Shader::readFile_(const std::string fileLocation) const
+{
+  auto fileContent = std::string{};
+  auto fileStream = std::ifstream{fileLocation, std::ios::in};
+
+  if (!fileStream.is_open())
+  {
+    std::cout << "Failed to read " + fileLocation + ". File does not exist!";
+    return {};
+  }
+
+  auto newLine = std::string{};
+  while (!fileStream.eof())
+  {
+    std::getline(fileStream, newLine);
+    fileContent.append(newLine + "\n");
+  }
+
+  fileStream.close();
+  return fileContent;
 }
 
 Shader::~Shader()
