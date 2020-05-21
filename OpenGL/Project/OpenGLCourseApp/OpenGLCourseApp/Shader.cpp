@@ -46,6 +46,11 @@ GLuint Shader::getModelLocation() const
   return uniformModel_;
 }
 
+GLuint Shader::getViewLocation() const
+{
+  return uniformView_;
+}
+
 void Shader::addShader_(const GLuint shaderProgram,
                         const std::string shaderCode,
                         const GLenum shaderType) const
@@ -115,8 +120,9 @@ void Shader::compileShader_(const std::string vertexCode, const std::string frag
   }
 
   // Place the id of the location into their corresponding variable.
-  uniformModel_ = glGetUniformLocation(shaderID_, "model");
   uniformProjection_ = glGetUniformLocation(shaderID_, "projection");
+  uniformModel_ = glGetUniformLocation(shaderID_, "model");
+  uniformView_ = glGetUniformLocation(shaderID_, "view");
 }
 
 std::string Shader::readFile_(const std::string fileLocation) const

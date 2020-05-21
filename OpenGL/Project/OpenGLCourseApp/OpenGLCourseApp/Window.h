@@ -7,11 +7,10 @@
 
 #include <GLFW\glfw3.h>
 
+#include "Constants.h"
+
 class Window
 {
-private:
-  static const int numberOfAsciiCharacters_ = 1024;
-
 public:
   Window();
   Window(const GLint windowWidth, const GLint windowHeight);
@@ -20,7 +19,7 @@ public:
 
   GLfloat getBufferWidth() const { return (GLfloat)bufferWidth_; }
   GLfloat getBufferHeight() const { return (GLfloat)bufferHeight_; }
-  const std::array<bool, numberOfAsciiCharacters_> &getKeys() const { return keys_; }
+  const std::array<bool, NUMBER_OF_SUPPORTED_ASCII_CHARACTERS> &getKeys() const { return keys_; }
 
   GLfloat getXChange();
   GLfloat getYChange();
@@ -52,5 +51,5 @@ private:
   GLfloat yChange_;
   bool isMouseMovedAtFirst_;
 
-  std::array<bool, numberOfAsciiCharacters_> keys_;
+  std::array<bool, NUMBER_OF_SUPPORTED_ASCII_CHARACTERS> keys_;
 };

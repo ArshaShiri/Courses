@@ -19,6 +19,7 @@ public:
 
   GLuint getProjectionLocation() const;
   GLuint getModelLocation() const;
+  GLuint getViewLocation() const;
 
   ~Shader();
 
@@ -32,5 +33,6 @@ private:
   GLuint shaderID_;
   GLuint uniformProjection_;
   GLuint uniformModel_;
+  GLuint uniformView_;
 };
 

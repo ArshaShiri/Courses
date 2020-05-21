@@ -1,12 +1,12 @@
 #include "Window.h"
 
-Window::Window() : width_{800}, height_{600}
+Window::Window() : width_{800}, height_{600}, xChange_{0}, yChange_{0}, isMouseMovedAtFirst_{true}
 {
   initializeKeys_();
 }
 
 Window::Window(const GLint windowWidth, const GLint windowHeight) :
-  width_{windowWidth}, height_{windowHeight}
+  width_{windowWidth}, height_{windowHeight}, xChange_{0}, yChange_{0}, isMouseMovedAtFirst_{true}
 {
   initializeKeys_();
 }
@@ -48,7 +48,7 @@ void Window::handleKeys_(GLFWwindow *pWindow, int key, int code, int action, int
     glfwSetWindowShouldClose(pWindow, GL_TRUE);
   }
 
-  if ((key >= 0) && (key < numberOfAsciiCharacters_))
+  if ((key >= 0) && (key < NUMBER_OF_SUPPORTED_ASCII_CHARACTERS))
   {
     if (action == GLFW_PRESS)
     {

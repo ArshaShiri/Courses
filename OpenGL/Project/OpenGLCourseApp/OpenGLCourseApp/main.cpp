@@ -9,15 +9,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Camera.h"
 #include "Mesh.h"
 #include "Shader.h"
 #include "Window.h"
 
-const float TO_RAD = M_PI / 180.0f;
+const float TO_RAD = (float)M_PI / 180.0f;
 
 auto mainWindow = Window{};
 auto meshList = std::vector<std::unique_ptr<Mesh>>{};
 auto shaderList = std::vector<std::unique_ptr<Shader>>{};
+auto camera = Camera{glm::vec3{0.0f, 0.0f, 0.0f}, glm::vec3{0.0f, 1.0f, 0.0f}, -90.0f, 0.0f, 5.0f, 0.5f};
+
+GLfloat deltaTime = 0.0f;
+GLfloat lastTime = 0.0f;
 
 // Vertex shader.
 // Location of the input variable via layout (location = 0)
@@ -67,6 +72,7 @@ int main()
 
   GLuint uniformProjection = 0;
   GLuint uniformModel = 0;
+  GLuint uniformView = 0;
 
   // Field of view top to bottom.
   glm::mat4 projectionMatrix = 
@@ -78,8 +84,15 @@ int main()
   // Loop until window is closed.
   while (!mainWindow.shouldWindowClose())
   {
+    GLfloat now = glfwGetTime();
+    deltaTime = now - lastTime;
+    lastTime = now;
+
     // Get + handle user input events
     glfwPollEvents();
+
+    camera.keyControl(mainWindow.getKeys(), deltaTime);
+    camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 
     // Clear window
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -90,6 +103,7 @@ int main()
     pShader1->useShader();
     uniformModel = pShader1->getModelLocation();
     uniformProjection = pShader1->getProjectionLocation();
+    uniformView = pShader1->getViewLocation();
     
     // 4x4  identity matrix.
     glm::mat4 modelMatrix(1.0f);
@@ -101,6 +115,7 @@ int main()
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.4, 0.4, 1.0f));
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMatrix));
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+    glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
     meshList.at(0)->renderMesh();
 
     modelMatrix = glm::mat4(1.0f);
