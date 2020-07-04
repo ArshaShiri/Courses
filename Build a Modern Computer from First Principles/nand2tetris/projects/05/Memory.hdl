@@ -27,5 +27,18 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // The bit located in address[14] determins if the access is to IO device or the ram itself.
+    // This is becuase if address[14] = 1, then we are accessing addresses bigger than 16383 which
+    // are dedicated to screen and keyboard(IO devices)
+    DMux (in = load, sel = address[14], a = ramAccess, b = IOAccess);
+    RAM16K(in = in, load = ramAccess, address = address[0..13], out = outRam);
+
+    // If IOAccess = 1, and address[13] = 1 then the number is 24576 or higher. This means access to keyboard.
+    DMux (in = IOAccess, sel = address[13], a = screenAccess, b = KeyboardAccess);
+
+    Screen (in = in, load = screenAccess, address = address[0..12], out = outScreen);
+    Keyboard(out = outKeyboard);
+
+    Mux16(a = outScreen, b = outKeyboard, sel=address[13], out=outScreenOrKeyboardAccess);
+    Mux16(a = outRam, b = outScreenOrKeyboardAccess, sel=address[14], out=out);
 }

@@ -39,5 +39,62 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+
+    // In case of a C-instruction, the a- and c-bits code the comp part of the
+    // instruction, while the d- and j-bits code the dest and jump parts of the instruction, respectively
+    // (the x-bits are not used, and can be ignored). “ixxaccccccdddjjj"
+
+    // Get the control bits for all the locations where the ALUOut is stored.
+    And(a = true, b = instruction[3], out = writeMOut);
+    And(a = writeMOut, b = CInstruction, out= writeM);
+    And(a = true, b = instruction[4], out = destDReg);
+    And(a = true, b = instruction[5], out = destAReg);
+
+    // Get the control bits:
+    // opcode
+    DMux (in = true, sel = instruction[15], a = AInstruction, b = CInstruction);
+
+    // If AInstruction the entire instruction goes into ARegister.
+    Mux16(a = ALUOut, b = instruction, sel = AInstruction, out = ARegisterInput);
+    Or(a = destAReg, b = AInstruction, out = controlAReg);
+    ARegister(in = ARegisterInput, load = controlAReg, out = outARegister, out[0..14] = addressM);
+
+    And(a = destDReg, b = CInstruction, out = controlDReg);
+    DRegister(in = ALUOut, load = controlDReg, out = outDRegister);
+
+    // a-bit determines whether the ALU will operate on the A register input or on the M input.
+    Mux16(a = outARegister, b = inM, sel = instruction[12], out = ALUInput);
+
+    ALU(x = outDRegister, y = ALUInput, zx = instruction[11], nx = instruction[10], zy = instruction[9], ny = instruction[8], f = instruction[7], no = instruction[6], out = ALUOut, out = outM, zr = isZero, ng = isNeg);
+
+    And(a = instruction[0], b = true, out= CheckJGT);
+    And(a = instruction[1], b = true, out= CheckJEQ);
+    And(a = instruction[2], b = true, out= CheckJLT);
+
+    And(a = CheckJGT, b = CheckJEQ, out= CheckJGTAndCheckJEQ);
+    And(a = CheckJGTAndCheckJEQ, b = CheckJLT, out= JMP);
+
+    And(a = CheckJGT, b = CheckJEQ, out= CheckJGE);
+    And(a = CheckJLT, b = CheckJEQ, out= CheckJLE);
+    And(a = CheckJGT, b = CheckJLT, out= CheckJNE);
+
+    And(a = isJNE, b = isJGE, out= isJGT);
+    And(a = isZero, b = true, out= isJEQ);
+    And(a = isNeg, b = true, out= isJLT);
+
+    Not(in = isJLT, out = isJGE);
+    Not(in = isJGT, out = isJLE);
+    Not(in = isZero, out = isJNE);
+    
+    And(a = CheckJGT, b = isJGT, out= JGT);
+    And(a = CheckJEQ, b = isJEQ, out= JEQ);
+    And(a = CheckJLT, b = isJLT, out= JLT);
+
+    And(a = CheckJGE, b = isJGE, out= JGE);
+    And(a = CheckJLE, b = isJLE, out= JLE);
+    And(a = CheckJNE, b = isJNE, out= JNE);
+
+    Or8Way(in[0] = false, in[1] = JGT, in[2] = JEQ, in[3] = JGE, in[4] = JLT, in[5] = JNE, in[6] = JLE, in[7] = JMP, out = canJump);
+    And(a = canJump, b = CInstruction, out= shouldJump);
+    PC(in = outARegister, load = shouldJump, inc = true, reset = reset, out[0..14] = pc, out = outPC);
 }
