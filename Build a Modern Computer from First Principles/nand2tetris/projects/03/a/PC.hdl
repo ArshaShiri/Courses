@@ -19,9 +19,9 @@ CHIP PC {
 
 
     Inc16(in = regOut, out = inInc);
-    Mux16 (a = in, b = inInc, sel=inc, out=outInc);
-    Mux16 (a = outInc, b = in, sel=load, out=outLoad);
-    Mux16 (a = outLoad, b = false, sel=reset, out=outReset);
+    Mux16 (a = in, b = inInc, sel = inc, out = outInc);
+    Mux16 (a = outInc, b = in, sel = load, out = outLoad);
+    Mux16 (a = outLoad, b = false, sel = reset, out = outReset);
 
     Or(a = inc, b = load, out = incOrLoad);
     Or(a = incOrLoad, b = reset, out = incOrLoadOrReset);
