@@ -100,7 +100,7 @@ void Assembler::translate()
 void Assembler::saveFile()
 {
   const auto outputFileExtention = ".hack";
-  std::ofstream output;
+  auto output = std::ofstream{};
   output.open(fileName_ + outputFileExtention);
   
   for (const auto machineCode : machineCodeLines_)
