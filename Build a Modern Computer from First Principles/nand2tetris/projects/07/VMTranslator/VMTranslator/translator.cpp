@@ -5,28 +5,43 @@
 #include "translator helper.h"
 #include "translator.h"
 
-Translator::Translator(const std::string &fileName) : fileName_{fileName}
-{
-  const auto extensionIndicator = '.';
-  const auto extensionIndicatorLocation = fileName.find(extensionIndicator);
+#if defined(WIN32) || defined(_WIN32) 
+  #define PATH_SEPARATOR "\\" 
+#else 
+  #define PATH_SEPARATOR "/" 
+#endif 
 
-  if (extensionIndicatorLocation == fileName.npos)
+Translator::Translator(const std::string &filePath) : filePath_{filePath}
+{
+  // Create output file.
+  const auto extensionIndicator = '.';
+  const auto extensionIndicatorLocation = filePath.find_last_of(extensionIndicator);
+
+  if (extensionIndicatorLocation == filePath.npos)
     std::cout << "Filename does not have an extension!" << '\n';
 
-  const auto fileNameWithNoExtension = fileName.substr(0, extensionIndicatorLocation);
   const auto outputExtension = ".asm";
-  outputFile_.open(fileNameWithNoExtension + outputExtension);
+  const auto outputFilePath = filePath.substr(0, extensionIndicatorLocation) + outputExtension;
+  outputFile_.open(outputFilePath);
+
+  const auto fileNameAndExtensionLocation = filePath.find_last_of(PATH_SEPARATOR);
+
+  if (fileNameAndExtensionLocation != filePath.npos)
+    fileNameWithNoExtension_ = filePath.substr(fileNameAndExtensionLocation + 1, 
+                                               extensionIndicatorLocation - fileNameAndExtensionLocation  - 1);
+  else
+    fileNameWithNoExtension_ = filePath.substr(0, extensionIndicatorLocation);
 }
 
 Translator::Translator(Translator &&otherTranslator)
 {
-  fileName_ = std::move(otherTranslator.fileName_);
+  filePath_ = std::move(otherTranslator.filePath_);
   outputFile_ = std::move(otherTranslator.outputFile_);
 }
 
 Translator& Translator::operator=(Translator &&otherTranslator)
 {
-  fileName_ = std::move(otherTranslator.fileName_);
+  filePath_ = std::move(otherTranslator.filePath_);
   outputFile_ = std::move(otherTranslator.outputFile_);
   return *this;
 }
@@ -38,7 +53,8 @@ Translator::~Translator()
 
 void Translator::translate()
 {
-  auto parser = Parser{fileName_};
+  auto parser = Parser{filePath_};
+
   while (parser.hasMoreCommands())
   {
     parser.advance();
@@ -73,100 +89,73 @@ void Translator::write_(const Parser &parser)
 
 void Translator::writeArithmetic_(const Parser &parser)
 {
+  if (pArtihmeticTranslatorHelper_ == nullptr)
+    pArtihmeticTranslatorHelper_ = std::make_unique<ArtihmeticTranslatorHelper>(parser, fileNameWithNoExtension_, outputFile_);
+
   const auto &arg1 = parser.getArg1();
-  auto artihmeticTranslatorHelper = ArtihmeticTranslatorHelper(parser, outputFile_);
 
   if (arg1 == "add")
   {
-    artihmeticTranslatorHelper.add();
+    pArtihmeticTranslatorHelper_->doAdd();
     return;
   }
+  if (arg1 == "sub")
+  {
+    pArtihmeticTranslatorHelper_->doSub();
+    return;
+  }
+  if (arg1 == "neg")
+  {
+    pArtihmeticTranslatorHelper_->doNeg();
+    return;
+  }
+  if (arg1 == "eq")
+  {
+    pArtihmeticTranslatorHelper_->doEq();
+    return;
+  }
+  if (arg1 == "gt")
+  {
+    pArtihmeticTranslatorHelper_->doGt();
+    return;
+  }
+  if (arg1 == "lt")
+  {
+    pArtihmeticTranslatorHelper_->doLt();
+    return;
+  }
+  if (arg1 == "and")
+  {
+    pArtihmeticTranslatorHelper_->doAnd();
+    return;
+  }
+  if (arg1 == "or")
+  {
+    pArtihmeticTranslatorHelper_->doOr();
+    return;
+  }
+  if (arg1 == "not")
+  {
+    pArtihmeticTranslatorHelper_->doNot();
+    return;
+  }
+
+  std::cout << "Arithmetic operation is not supported!" << '\n';
 }
 
 void Translator::writePushPop_(const Parser &parser)
 {
+  if (pPushPopHelper_ == nullptr)
+    pPushPopHelper_ = std::make_unique<PushPopHelper>(parser, fileNameWithNoExtension_, outputFile_);
+
   const auto commandType = parser.getCommandType();
-  auto pushPopHelper = PushPopHelper(parser, outputFile_);
 
   if (commandType == CommandType::C_PUSH)
   {
-    pushPopHelper.pushConstant();
+    pPushPopHelper_->push();
   }
   else
   {
-    // pop command
+    pPushPopHelper_->pop();
   }
 }
-
-namespace
-{
-  //void writePushCommand(std::ofstream &file, const std::string &arg1, int arg2)
-  //{
-  //  const auto aCommandStart = '@';
-  //  const auto stackPointerRegister = 'sp';
-
-  //  file << aCommandStart + std::to_string(arg2) << '\n';
-
-  //  // Set the correct address to A register.
-  //  if (arg1 != "constant")
-  //  {
-  //    file << "D=A\n";
-
-  //    const auto basePointer = getBasePointer(arg1);
-  //    file << aCommandStart + basePointer << '\n';
-  //    file << "D=D+M\n";
-
-  //    // store the address in register 13
-  //    const auto addressRegister = "R13";
-  //    file << aCommandStart + addressRegister << '\n';
-  //    file << "M=D\n";
-  //  }
-
-  //  file << "D=A\n";
-
-  //  // *sp = D
-  //  file << aCommandStart + stackPointerRegister << '\n';
-  //  file << "A=M\n";
-  //  file << "M=D\n";
-
-  //  // sp++
-  //  file << aCommandStart + stackPointerRegister << '\n';
-  //  file << "M=M+1\n";
-  //}
-
-  //void writePopCommand(std::ofstream &file, const std::string &arg1, int arg2)
-  //{
-  //  const auto aCommandStart = '@';
-  //  const auto stackPointerRegister = 'sp';
-  //  file << aCommandStart + std::to_string(arg2) << '\n';
-
-  //  // this part is duplicated with the function above.
-  //  // Set the correct address to A register.
-  //  file << "D=A\n";
-
-  //  const auto basePointer = getBasePointer(arg1);
-  //  file << aCommandStart + basePointer << '\n';
-  //  file << "D=D+M\n";
-
-  //  // store the address in register 13
-  //  const auto addressRegister = "R13";
-  //  file << aCommandStart + addressRegister << '\n';
-  //  file << "M=D\n";
-  // 
-  //  // sp--
-  //  file << aCommandStart + stackPointerRegister + '\n';
-  //  file << "M=M-1\n";
-
-  //  // D = *sp
-  //  file << "A=M\n";
-  //  file << "D=M\n";
-
-  //  file << aCommandStart + addressRegister << '\n';
-  //  file << "M=D\n";
-  //}
-
-  //std::string getBasePointer(const std::string &memeorySegmentName)
-  //{
-  //  
-  //}
-} // end of namespace definition
