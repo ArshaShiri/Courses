@@ -9,6 +9,7 @@
 class Parser;
 class PushPopHelper;
 class ArithmeticTranslatorHelper;
+class FlowHelper;
 
 class Translator
 {
@@ -29,6 +30,7 @@ private:
   void write_(const Parser &parser);
   void writeArithmetic_(const Parser &parser);
   void writePushPop_(const Parser &parser);
+  void writeFlowCommand_(const Parser &parser);
 
   // private attributes
   std::ofstream outputFile_;
@@ -36,5 +38,6 @@ private:
   std::string fileNameWithNoExtension_;
   std::unique_ptr<ArithmeticTranslatorHelper> pArithmeticTranslatorHelper_;
   std::unique_ptr <PushPopHelper> pPushPopHelper_;
+  std::unique_ptr <FlowHelper> pFlowHelper_;
 };
 

@@ -2,6 +2,7 @@
 #include <utility>
 
 #include "arithmetic translator helper.h"
+#include "flow helper.h"
 #include "parser.h"
 #include "push pop helper.h"
 #include "translator helper.h"
@@ -83,6 +84,13 @@ void Translator::write_(const Parser &parser)
     writePushPop_(parser);
     break;
   }
+  case CommandType::C_LABLE: 
+  case CommandType::C_GOTO:
+  case CommandType::C_IF:
+  {
+    writeFlowCommand_(parser);
+    break;
+  }
   default:
     std::cout << "Command type is not supported yet " << __FUNCTION__ << '\n';
     break;
@@ -94,55 +102,7 @@ void Translator::writeArithmetic_(const Parser &parser)
   if (pArithmeticTranslatorHelper_ == nullptr)
     pArithmeticTranslatorHelper_ = std::make_unique<ArithmeticTranslatorHelper>(parser, fileNameWithNoExtension_, outputFile_);
 
-  const auto &arg1 = parser.getArg1();
-
-  if (arg1 == "add")
-  {
-    pArithmeticTranslatorHelper_->doAdd();
-    return;
-  }
-  if (arg1 == "sub")
-  {
-    pArithmeticTranslatorHelper_->doSub();
-    return;
-  }
-  if (arg1 == "neg")
-  {
-    pArithmeticTranslatorHelper_->doNeg();
-    return;
-  }
-  if (arg1 == "eq")
-  {
-    pArithmeticTranslatorHelper_->doEq();
-    return;
-  }
-  if (arg1 == "gt")
-  {
-    pArithmeticTranslatorHelper_->doGt();
-    return;
-  }
-  if (arg1 == "lt")
-  {
-    pArithmeticTranslatorHelper_->doLt();
-    return;
-  }
-  if (arg1 == "and")
-  {
-    pArithmeticTranslatorHelper_->doAnd();
-    return;
-  }
-  if (arg1 == "or")
-  {
-    pArithmeticTranslatorHelper_->doOr();
-    return;
-  }
-  if (arg1 == "not")
-  {
-    pArithmeticTranslatorHelper_->doNot();
-    return;
-  }
-
-  std::cout << "Arithmetic operation is not supported!" << '\n';
+  pArithmeticTranslatorHelper_->write();
 }
 
 void Translator::writePushPop_(const Parser &parser)
@@ -150,14 +110,13 @@ void Translator::writePushPop_(const Parser &parser)
   if (pPushPopHelper_ == nullptr)
     pPushPopHelper_ = std::make_unique<PushPopHelper>(parser, fileNameWithNoExtension_, outputFile_);
 
-  const auto commandType = parser.getCommandType();
+  pPushPopHelper_->write();
+}
 
-  if (commandType == CommandType::C_PUSH)
-  {
-    pPushPopHelper_->push();
-  }
-  else
-  {
-    pPushPopHelper_->pop();
-  }
+void Translator::writeFlowCommand_(const Parser &parser)
+{
+  if (pFlowHelper_ == nullptr)
+    pFlowHelper_ = std::make_unique<FlowHelper>(parser, fileNameWithNoExtension_, outputFile_);
+
+  pFlowHelper_->write();
 }

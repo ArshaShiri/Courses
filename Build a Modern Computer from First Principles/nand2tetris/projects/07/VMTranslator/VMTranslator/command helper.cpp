@@ -50,6 +50,24 @@ void CommandHelper::setCommandType_()
     commandType_ = CommandType::C_POP;
     return;
   }
+
+  if (firstTokken == "label")
+  {
+    commandType_ = CommandType::C_LABLE;
+    return;
+  }
+
+  if (firstTokken == "goto")
+  {
+    commandType_ = CommandType::C_GOTO;
+    return;
+  }
+
+  if (firstTokken == "if-goto")
+  {
+    commandType_ = CommandType::C_IF;
+    return;
+  }
 }
 
 void CommandHelper::setArg1_()

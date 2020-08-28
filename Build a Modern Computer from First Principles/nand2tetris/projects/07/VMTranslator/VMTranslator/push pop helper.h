@@ -6,13 +6,14 @@ class PushPopHelper : public TranslatorHelper
 {
 public:
   PushPopHelper(const Parser &parser,
-    const std::string &fileNameWithNoExtension,
-    std::ofstream &outputFile);
-  void push();
-  void pop();
+                const std::string &fileNameWithNoExtension,
+                std::ofstream &outputFile);
+  void write();
 
 private:
   // Private methods.
+  void push_();
+  void pop_();
   void doPush_(const std::string &baseAddressRegister);
   void pushConstant_();
   void pushStatic_();
