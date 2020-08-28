@@ -4,9 +4,11 @@
 #include <memory>
 #include <string>
 
-#include "translator helper.h"
+
 
 class Parser;
+class PushPopHelper;
+class ArithmeticTranslatorHelper;
 
 class Translator
 {
@@ -32,7 +34,7 @@ private:
   std::ofstream outputFile_;
   std::string filePath_;
   std::string fileNameWithNoExtension_;
-  std::unique_ptr<ArtihmeticTranslatorHelper> pArtihmeticTranslatorHelper_;
+  std::unique_ptr<ArithmeticTranslatorHelper> pArithmeticTranslatorHelper_;
   std::unique_ptr <PushPopHelper> pPushPopHelper_;
 };
 

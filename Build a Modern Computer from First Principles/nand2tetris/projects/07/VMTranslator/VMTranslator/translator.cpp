@@ -1,7 +1,9 @@
 #include <iostream>
 #include <utility>
 
+#include "arithmetic translator helper.h"
 #include "parser.h"
+#include "push pop helper.h"
 #include "translator helper.h"
 #include "translator.h"
 
@@ -89,54 +91,54 @@ void Translator::write_(const Parser &parser)
 
 void Translator::writeArithmetic_(const Parser &parser)
 {
-  if (pArtihmeticTranslatorHelper_ == nullptr)
-    pArtihmeticTranslatorHelper_ = std::make_unique<ArtihmeticTranslatorHelper>(parser, fileNameWithNoExtension_, outputFile_);
+  if (pArithmeticTranslatorHelper_ == nullptr)
+    pArithmeticTranslatorHelper_ = std::make_unique<ArithmeticTranslatorHelper>(parser, fileNameWithNoExtension_, outputFile_);
 
   const auto &arg1 = parser.getArg1();
 
   if (arg1 == "add")
   {
-    pArtihmeticTranslatorHelper_->doAdd();
+    pArithmeticTranslatorHelper_->doAdd();
     return;
   }
   if (arg1 == "sub")
   {
-    pArtihmeticTranslatorHelper_->doSub();
+    pArithmeticTranslatorHelper_->doSub();
     return;
   }
   if (arg1 == "neg")
   {
-    pArtihmeticTranslatorHelper_->doNeg();
+    pArithmeticTranslatorHelper_->doNeg();
     return;
   }
   if (arg1 == "eq")
   {
-    pArtihmeticTranslatorHelper_->doEq();
+    pArithmeticTranslatorHelper_->doEq();
     return;
   }
   if (arg1 == "gt")
   {
-    pArtihmeticTranslatorHelper_->doGt();
+    pArithmeticTranslatorHelper_->doGt();
     return;
   }
   if (arg1 == "lt")
   {
-    pArtihmeticTranslatorHelper_->doLt();
+    pArithmeticTranslatorHelper_->doLt();
     return;
   }
   if (arg1 == "and")
   {
-    pArtihmeticTranslatorHelper_->doAnd();
+    pArithmeticTranslatorHelper_->doAnd();
     return;
   }
   if (arg1 == "or")
   {
-    pArtihmeticTranslatorHelper_->doOr();
+    pArithmeticTranslatorHelper_->doOr();
     return;
   }
   if (arg1 == "not")
   {
-    pArtihmeticTranslatorHelper_->doNot();
+    pArithmeticTranslatorHelper_->doNot();
     return;
   }
 
