@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include "arithmetic translator helper.h"
+#include "arithmetic helper.h"
 
-ArithmeticTranslatorHelper::ArithmeticTranslatorHelper(
+ArithmeticHelper::ArithmeticHelper(
   const Parser &parser,
   const std::string &fileNameWithNoExtension,
   std::ofstream &outputFile) : TranslatorHelper{parser, fileNameWithNoExtension, outputFile},
@@ -11,7 +11,7 @@ ArithmeticTranslatorHelper::ArithmeticTranslatorHelper(
   ltLableCounter_{0}
 {}
 
-void ArithmeticTranslatorHelper::write()
+void ArithmeticHelper::write()
 {
   const auto &arg1 = getParser_().getArg1();
 
@@ -65,7 +65,7 @@ void ArithmeticTranslatorHelper::write()
 }
 
 // This is useful for arithmetic commands.
-void ArithmeticTranslatorHelper::popToRegister_(const std::string &regsiter)
+void ArithmeticHelper::popToRegister_(const std::string &regsiter)
 {
   spMinusMinus_();
   assignStackPointerToD_();
@@ -76,7 +76,7 @@ void ArithmeticTranslatorHelper::popToRegister_(const std::string &regsiter)
   outputFile << "M=D\n";
 }
 
-void ArithmeticTranslatorHelper::operateOnTwoTopValuesInStackAndStoreResultInD_(std::string operatorType)
+void ArithmeticHelper::operateOnTwoTopValuesInStackAndStoreResultInD_(std::string operatorType)
 {
   spMinusMinus_();
   assignStackPointerToD_();
@@ -88,21 +88,21 @@ void ArithmeticTranslatorHelper::operateOnTwoTopValuesInStackAndStoreResultInD_(
   outputFile << "D=M" << operatorType << "D\n";
 }
 
-void ArithmeticTranslatorHelper::add_()
+void ArithmeticHelper::add_()
 {
   operateOnTwoTopValuesInStackAndStoreResultInD_("+");
   assignDToStackPointer_();
   spPlusPlus_();
 }
 
-void ArithmeticTranslatorHelper::sub_()
+void ArithmeticHelper::sub_()
 {
   operateOnTwoTopValuesInStackAndStoreResultInD_("-");
   assignDToStackPointer_();
   spPlusPlus_();
 }
 
-void ArithmeticTranslatorHelper::neg_()
+void ArithmeticHelper::neg_()
 {
   // Store the top value in D register.
   spMinusMinus_();
@@ -115,7 +115,7 @@ void ArithmeticTranslatorHelper::neg_()
   spPlusPlus_();
 }
 
-void ArithmeticTranslatorHelper::doComparison_(
+void ArithmeticHelper::doComparison_(
   const std::string &trueLable,
   const std::string &commonInstructionLable,
   const std::string &counter,
@@ -147,36 +147,36 @@ void ArithmeticTranslatorHelper::doComparison_(
   spPlusPlus_();
 }
 
-void ArithmeticTranslatorHelper::eq_()
+void ArithmeticHelper::eq_()
 {
   doComparison_("EQUAL_", "COMMON_INSTRUCTIONS_EQ_", std::to_string(eqLableCounter_++), "JEQ");
 }
 
-void ArithmeticTranslatorHelper::gt_()
+void ArithmeticHelper::gt_()
 {
   doComparison_("GRATER_", "COMMON_INSTRUCTIONS_GT_", std::to_string(gtLableCounter_++), "JGT");
 }
 
-void ArithmeticTranslatorHelper::lt_()
+void ArithmeticHelper::lt_()
 {
   doComparison_("LESSER_", "COMMON_INSTRUCTIONS_LT_", std::to_string(ltLableCounter_++), "JLT");
 }
 
-void ArithmeticTranslatorHelper::and_()
+void ArithmeticHelper::and_()
 {
   operateOnTwoTopValuesInStackAndStoreResultInD_("&");
   assignDToStackPointer_();
   spPlusPlus_();
 }
 
-void ArithmeticTranslatorHelper::or_()
+void ArithmeticHelper::or_()
 {
   operateOnTwoTopValuesInStackAndStoreResultInD_("|");
   assignDToStackPointer_();
   spPlusPlus_();
 }
 
-void ArithmeticTranslatorHelper::not_()
+void ArithmeticHelper::not_()
 {
   spMinusMinus_();
   assignStackPointerToD_();

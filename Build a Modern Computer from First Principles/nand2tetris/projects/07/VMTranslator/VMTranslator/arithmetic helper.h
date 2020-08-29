@@ -2,10 +2,10 @@
 
 #include "translator helper.h"
 
-class ArithmeticTranslatorHelper : public TranslatorHelper
+class ArithmeticHelper : public TranslatorHelper
 {
 public:
-  ArithmeticTranslatorHelper(const Parser &parser,
+  ArithmeticHelper(const Parser &parser,
                              const std::string &fileNameWithNoExtension,
                              std::ofstream &outputFile);
   void write();

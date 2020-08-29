@@ -4,6 +4,11 @@
 
 const std::string TranslatorHelper::aCommandStart_ = {"@"};
 const std::string TranslatorHelper::stackPointerRegister_ = {"R0"};
+const std::string TranslatorHelper::LCLRegister_ = "R1";
+const std::string TranslatorHelper::ARGRegister_ = "R2";
+const std::string TranslatorHelper::THISRegister_ = "R3";
+const std::string TranslatorHelper::THATRegister_ = "R4";
+const std::string TranslatorHelper::TEMPRegister_ = "R5";
 
 TranslatorHelper::TranslatorHelper(
   const Parser &parser,

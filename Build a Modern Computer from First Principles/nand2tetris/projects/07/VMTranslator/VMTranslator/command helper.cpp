@@ -68,6 +68,24 @@ void CommandHelper::setCommandType_()
     commandType_ = CommandType::C_IF;
     return;
   }
+
+  if (firstTokken == "function")
+  {
+    commandType_ = CommandType::C_FUNCTION;
+    return;
+  }
+
+  if (firstTokken == "call")
+  {
+    commandType_ = CommandType::C_CALL;
+    return;
+  }
+
+  if (firstTokken == "return")
+  {
+    commandType_ = CommandType::C_RETURN;
+    return;
+  }
 }
 
 void CommandHelper::setArg1_()

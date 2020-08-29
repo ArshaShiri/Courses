@@ -3,12 +3,6 @@
 
 #include "push pop helper.h"
 
-const std::string PushPopHelper::LCLRegister_ = "R1";
-const std::string PushPopHelper::ARGRegister_ = "R2";
-const std::string PushPopHelper::THISRegister_ = "R3";
-const std::string PushPopHelper::THATRegister_ = "R4";
-const std::string PushPopHelper::TEMPRegister_ = "R5";
-
 PushPopHelper::PushPopHelper(
   const Parser &parser,
   const std::string &fileNameWithNoExtension,

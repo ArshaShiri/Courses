@@ -1,8 +1,9 @@
 #include <iostream>
 #include <utility>
 
-#include "arithmetic translator helper.h"
+#include "arithmetic helper.h"
 #include "flow helper.h"
+#include "function helper.h"
 #include "parser.h"
 #include "push pop helper.h"
 #include "translator helper.h"
@@ -91,6 +92,13 @@ void Translator::write_(const Parser &parser)
     writeFlowCommand_(parser);
     break;
   }
+  case CommandType::C_CALL:
+  case CommandType::C_FUNCTION:
+  case CommandType::C_RETURN:
+  {
+    writeFunctionCommand_(parser);
+    break;
+  }
   default:
     std::cout << "Command type is not supported yet " << __FUNCTION__ << '\n';
     break;
@@ -100,7 +108,7 @@ void Translator::write_(const Parser &parser)
 void Translator::writeArithmetic_(const Parser &parser)
 {
   if (pArithmeticTranslatorHelper_ == nullptr)
-    pArithmeticTranslatorHelper_ = std::make_unique<ArithmeticTranslatorHelper>(parser, fileNameWithNoExtension_, outputFile_);
+    pArithmeticTranslatorHelper_ = std::make_unique<ArithmeticHelper>(parser, fileNameWithNoExtension_, outputFile_);
 
   pArithmeticTranslatorHelper_->write();
 }
@@ -119,4 +127,12 @@ void Translator::writeFlowCommand_(const Parser &parser)
     pFlowHelper_ = std::make_unique<FlowHelper>(parser, fileNameWithNoExtension_, outputFile_);
 
   pFlowHelper_->write();
+}
+
+void Translator::writeFunctionCommand_(const Parser &parser)
+{
+  if (pFunctionHelper_ == nullptr)
+    pFunctionHelper_ = std::make_unique<FunctionHelper>(parser, fileNameWithNoExtension_, outputFile_);
+
+  pFunctionHelper_->write();
 }

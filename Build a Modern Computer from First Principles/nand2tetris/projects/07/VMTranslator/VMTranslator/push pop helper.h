@@ -24,13 +24,5 @@ private:
   void popPointer_();
 
   // Private attributes
-
-  // Points to the base address of the segment.
-  static const std::string LCLRegister_;
-  static const std::string ARGRegister_;
-  static const std::string THISRegister_;
-  static const std::string THATRegister_;
-  static const std::string TEMPRegister_;
-
   const std::string helperRegister14 = "R14";
 };

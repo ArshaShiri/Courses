@@ -28,6 +28,13 @@ protected:
   // Points to the next available location in the stack.
   static const std::string stackPointerRegister_;
 
+  // Points to the base address of the segment.
+  static const std::string LCLRegister_;
+  static const std::string ARGRegister_;
+  static const std::string THISRegister_;
+  static const std::string THATRegister_;
+  static const std::string TEMPRegister_;
+
 private:
   std::ofstream &outputFile_;
   const std::string &fileNameWithNoExtension_;
