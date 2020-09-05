@@ -4,11 +4,10 @@
 
 ArithmeticHelper::ArithmeticHelper(
   const Parser &parser,
-  const std::string &fileNameWithNoExtension,
-  std::ofstream &outputFile) : TranslatorHelper{parser, fileNameWithNoExtension, outputFile},
-  eqLableCounter_{0},
-  gtLableCounter_{0},
-  ltLableCounter_{0}
+  std::ofstream &outputFile) : TranslatorHelper{parser, outputFile},
+                               eqLabelCounter_{0},
+                               gtLabelCounter_{0},
+                               ltLabelCounter_{0}
 {}
 
 void ArithmeticHelper::write()
@@ -149,17 +148,17 @@ void ArithmeticHelper::doComparison_(
 
 void ArithmeticHelper::eq_()
 {
-  doComparison_("EQUAL_", "COMMON_INSTRUCTIONS_EQ_", std::to_string(eqLableCounter_++), "JEQ");
+  doComparison_("EQUAL_", "COMMON_INSTRUCTIONS_EQ_", std::to_string(eqLabelCounter_++), "JEQ");
 }
 
 void ArithmeticHelper::gt_()
 {
-  doComparison_("GRATER_", "COMMON_INSTRUCTIONS_GT_", std::to_string(gtLableCounter_++), "JGT");
+  doComparison_("GRATER_", "COMMON_INSTRUCTIONS_GT_", std::to_string(gtLabelCounter_++), "JGT");
 }
 
 void ArithmeticHelper::lt_()
 {
-  doComparison_("LESSER_", "COMMON_INSTRUCTIONS_LT_", std::to_string(ltLableCounter_++), "JLT");
+  doComparison_("LESSER_", "COMMON_INSTRUCTIONS_LT_", std::to_string(ltLabelCounter_++), "JLT");
 }
 
 void ArithmeticHelper::and_()

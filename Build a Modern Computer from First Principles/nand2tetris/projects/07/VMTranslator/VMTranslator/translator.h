@@ -3,7 +3,7 @@
 #include <fstream>
 #include <memory>
 #include <string>
-
+#include <vector>
 
 class ArithmeticHelper;
 class FlowHelper;
@@ -14,7 +14,7 @@ class PushPopHelper;
 class Translator
 {
 public:
-  Translator(const std::string &filePath);
+  Translator(const std::string &fileOrDirPath);
   ~Translator();
 
   Translator(const Translator &) = delete;
@@ -27,17 +27,24 @@ public:
 
 private:
   // private methods
-  void write_(const Parser &parser);
+  void write_(const Parser &parser, 
+              const std::string &inputFilePathAndNameWithoutExtension);
 
   void writeArithmetic_(const Parser &parser);
-  void writePushPop_(const Parser &parser);
+  void writePushPop_(const Parser &parser, 
+                     const std::string &inputFilePathAndNameWithoutExtension);
   void writeFlowCommand_(const Parser &parser);
   void writeFunctionCommand_(const Parser &parser);
 
+  std::string getOutputFilePath_(const std::string &fileOrDirPath,
+                                 size_t lastDirectorySeparator,
+                                 size_t extensionIndicatorLocation) const;
+
   // private attributes
   std::ofstream outputFile_;
-  std::string filePath_;
-  std::string fileNameWithNoExtension_;
+  bool isFilePathADirectory_;
+  bool isDirectoryOrFileInCurrentDir_;
+  std::vector<std::pair<std::string, std::string>> inputFilePathsAndNamesWithoutExtension_;
 
   std::unique_ptr<ArithmeticHelper> pArithmeticTranslatorHelper_;
   std::unique_ptr <PushPopHelper> pPushPopHelper_;

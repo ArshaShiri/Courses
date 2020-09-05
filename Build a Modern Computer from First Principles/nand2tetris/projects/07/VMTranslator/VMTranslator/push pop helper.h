@@ -25,4 +25,5 @@ private:
 
   // Private attributes
   const std::string helperRegister14 = "R14";
+  std::string fileNameWithNoExtension_;
 };

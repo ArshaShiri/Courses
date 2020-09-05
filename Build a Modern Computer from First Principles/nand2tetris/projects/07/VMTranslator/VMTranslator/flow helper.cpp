@@ -3,8 +3,7 @@
 
 FlowHelper::FlowHelper(
   const Parser &parser,
-  const std::string &fileNameWithNoExtension,
-  std::ofstream &outputFile) : TranslatorHelper{parser, fileNameWithNoExtension, outputFile}
+  std::ofstream &outputFile) : TranslatorHelper{parser, outputFile}
 {}
 
 void FlowHelper::write()

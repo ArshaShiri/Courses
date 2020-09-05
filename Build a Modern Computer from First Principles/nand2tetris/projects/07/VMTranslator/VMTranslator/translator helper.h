@@ -9,7 +9,6 @@ class TranslatorHelper
 {
 public:
   TranslatorHelper(const Parser &parser,
-                   const std::string &fileNameWithNoExtension,
                    std::ofstream &outputFile);
 
 protected:
@@ -20,7 +19,6 @@ protected:
   void assignStackPointerToD_();
 
   std::ofstream& getOutputFile_();
-  const std::string& getFileNameWithNoExtension_() const;
   const Parser& getParser_() const;
 
   static const std::string aCommandStart_;
@@ -37,6 +35,5 @@ protected:
 
 private:
   std::ofstream &outputFile_;
-  const std::string &fileNameWithNoExtension_;
   const Parser &parser_;
 };

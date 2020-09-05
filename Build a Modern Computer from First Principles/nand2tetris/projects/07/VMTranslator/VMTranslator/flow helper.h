@@ -6,7 +6,6 @@ class FlowHelper : public TranslatorHelper
 {
 public:
   FlowHelper(const Parser &parser,
-             const std::string &fileNameWithNoExtension,
              std::ofstream &outputFile);
 
   void write();

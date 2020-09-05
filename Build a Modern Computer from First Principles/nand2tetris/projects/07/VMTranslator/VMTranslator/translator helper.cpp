@@ -12,10 +12,8 @@ const std::string TranslatorHelper::TEMPRegister_ = "R5";
 
 TranslatorHelper::TranslatorHelper(
   const Parser &parser,
-  const std::string &fileNameWithNoExtension,
   std::ofstream &outputFile) : parser_{parser},
-                               outputFile_{outputFile},
-                               fileNameWithNoExtension_{fileNameWithNoExtension}
+                               outputFile_{outputFile}
 {}
 
 // Increment the stack pointer.
@@ -62,11 +60,6 @@ void TranslatorHelper::assignStackPointerToD_()
 std::ofstream& TranslatorHelper::getOutputFile_()
 {
   return outputFile_;
-}
-
-const std::string& TranslatorHelper::getFileNameWithNoExtension_() const
-{
-  return fileNameWithNoExtension_;
 }
 
 const Parser& TranslatorHelper::getParser_() const

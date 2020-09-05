@@ -6,8 +6,7 @@ class ArithmeticHelper : public TranslatorHelper
 {
 public:
   ArithmeticHelper(const Parser &parser,
-                             const std::string &fileNameWithNoExtension,
-                             std::ofstream &outputFile);
+                   std::ofstream &outputFile);
   void write();
 
 private:
@@ -30,8 +29,8 @@ private:
   void not_();
 
   // Private attributes.
-  size_t eqLableCounter_;
-  size_t gtLableCounter_;
-  size_t ltLableCounter_;
+  size_t eqLabelCounter_;
+  size_t gtLabelCounter_;
+  size_t ltLabelCounter_;
 };
 

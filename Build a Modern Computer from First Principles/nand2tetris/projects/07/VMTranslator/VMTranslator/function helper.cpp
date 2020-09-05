@@ -2,8 +2,8 @@
 
 FunctionHelper::FunctionHelper(
   const Parser &parser,
-  const std::string &fileNameWithNoExtension,
-  std::ofstream &outputFile) : TranslatorHelper{parser, fileNameWithNoExtension, outputFile}
+  std::ofstream &outputFile) : TranslatorHelper{parser, outputFile},
+                               returnAddressLabelCounter_{0}
 {}
 
 void FunctionHelper::write()
@@ -43,7 +43,59 @@ void FunctionHelper::function_()
 }
 
 void FunctionHelper::call_()
-{}
+{
+  const auto returnAddressLable = "return" + std::to_string(returnAddressLabelCounter_++);
+  auto &outputFile = getOutputFile_();
+
+  // Push return address
+  outputFile << aCommandStart_ + returnAddressLable + '\n';
+  outputFile << "D=A\n";
+  assignDToStackPointer_();
+  spPlusPlus_();
+
+  auto pushBasePointerRegister = [&outputFile, this](const std::string &basePointerRegisterName)
+  {
+    // D = basePointerRegisterName
+    outputFile << aCommandStart_ + basePointerRegisterName + '\n';
+    outputFile << "D=M\n";
+
+    assignDToStackPointer_();
+  };
+
+  pushBasePointerRegister(LCLRegister_);
+  pushBasePointerRegister(ARGRegister_);
+  pushBasePointerRegister(THISRegister_);
+  pushBasePointerRegister(THATRegister_);
+
+  // ARG = SP - n - 5 (n is number of args)
+  const auto numberOfArgs = std::to_string(getParser_().getArg2());
+
+  // First: D = SP - n - 5
+  outputFile << aCommandStart_ + stackPointerRegister_ + '\n';
+  outputFile << "D=M\n";
+  outputFile << aCommandStart_ + numberOfArgs + '\n';
+  outputFile << "D=D-A\n";
+  outputFile << aCommandStart_ + "5\n";
+  outputFile << "D=D-A\n";
+
+  // Then ARG = D
+  outputFile << aCommandStart_ + ARGRegister_ + '\n';
+  outputFile << "M=D\n";
+
+  // LCL = SP
+  outputFile << aCommandStart_ + stackPointerRegister_ + '\n';
+  outputFile << "D=M\n";
+  outputFile << aCommandStart_ + LCLRegister_ + '\n';
+  outputFile << "M=D\n";
+
+  // goto f
+  const auto functionLable = getParser_().getArg1();
+  outputFile << aCommandStart_ + functionLable + '\n';
+  outputFile << "0;JMP\n";
+
+  // (return address)
+  outputFile << "(" + returnAddressLable + ")\n";
+}
 
 void FunctionHelper::return_()
 {
@@ -68,12 +120,12 @@ void FunctionHelper::return_()
   // *ARG = pop()
   spMinusMinus_();
   assignStackPointerToD_();
-  outputFile << aCommandStart_ + "ARG\n";
+  outputFile << aCommandStart_ + ARGRegister_ + '\n';
   outputFile << "A=M\n";
   outputFile << "M=D\n";
 
   // SP = ARG + 1
-  outputFile << aCommandStart_ + "ARG\n";
+  outputFile << aCommandStart_ + ARGRegister_ + '\n';
   outputFile << "D=M+1\n";
   outputFile << aCommandStart_ << stackPointerRegister_ << '\n';
   outputFile << "M=D\n";

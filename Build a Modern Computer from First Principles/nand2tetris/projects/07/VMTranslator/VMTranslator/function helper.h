@@ -6,7 +6,6 @@ class FunctionHelper : public TranslatorHelper
 {
 public:
   FunctionHelper(const Parser &parser,
-                 const std::string &fileNameWithNoExtension,
                  std::ofstream &outputFile);
 
   void write();
@@ -17,5 +16,8 @@ private:
   void function_();
   void call_();
   void return_();
+
+  // Private attributes
+  size_t returnAddressLabelCounter_;
 };
 

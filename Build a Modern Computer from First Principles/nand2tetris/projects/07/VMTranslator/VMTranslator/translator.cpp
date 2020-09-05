@@ -1,4 +1,5 @@
 #include <iostream>
+#include <dirent.h>
 #include <utility>
 
 #include "arithmetic helper.h"
@@ -13,39 +14,78 @@
   #define PATH_SEPARATOR "\\" 
 #else 
   #define PATH_SEPARATOR "/" 
-#endif 
+#endif
 
-Translator::Translator(const std::string &filePath) : filePath_{filePath}
+Translator::Translator(const std::string &fileOrDirPath)
 {
-  // Create output file.
   const auto extensionIndicator = '.';
-  const auto extensionIndicatorLocation = filePath.find_last_of(extensionIndicator);
+  const auto extensionIndicatorLocation = fileOrDirPath.find_last_of(extensionIndicator);
+  isFilePathADirectory_ = extensionIndicatorLocation == fileOrDirPath.npos;
 
-  if (extensionIndicatorLocation == filePath.npos)
-    std::cout << "Filename does not have an extension!" << '\n';
+  const auto lastDirectorySeparatorLocation = fileOrDirPath.find_last_of(PATH_SEPARATOR);
+  isDirectoryOrFileInCurrentDir_ = lastDirectorySeparatorLocation == fileOrDirPath.npos;
 
-  const auto outputExtension = ".asm";
-  const auto outputFilePath = filePath.substr(0, extensionIndicatorLocation) + outputExtension;
+  // First we determine the output file path.
+  const auto outputFilePath = getOutputFilePath_(fileOrDirPath,
+                                                 lastDirectorySeparatorLocation,
+                                                 extensionIndicatorLocation);
   outputFile_.open(outputFilePath);
 
-  const auto fileNameAndExtensionLocation = filePath.find_last_of(PATH_SEPARATOR);
-
-  if (fileNameAndExtensionLocation != filePath.npos)
-    fileNameWithNoExtension_ = filePath.substr(fileNameAndExtensionLocation + 1, 
-                                               extensionIndicatorLocation - fileNameAndExtensionLocation  - 1);
+  // populate address map.
+  if (isFilePathADirectory_)
+  {
+  }
   else
-    fileNameWithNoExtension_ = filePath.substr(0, extensionIndicatorLocation);
+  {
+    auto inputFileNameWithoutExtention = std::string{};
+    if (isDirectoryOrFileInCurrentDir_)
+    {
+      inputFileNameWithoutExtention = fileOrDirPath.substr(0, extensionIndicatorLocation);
+    }
+    else
+    {
+      inputFileNameWithoutExtention =
+        fileOrDirPath.substr(lastDirectorySeparatorLocation + 1,
+                             extensionIndicatorLocation - lastDirectorySeparatorLocation - 1);
+
+    }
+    inputFilePathsAndNamesWithoutExtension_.emplace_back(fileOrDirPath, inputFileNameWithoutExtention);
+  }
+}
+
+std::string Translator::getOutputFilePath_(
+  const std::string &fileOrDirPath,
+  size_t lastDirectorySeparatorLocation,
+  size_t extensionIndicatorLocation) const
+{
+  auto outputFilePath = std::string{};
+  const auto outputExtension = ".asm";
+
+  if (isFilePathADirectory_)
+  {
+    if (isDirectoryOrFileInCurrentDir_)
+      outputFilePath = fileOrDirPath + fileOrDirPath + outputExtension;
+    else
+      outputFilePath = 
+        fileOrDirPath + fileOrDirPath.substr(lastDirectorySeparatorLocation + 1) + outputExtension;
+  }
+  else
+    outputFilePath = fileOrDirPath.substr(0, extensionIndicatorLocation) + outputExtension;
+
+  //std::cout << "path is " << fileOrDirPath << '\n';
+  //std::cout << "outputFilePath is " << outputFilePath << '\n';
+  return outputFilePath;
 }
 
 Translator::Translator(Translator &&otherTranslator)
 {
-  filePath_ = std::move(otherTranslator.filePath_);
+  inputFilePathsAndNamesWithoutExtension_ = std::move(otherTranslator.inputFilePathsAndNamesWithoutExtension_);
   outputFile_ = std::move(otherTranslator.outputFile_);
 }
 
 Translator& Translator::operator=(Translator &&otherTranslator)
 {
-  filePath_ = std::move(otherTranslator.filePath_);
+  inputFilePathsAndNamesWithoutExtension_ = std::move(otherTranslator.inputFilePathsAndNamesWithoutExtension_);
   outputFile_ = std::move(otherTranslator.outputFile_);
   return *this;
 }
@@ -57,16 +97,20 @@ Translator::~Translator()
 
 void Translator::translate()
 {
-  auto parser = Parser{filePath_};
-
-  while (parser.hasMoreCommands())
+  for (const auto inputFilePathAndNameWithoutExtension : inputFilePathsAndNamesWithoutExtension_)
   {
-    parser.advance();
-    write_(parser);
+    auto parser = Parser{inputFilePathAndNameWithoutExtension.first};
+
+    while (parser.hasMoreCommands())
+    {
+      parser.advance();
+      write_(parser, inputFilePathAndNameWithoutExtension.second);
+    }
   }
 }
 
-void Translator::write_(const Parser &parser)
+void Translator::write_(const Parser &parser, 
+                        const std::string &inputFilePathAndNameWithoutExtension)
 {
   // Write the vm command on the file for debugging purposes.
   outputFile_ << "// " + parser.getCurrentVMCommand() << '\n';
@@ -82,7 +126,7 @@ void Translator::write_(const Parser &parser)
   case CommandType::C_POP:
   case CommandType::C_PUSH:
   {
-    writePushPop_(parser);
+    writePushPop_(parser, inputFilePathAndNameWithoutExtension);
     break;
   }
   case CommandType::C_LABLE: 
@@ -108,15 +152,16 @@ void Translator::write_(const Parser &parser)
 void Translator::writeArithmetic_(const Parser &parser)
 {
   if (pArithmeticTranslatorHelper_ == nullptr)
-    pArithmeticTranslatorHelper_ = std::make_unique<ArithmeticHelper>(parser, fileNameWithNoExtension_, outputFile_);
+    pArithmeticTranslatorHelper_ = std::make_unique<ArithmeticHelper>(parser, outputFile_);
 
   pArithmeticTranslatorHelper_->write();
 }
 
-void Translator::writePushPop_(const Parser &parser)
+void Translator::writePushPop_(const Parser &parser, 
+                               const std::string &inputFilePathAndNameWithoutExtension)
 {
   if (pPushPopHelper_ == nullptr)
-    pPushPopHelper_ = std::make_unique<PushPopHelper>(parser, fileNameWithNoExtension_, outputFile_);
+    pPushPopHelper_ = std::make_unique<PushPopHelper>(parser, inputFilePathAndNameWithoutExtension, outputFile_);
 
   pPushPopHelper_->write();
 }
@@ -124,7 +169,7 @@ void Translator::writePushPop_(const Parser &parser)
 void Translator::writeFlowCommand_(const Parser &parser)
 {
   if (pFlowHelper_ == nullptr)
-    pFlowHelper_ = std::make_unique<FlowHelper>(parser, fileNameWithNoExtension_, outputFile_);
+    pFlowHelper_ = std::make_unique<FlowHelper>(parser, outputFile_);
 
   pFlowHelper_->write();
 }
@@ -132,7 +177,7 @@ void Translator::writeFlowCommand_(const Parser &parser)
 void Translator::writeFunctionCommand_(const Parser &parser)
 {
   if (pFunctionHelper_ == nullptr)
-    pFunctionHelper_ = std::make_unique<FunctionHelper>(parser, fileNameWithNoExtension_, outputFile_);
+    pFunctionHelper_ = std::make_unique<FunctionHelper>(parser, outputFile_);
 
   pFunctionHelper_->write();
 }

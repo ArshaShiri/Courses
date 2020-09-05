@@ -6,7 +6,8 @@
 PushPopHelper::PushPopHelper(
   const Parser &parser,
   const std::string &fileNameWithNoExtension,
-  std::ofstream &outputFile) : TranslatorHelper{parser, fileNameWithNoExtension, outputFile}
+  std::ofstream &outputFile) : TranslatorHelper{parser, outputFile},
+                               fileNameWithNoExtension_ {fileNameWithNoExtension}
 {}
 
 void PushPopHelper::write()
@@ -164,8 +165,7 @@ void PushPopHelper::pushConstant_()
 
 void PushPopHelper::pushStatic_()
 {
-  const auto &fileNameWithNoExtension = getFileNameWithNoExtension_();
-  const auto varName = fileNameWithNoExtension + '.' + std::to_string(getParser_().getArg2());
+  const auto varName = fileNameWithNoExtension_ + '.' + std::to_string(getParser_().getArg2());
 
   auto &outputFile = getOutputFile_();
   outputFile << aCommandStart_ << varName << '\n';
@@ -230,9 +230,7 @@ void PushPopHelper::popStatic_()
   spMinusMinus_();
   assignStackPointerToD_();
 
-  const auto &fileNameWithNoExtension = getFileNameWithNoExtension_();
-  const auto varName = fileNameWithNoExtension + '.' + std::to_string(getParser_().getArg2());
-
+  const auto varName = fileNameWithNoExtension_ + '.' + std::to_string(getParser_().getArg2());
   auto &outputFile = getOutputFile_();
   outputFile << aCommandStart_ << varName << '\n';
   outputFile << "M=D\n";
