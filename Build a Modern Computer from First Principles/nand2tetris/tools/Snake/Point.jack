@@ -15,7 +15,20 @@ class Point
 
    /** Accessors. */
    method int getXCoord() { return xCoord; }
-   method int getYCoord() { return yCoord; }  
+   method int getYCoord() { return yCoord; }
+
+   /** Setters. */
+   method void setXCoord(int x) 
+   { 
+     let xCoord = x ;
+     return;
+   }
+   
+   method void setYCoord(int y) 
+   {
+     let yCoord = y ;
+     return;
+   }
   
    /** Disposes this point. */
    method void dispose() 

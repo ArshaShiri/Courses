@@ -5,11 +5,18 @@
  class SnakeGame
  { 
    field Snake snake;
+   field int direction; // the snake's current direction: 
+                        // 1=up, 2=down, 3=left, 4=right
+                        // By default, the snake starts going right.
+
+   field int delay;
    
    /** Constructs a new Snake Game. */
    constructor SnakeGame new() 
    {
       let snake = Snake.new();
+      let delay = 5;
+      let direction = 4;
       return this;
    }
 
@@ -21,6 +28,18 @@
       return;
    }
 
+   /** Moves the snake in the current direction. */
+   method void moveSnake() 
+   {
+      if (direction = 1) { do snake.moveUp(); }
+      if (direction = 2) { do snake.moveDown(); }
+      if (direction = 3) { do snake.moveLeft(); }
+      if (direction = 4) { do snake.moveRight(); }
+      do Sys.wait(delay);   // delays the next movement
+      return;
+   }
+
+
    /** Runs the game: handles the user's inputs and moves the snake accordingly */
    method void run() 
    {
@@ -30,20 +49,15 @@
       
       while (~exit) 
       {
-         // waits for a key to be pressed
-         while (key = 0) 
-         {
-            let key = Keyboard.keyPressed();
-         }
+         let key = Keyboard.keyPressed();
 
          if (key = 81)  { let exit = true; }     // q key
+         if (key = 131) { let direction = 1; }   // up arrow
+         if (key = 133) { let direction = 2; }   // down arrow
+         if (key = 130) { let direction = 3; }   // left arrow
+         if (key = 132) { let direction = 4; }   // right arrow
 
-
-         // waits for the key to be released
-         while (~(key = 0)) 
-         {
-            let key = Keyboard.keyPressed();
-         }
+         do moveSnake();
      }
      return;
    }   

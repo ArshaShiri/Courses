@@ -4,12 +4,21 @@ class Snake
 {
   // For now, a snake is just a point. Eventually, it is going to be an dynamic array of points.
   field Point snakePoint;
+  field int xMin;
+  field int xMax;
+  field int yMin;
+  field int yMax;
   
    /** Constructs a new snake which consists of one point  and draws it 
     *  on top left of the screen */
    constructor Snake new() 
    {
       let snakePoint = Point.new(0, 0);
+      let xMin = 0;
+      let xMax = 511;
+      let yMin = 0;
+      let yMax = 255;
+
       do draw();
       return this;
    }
@@ -32,5 +41,102 @@ class Snake
   
       do Screen.drawPixel(currentX, currentY);
       return;
+   }
+   
+   /** Erases the snake from the screen. */
+   method void erase() 
+   {
+      var int currentX;
+      var int currentY;
+      let currentX = snakePoint.getXCoord();
+      let currentY = snakePoint.getYCoord();
+  
+      do Screen.setColor(false);
+      do Screen.drawPixel(currentX, currentY);
+      return;
+   }
+   
+   /** Moves the snake up by 1 pixel. */
+   method void moveUp()
+   {
+     var int x;
+     var int y;   
+     if (snakePoint.getYCoord() > 0)
+     {
+       do erase();
+       let x = snakePoint.getXCoord();
+       let y = snakePoint.getYCoord();
+
+       let y = y - 1;
+       do Screen.setColor(true);
+       do Screen.drawPixel(x, y);
+       do snakePoint.setXCoord(x);
+       do snakePoint.setYCoord(y);
+     }
+
+     return;
+   }
+
+   /** Moves the down up by 1 pixel. */
+   method void moveDown()
+   {
+     var int x;
+     var int y; 
+     if (snakePoint.getYCoord() < yMax)
+     {
+       do erase();
+       let x = snakePoint.getXCoord();
+       let y = snakePoint.getYCoord();
+
+       let y = y + 1;
+       do Screen.setColor(true);
+       do Screen.drawPixel(x, y);
+       do snakePoint.setXCoord(x);
+       do snakePoint.setYCoord(y);
+     }
+
+     return;
+   }
+
+   /** Moves the right up by 1 pixel. */
+   method void moveRight()
+   {
+     var int x;
+     var int y; 
+     if (snakePoint.getXCoord() < xMax)
+     {
+       do erase();
+       let x = snakePoint.getXCoord();
+       let y = snakePoint.getYCoord();
+
+       let x = x + 1;
+       do Screen.setColor(true);
+       do Screen.drawPixel(x, y);
+       do snakePoint.setXCoord(x);
+       do snakePoint.setYCoord(y);
+     }
+
+     return;
+   }
+
+   /** Moves the left up by 1 pixel. */
+   method void moveLeft()
+   {
+     var int x;
+     var int y;
+     if (snakePoint.getXCoord() > xMin)
+     {
+       do erase();
+       let x = snakePoint.getXCoord();
+       let y = snakePoint.getYCoord();
+
+       let x = x - 1;
+       do Screen.setColor(true);
+       do Screen.drawPixel(x, y);
+       do snakePoint.setXCoord(x);
+       do snakePoint.setYCoord(y);
+     }
+
+     return;
    }
 }
