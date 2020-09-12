@@ -12,7 +12,6 @@ public:
 
 private:
   // Private methods.
-  void pushToStack_(const std::string &argumentToPush);
   void function_();
   void call_();
   void return_();

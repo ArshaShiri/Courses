@@ -123,16 +123,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="arithmetic helper.cpp" />
     <ClCompile Include="command helper.cpp" />
+    <ClCompile Include="flow helper.cpp" />
+    <ClCompile Include="function helper.cpp" />
+    <ClCompile Include="push pop helper.cpp" />
     <ClCompile Include="translator helper.cpp" />
     <ClCompile Include="VMTranslator.cpp" />
-    <ClCompile Include="parer.cpp" />
+    <ClCompile Include="parser.cpp" />
     <ClCompile Include="translator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="arithmetic helper.h" />
     <ClInclude Include="command helper.h" />
     <ClInclude Include="common.h" />
+    <ClInclude Include="flow helper.h" />
+    <ClInclude Include="function helper.h" />
     <ClInclude Include="parser.h" />
+    <ClInclude Include="push pop helper.h" />
     <ClInclude Include="translator.h" />
     <ClInclude Include="translator helper.h" />
   </ItemGroup>

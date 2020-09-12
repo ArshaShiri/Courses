@@ -6,8 +6,8 @@ class PushPopHelper : public TranslatorHelper
 {
 public:
   PushPopHelper(const Parser &parser,
-                const std::string &fileNameWithNoExtension,
                 std::ofstream &outputFile);
+  void setFileNameWithNoExtension(const std::string &fileNameWithNoExtension);
   void write();
 
 private:

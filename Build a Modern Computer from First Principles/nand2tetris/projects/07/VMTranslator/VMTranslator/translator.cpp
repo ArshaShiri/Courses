@@ -34,6 +34,28 @@ Translator::Translator(const std::string &fileOrDirPath)
   // populate address map.
   if (isFilePathADirectory_)
   {
+    const auto inputFileExtension = ".vm";
+    DIR *dir;
+    struct dirent *ent;
+    if ((dir = opendir(fileOrDirPath.c_str())) != NULL) 
+    {
+      while ((ent = readdir(dir)) != NULL)
+      {
+        const auto fileName = std::string{ent->d_name};
+        const auto extensionLocation = fileName.find(inputFileExtension);
+        if (extensionLocation != fileName.npos)
+        {
+          const auto fileNameWithNoExtension = fileName.substr(0, extensionLocation);
+          const auto inputFilePath = fileOrDirPath + PATH_SEPARATOR + fileName;
+          inputFilePathsAndNamesWithoutExtension_.emplace_back(inputFilePath, fileNameWithNoExtension);
+        }
+      }
+      closedir(dir);
+    }
+    else
+    {
+      std::cout << "Failed to open directory" + fileOrDirPath + '\n';
+    }
   }
   else
   {
@@ -64,16 +86,14 @@ std::string Translator::getOutputFilePath_(
   if (isFilePathADirectory_)
   {
     if (isDirectoryOrFileInCurrentDir_)
-      outputFilePath = fileOrDirPath + fileOrDirPath + outputExtension;
+      outputFilePath = fileOrDirPath + PATH_SEPARATOR + fileOrDirPath + outputExtension;
     else
       outputFilePath = 
-        fileOrDirPath + fileOrDirPath.substr(lastDirectorySeparatorLocation + 1) + outputExtension;
+        fileOrDirPath + PATH_SEPARATOR + fileOrDirPath.substr(lastDirectorySeparatorLocation + 1) + outputExtension;
   }
   else
     outputFilePath = fileOrDirPath.substr(0, extensionIndicatorLocation) + outputExtension;
 
-  //std::cout << "path is " << fileOrDirPath << '\n';
-  //std::cout << "outputFilePath is " << outputFilePath << '\n';
   return outputFilePath;
 }
 
@@ -92,20 +112,41 @@ Translator& Translator::operator=(Translator &&otherTranslator)
 
 Translator::~Translator()
 {
+  outputFile_ << "(END)\n";
+  outputFile_ << "@END\n";
+  outputFile_ << "0;JMP\n";
   outputFile_.close();
 }
 
 void Translator::translate()
 {
+  auto addSisInitCall = bool{false};
+
+  // In case a directory is given, it is assumed that there are multiple files and we need to 
+  // write startup code. This is a requirement of the specs.
+  if (isFilePathADirectory_)
+  {
+    outputFile_ << "// Bootstrap code.\n";
+
+    // Set sp to 256
+    outputFile_ << "@256\n";
+    outputFile_ << "D=A\n";
+    outputFile_ << "@R0\n";
+    outputFile_ << "M=D\n";
+
+    addSisInitCall = true;
+  }
+
   for (const auto inputFilePathAndNameWithoutExtension : inputFilePathsAndNamesWithoutExtension_)
   {
-    auto parser = Parser{inputFilePathAndNameWithoutExtension.first};
+    auto parser = Parser{inputFilePathAndNameWithoutExtension.first, addSisInitCall};
 
     while (parser.hasMoreCommands())
     {
       parser.advance();
       write_(parser, inputFilePathAndNameWithoutExtension.second);
     }
+    addSisInitCall = false;
   }
 }
 
@@ -161,8 +202,9 @@ void Translator::writePushPop_(const Parser &parser,
                                const std::string &inputFilePathAndNameWithoutExtension)
 {
   if (pPushPopHelper_ == nullptr)
-    pPushPopHelper_ = std::make_unique<PushPopHelper>(parser, inputFilePathAndNameWithoutExtension, outputFile_);
+    pPushPopHelper_ = std::make_unique<PushPopHelper>(parser, outputFile_);
 
+  pPushPopHelper_->setFileNameWithNoExtension(inputFilePathAndNameWithoutExtension);
   pPushPopHelper_->write();
 }
 

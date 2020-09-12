@@ -10,16 +10,18 @@ namespace
   void removeComments(std::string &string);
 } // end of namespace declaration
 
-Parser::Parser(const std::string &fileName) : currentCommandLine_{0}
+Parser::Parser(const std::string &fileName, bool addSisInitCall) : currentCommandLine_{0}
 {
   auto inputFile = std::ifstream(fileName);
 
   if (!inputFile)
   {
-    std::cout << "Cannot open input file.\n";
+    std::cout << "Cannot open input file: " + fileName + '\n';
     return;
   }
 
+  if (addSisInitCall)
+    VMProgram_.emplace_back("call Sys.init 0");
   storeVMProgram_(inputFile);
 }
 

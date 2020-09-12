@@ -9,7 +9,7 @@
 class Parser
 {
 public:
-  Parser(const std::string &fileName);
+  Parser(const std::string &fileName, bool addSisInitCall = false);
 
   bool hasMoreCommands() const;
   void advance();

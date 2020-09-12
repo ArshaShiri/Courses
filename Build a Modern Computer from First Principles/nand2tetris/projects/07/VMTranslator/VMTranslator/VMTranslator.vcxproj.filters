@@ -18,9 +18,6 @@
     <ClCompile Include="command helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="parer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="translator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -28,6 +25,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="translator helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="push pop helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="flow helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="function helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="arithmetic helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -45,6 +57,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="translator helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="push pop helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="flow helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="function helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arithmetic helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

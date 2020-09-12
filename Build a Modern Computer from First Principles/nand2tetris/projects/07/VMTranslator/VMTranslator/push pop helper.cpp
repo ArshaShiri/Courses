@@ -5,9 +5,7 @@
 
 PushPopHelper::PushPopHelper(
   const Parser &parser,
-  const std::string &fileNameWithNoExtension,
-  std::ofstream &outputFile) : TranslatorHelper{parser, outputFile},
-                               fileNameWithNoExtension_ {fileNameWithNoExtension}
+  std::ofstream &outputFile) : TranslatorHelper{parser, outputFile}
 {}
 
 void PushPopHelper::write()
@@ -18,6 +16,11 @@ void PushPopHelper::write()
     push_();
   else
     pop_();
+}
+
+void PushPopHelper::setFileNameWithNoExtension(const std::string &fileNameWithNoExtension)
+{
+  fileNameWithNoExtension_ = fileNameWithNoExtension;
 }
 
 void PushPopHelper::push_()

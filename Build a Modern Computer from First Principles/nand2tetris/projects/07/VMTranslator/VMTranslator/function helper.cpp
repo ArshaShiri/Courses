@@ -18,11 +18,6 @@ void FunctionHelper::write()
     return_();
 }
 
-void FunctionHelper::pushToStack_(const std::string &argumentToPush)
-{
-
-}
-
 void FunctionHelper::function_()
 {
   const auto &parser = getParser_();
@@ -60,6 +55,7 @@ void FunctionHelper::call_()
     outputFile << "D=M\n";
 
     assignDToStackPointer_();
+    spPlusPlus_();
   };
 
   pushBasePointerRegister(LCLRegister_);
@@ -160,5 +156,6 @@ void FunctionHelper::return_()
 
   // goto RET
   outputFile << aCommandStart_ + "RET\n";
+  outputFile << "A=M\n";
   outputFile << "0;JMP\n";
 }

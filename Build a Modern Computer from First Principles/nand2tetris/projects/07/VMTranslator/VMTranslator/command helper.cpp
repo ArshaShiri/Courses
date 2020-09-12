@@ -98,10 +98,7 @@ void CommandHelper::setArg1_()
     break;
   }
   case CommandType::C_RETURN:
-  {
-    std::cout << "arg1 is not meant for C_RETURN commands" << '\n';
     break;
-  }
   default:
   {
     arg1_ = tokens_.at(1);
