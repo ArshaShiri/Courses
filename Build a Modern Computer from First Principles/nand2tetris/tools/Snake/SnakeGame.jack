@@ -1,0 +1,50 @@
+/**
+ * Implements the Snake
+ */
+ 
+ class SnakeGame
+ { 
+   field Snake snake;
+   
+   /** Constructs a new Snake Game. */
+   constructor SnakeGame new() 
+   {
+      let snake = Snake.new();
+      return this;
+   }
+
+   /** Disposes this game. */
+   method void dispose() 
+   {
+      do snake.dispose();
+      do Memory.deAlloc(this);
+      return;
+   }
+
+   /** Runs the game: handles the user's inputs and moves the snake accordingly */
+   method void run() 
+   {
+      var char key;  // the key currently pressed by the user
+      var boolean exit;
+      let exit = false;
+      
+      while (~exit) 
+      {
+         // waits for a key to be pressed
+         while (key = 0) 
+         {
+            let key = Keyboard.keyPressed();
+         }
+
+         if (key = 81)  { let exit = true; }     // q key
+
+
+         // waits for the key to be released
+         while (~(key = 0)) 
+         {
+            let key = Keyboard.keyPressed();
+         }
+     }
+     return;
+   }   
+ }

@@ -1,0 +1,26 @@
+/** Represents a point in 2D coordinate system */
+
+class Point 
+{
+   field int xCoord;
+   field int yCoord;
+  
+   /** Makes a new point with given x and y */
+   constructor Point new(int x, int y) 
+   {
+      let xCoord = x;
+      let yCoord = y;
+      return this;
+   }
+
+   /** Accessors. */
+   method int getXCoord() { return xCoord; }
+   method int getYCoord() { return yCoord; }  
+  
+   /** Disposes this point. */
+   method void dispose() 
+   {
+      do Memory.deAlloc(this);
+      return;
+   }
+}
