@@ -1,0 +1,42 @@
+/** Represents a node that is used in the Point linked list. */
+
+class PointNode 
+{
+  field Point data;
+  field Node next;
+
+  /** Creates a  new Node. */
+  constructor PointNode new()
+  {
+      let data = Point.new(0, 0);
+      let next = null;
+      return this;
+  }
+
+  /** Accessors. */
+  method Point getPoint() { return data; }
+  method int getNext() { return next; }
+
+  /** Setters. */
+  method void setPoint(int x, int y) 
+  { 
+    do data.setXCoord(x);
+    do data.setYCoord(y);
+    return;
+  }
+
+  method void setNextNode(PointNode node) 
+  {
+   let next = node;
+   return;
+  }
+
+  /** Disposes this node */
+  method void dispose() 
+  {
+      do data.dispose();
+      // Since a node is managed by the linked list, it should not dispose the next node.
+      do Memory.deAlloc(this);
+      return;
+  }
+}

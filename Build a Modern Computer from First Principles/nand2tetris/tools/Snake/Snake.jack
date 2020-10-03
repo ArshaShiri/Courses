@@ -1,142 +1,217 @@
-/** Represents a snake which is a collection of 2D points */
+/** Represents a snake which is a collection of 2D points.
+  * A snake consists of multiple rectangles */
+
 
 class Snake
-{
-  // For now, a snake is just a point. Eventually, it is going to be an dynamic array of points.
-  field Point snakePoint;
+{ 
+  field PointList snakePoints;
+  field int snakePartSize;
+
   field int xMin;
   field int xMax;
   field int yMin;
   field int yMax;
+
+ /** Constructs a new snake which consists of one point  and draws it 
+  *  on top left of the screen */
+ constructor Snake new() 
+ {
+    let snakePoints = PointList.new();
+    // do snakePoints.addPoint(0, 4);
+    do snakePoints.addPoint(0, 0);
+    
+    let snakePartSize = 4;
+    let xMin = snakePartSize - 1;
+    let xMax = 511 - snakePartSize - snakePartSize + 1;
+    let yMin = snakePartSize - 1;
+    let yMax = 255 - snakePartSize - snakePartSize + 1;
+
+    do draw(0, 4);
+    return this;
+ }
+ 
+ method int getSnakePartSize() { return snakePartSize; }
+
+ /** Disposes this snake. */
+ method void dispose() 
+ {
+    do snakePoints.dispose();
+    do Memory.deAlloc(this);
+    return;
+ }
+ 
+  /** Gets the head of the snake. */
+  method Point getHeadPoint() 
+  {
+    var PointNode head;
+    var Point headLocation;
+
+    let head = snakePoints.getHead();
+    let headLocation = head.getPoint();
+    return headLocation;
+  } 
+
+  /** Draws the snake on the screen.
+  *  It gets the new coordinates for the head of the snake and draws the rest
+  *  of the snake. */
+  method void draw(int x, int y) 
+  {
+    var PointNode currentNode;
+    var Point currentPoint;
+    var PointListIterator pointIt;
+    var int previousX;
+    var int previousY;
+    
+
+    let pointIt = PointListIterator.new(snakePoints);
+    do Screen.setColor(true);
+    while(pointIt.hasMoreNode())
+    {
+      do pointIt.advance();
+      let currentNode = pointIt.getCurrentNode();
+      let currentPoint = currentNode.getPoint();
+      let previousX = currentPoint.getXCoord();
+      let previousY =currentPoint.getYCoord();
+      do currentNode.setPoint(x, y);
+
+      do Screen.drawRectangle(x, y, x + snakePartSize, y + snakePartSize);
+      //do Output.printInt(x);
+      //do Output.printInt(y);
+      
+      let x = previousX;
+      let y = previousY;
+      // do Output.printInt(testNumber);
+      // let testNumber = 2;
+    }
+    do Output.println();
+    do pointIt.dispose();
+    return;
+  }
+
+  /** Erases the snake from the screen. */
+  method void erase() 
+  {
+    var PointListIterator pointIt;
+    var PointNode currentNode;
+    var Point currentPoint;
+    var in x;
+    var in y;
+
+    let pointIt = PointListIterator.new(snakePoints);
+
+    do Screen.setColor(false);
+    while(pointIt.hasMoreNode())
+    {
+      do pointIt.advance();
+      let currentNode = pointIt.getCurrentNode();
+      let currentPoint = currentNode.getPoint();
+      let x = currentPoint.getXCoord();
+      let y = currentPoint.getYCoord();
+      do Screen.drawRectangle(x, y, x + snakePartSize, y + snakePartSize);
+    }
+
+    do pointIt.dispose();
+    return;
+  }
+ 
+/** Moves the snake up by snakePartSize pixel. */
+  method void moveUp()
+  {
+    var int x;
+    var int y;
+    var PointNode head;
+    var Point headLocation;
+
+    let head = snakePoints.getHead();
+    let headLocation = head.getPoint();
+    let x = headLocation.getXCoord();
+    let y = headLocation.getYCoord();    
+    
+    if (y > 0)
+    {
+     do erase();
+     let y = y - snakePartSize;
+     do draw(x, y);
+    }
+
+    return;
+  }
+
+ /** Moves the down up by snakePartSize pixel. */
+ method void moveDown()
+ {
+    var int x;
+    var int y;
+    var PointNode head;
+    var Point headLocation;
+
+    let head = snakePoints.getHead();
+    let headLocation = head.getPoint();
+    let x = headLocation.getXCoord();
+    let y = headLocation.getYCoord();    
+    
+    if (y < yMax)
+    {
+     do erase();
+     let y = y + snakePartSize;
+     //do Output.printInt(x);
+     //do Output.printInt(y);
+     //do Output.println();     
+     do draw(x, y);
+    }
+
+    return;
+ }
+
+  /** Moves the right up by snakePartSize pixel. */
+  method void moveRight()
+  {
+    var int x;
+    var int y;
+    var PointNode head;
+    var Point headLocation;
+
+    let head = snakePoints.getHead();
+    let headLocation = head.getPoint();
+    let x = headLocation.getXCoord();
+    let y = headLocation.getYCoord(); 
+    
+    if (x < xMax)
+    {
+     do erase();
+     let x = x + snakePartSize;
+     do draw(x, y);
+    }
+
+    return;
+  }
+
+  /** Moves the left up by snakePartSize pixel. */
+  method void moveLeft()
+  {
+    var int x;
+    var int y;
+    var PointNode head;
+    var Point headLocation;
+
+    let head = snakePoints.getHead();
+    let headLocation = head.getPoint();
+    let x = headLocation.getXCoord();
+    let y = headLocation.getYCoord(); 
+    
+    if (x > xMin)
+    {
+     do erase();
+     let x = x - snakePartSize;
+     do draw(x, y);
+    }
+
+    return;
+  }
   
-   /** Constructs a new snake which consists of one point  and draws it 
-    *  on top left of the screen */
-   constructor Snake new() 
-   {
-      let snakePoint = Point.new(0, 0);
-      let xMin = 0;
-      let xMax = 511;
-      let yMin = 0;
-      let yMax = 255;
-
-      do draw();
-      return this;
-   }
-
-   /** Disposes this snake. */
-   method void dispose() 
-   {
-      do snakePoint.dispose();
-      do Memory.deAlloc(this);
-      return;
-   }
-
-   /** Draws the snake on the screen. */
-   method void draw() 
-   {
-      var int currentX;
-      var int currentY;
-      let currentX = snakePoint.getXCoord();
-      let currentY = snakePoint.getYCoord();
-  
-      do Screen.drawPixel(currentX, currentY);
-      return;
-   }
-   
-   /** Erases the snake from the screen. */
-   method void erase() 
-   {
-      var int currentX;
-      var int currentY;
-      let currentX = snakePoint.getXCoord();
-      let currentY = snakePoint.getYCoord();
-  
-      do Screen.setColor(false);
-      do Screen.drawPixel(currentX, currentY);
-      return;
-   }
-   
-   /** Moves the snake up by 1 pixel. */
-   method void moveUp()
-   {
-     var int x;
-     var int y;   
-     if (snakePoint.getYCoord() > 0)
-     {
-       do erase();
-       let x = snakePoint.getXCoord();
-       let y = snakePoint.getYCoord();
-
-       let y = y - 1;
-       do Screen.setColor(true);
-       do Screen.drawPixel(x, y);
-       do snakePoint.setXCoord(x);
-       do snakePoint.setYCoord(y);
-     }
-
-     return;
-   }
-
-   /** Moves the down up by 1 pixel. */
-   method void moveDown()
-   {
-     var int x;
-     var int y; 
-     if (snakePoint.getYCoord() < yMax)
-     {
-       do erase();
-       let x = snakePoint.getXCoord();
-       let y = snakePoint.getYCoord();
-
-       let y = y + 1;
-       do Screen.setColor(true);
-       do Screen.drawPixel(x, y);
-       do snakePoint.setXCoord(x);
-       do snakePoint.setYCoord(y);
-     }
-
-     return;
-   }
-
-   /** Moves the right up by 1 pixel. */
-   method void moveRight()
-   {
-     var int x;
-     var int y; 
-     if (snakePoint.getXCoord() < xMax)
-     {
-       do erase();
-       let x = snakePoint.getXCoord();
-       let y = snakePoint.getYCoord();
-
-       let x = x + 1;
-       do Screen.setColor(true);
-       do Screen.drawPixel(x, y);
-       do snakePoint.setXCoord(x);
-       do snakePoint.setYCoord(y);
-     }
-
-     return;
-   }
-
-   /** Moves the left up by 1 pixel. */
-   method void moveLeft()
-   {
-     var int x;
-     var int y;
-     if (snakePoint.getXCoord() > xMin)
-     {
-       do erase();
-       let x = snakePoint.getXCoord();
-       let y = snakePoint.getYCoord();
-
-       let x = x - 1;
-       do Screen.setColor(true);
-       do Screen.drawPixel(x, y);
-       do snakePoint.setXCoord(x);
-       do snakePoint.setYCoord(y);
-     }
-
-     return;
-   }
+  method void addPoint(int x, int y)
+  {
+    do snakePoints.addPoint(x, y);
+    return;
+  }
 }

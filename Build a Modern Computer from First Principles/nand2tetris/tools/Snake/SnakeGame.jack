@@ -5,6 +5,7 @@
  class SnakeGame
  { 
    field Snake snake;
+   field int snakePartSize;
    field int direction; // the snake's current direction: 
                         // 1=up, 2=down, 3=left, 4=right
                         // By default, the snake starts going right.
@@ -15,8 +16,9 @@
    constructor SnakeGame new() 
    {
       let snake = Snake.new();
-      let delay = 5;
-      let direction = 4;
+      let delay = 50;
+      let direction = 2;
+      let snakePartSize = snake.getSnakePartSize();
       return this;
    }
 
@@ -56,9 +58,28 @@
          if (key = 133) { let direction = 2; }   // down arrow
          if (key = 130) { let direction = 3; }   // left arrow
          if (key = 132) { let direction = 4; }   // right arrow
-
-         do moveSnake();
+         
+         if (key = 65) { do addPoint(); }   // for debugging purposes
+         do moveSnake();  
      }
      return;
-   }   
+   }
+
+   method void addPoint()
+   {
+     var int x;
+     var int y;
+     var Point snakeHead;
+     
+     let snakeHead = snake.getHeadPoint();
+     let x = snakeHead.getXCoord();
+     let y = snakeHead.getYCoord();
+     
+     if (direction = 1) { do snake.addPoint(x, y + snakePartSize); } // Up
+     if (direction = 2) { do snake.addPoint(x, y - snakePartSize); } // Down
+     if (direction = 3) { do snake.addPoint(x - snakePartSize, y); } // Left
+     if (direction = 4) { do snake.addPoint(x + snakePartSize, y); } // Right
+     
+     return;
+   } 
  }

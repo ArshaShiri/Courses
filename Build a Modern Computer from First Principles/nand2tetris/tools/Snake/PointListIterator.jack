@@ -1,0 +1,59 @@
+/** Iterator class to iterate over PointList. */
+
+class PointListIterator 
+{ 
+  field PointList givenList;
+  field PointNode currentNode;
+
+  /** Initializes the PointListIterator by setting the givenList to list. */
+  constructor PointListIterator new(PointList list)
+  {
+    let givenList = list;
+    let currentNode = null;
+    return this;
+  }
+
+  /** Checks if there are more nodes to iterate through. */
+  method boolean hasMoreNode()
+  {
+    var PointNode nextNode;
+    var boolean hasMoreNode;
+    
+    if (currentNode = null)
+    {
+      let nextNode = givenList.getHead();
+    }
+    else
+    {
+      let nextNode = currentNode.getNext();
+    }
+    
+    let hasMoreNode = ~(nextNode = null);
+    return hasMoreNode;
+  }
+  
+  /** Sets the currentNode to the next node in the list. */
+  method void advance()
+  {
+    if (currentNode = null)
+    {
+      let currentNode = givenList.getHead();
+    }
+    else
+    {
+      let currentNode = currentNode.getNext();
+    }
+
+    return;
+  }
+
+  /** Get the next node in the list. */
+  method PointNode getCurrentNode(){ return currentNode; }
+
+  method void dispose() 
+  {
+    // do currentNode.dispose();
+    do Memory.deAlloc(this);
+    return;
+  }
+}

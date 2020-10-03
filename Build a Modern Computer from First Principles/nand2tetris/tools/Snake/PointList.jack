@@ -1,0 +1,67 @@
+/** Represents a linked list of Points. */
+
+class PointList 
+{
+  field PointNode head;
+
+  /** Creates a PointList. */
+  constructor PointList new()
+  {
+      let head = null;
+      return this;
+  }
+
+  /** Gets the head node. */
+  method PointNode getHead() { return head; }
+
+  /** Add a point to the list. */
+  method void addPoint(int x, int y)
+  {
+    var PointNode newNode;
+    var PointNode nextNode;
+    var PointNode currentNode;
+
+    if (head = null)
+    {
+      let head = PointNode.new();
+      do head.setPoint(x, y);
+      return;
+    }
+    else
+    {
+      let newNode = PointNode.new();
+      do newNode.setPoint(x, y);
+
+      let nextNode = head.getNext();
+      let currentNode = head;
+
+      while (~(nextNode = null)) 
+      { 
+        let currentNode = nextNode;
+        let nextNode = currentNode.getNext();
+      }
+      //do Output.printInt(x);
+      //do Output.printInt(y);
+      //do Output.println();
+      do currentNode.setNextNode(newNode);
+      return;
+    }
+  }
+
+  /** Disposes this List by recursively disposing its tail. */
+  method void dispose()
+  {
+    var PointNode currentNode;
+    var PointNode nextNode;
+    let currentNode = head;
+
+    while (~(currentNode = null)) 
+    {
+      let nextNode = currentNode.getNext();
+      do currentNode.dispose();
+      let currentNode = nextNode;
+    }
+
+    return;
+  }
+}

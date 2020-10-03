@@ -2,38 +2,44 @@
 
 class Point 
 {
-   field int xCoord;
-   field int yCoord;
-  
-   /** Makes a new point with given x and y */
-   constructor Point new(int x, int y) 
-   {
-      let xCoord = x;
-      let yCoord = y;
-      return this;
-   }
+ field int xCoord;
+ field int yCoord;
 
-   /** Accessors. */
-   method int getXCoord() { return xCoord; }
-   method int getYCoord() { return yCoord; }
+ /** Makes a new point with given x and y */
+ constructor Point new(int x, int y) 
+ {
+    let xCoord = x;
+    let yCoord = y;
+    return this;
+ }
 
-   /** Setters. */
-   method void setXCoord(int x) 
-   { 
-     let xCoord = x ;
-     return;
-   }
-   
-   method void setYCoord(int y) 
-   {
-     let yCoord = y ;
-     return;
-   }
-  
-   /** Disposes this point. */
-   method void dispose() 
-   {
-      do Memory.deAlloc(this);
-      return;
-   }
+ /** Accessors. */
+ method int getXCoord() { return xCoord; }
+ method int getYCoord() { return yCoord; }
+
+ /** Setters. */
+ method void setXCoord(int x) 
+ { 
+   let xCoord = x ;
+   return;
+ }
+ 
+ method void setYCoord(int y) 
+ {
+   let yCoord = y ;
+   return;
+ }
+
+ method void drawOrErase()
+ {
+   do Screen.drawPixel(xCoord, yCoord);
+   return;
+ }
+
+ /** Disposes this point. */
+ method void dispose() 
+ {
+    do Memory.deAlloc(this);
+    return;
+ }
 }
