@@ -90,7 +90,7 @@ class SnakeGame
    let foodX = food.getXCoord();
    let foodY = food.getYCoord();
    
-   // We will check if the bounding box of the snake's had overlaps with the food.
+   // We will check if the bounding box of the snake's head overlaps with the food.
    if (SnakeUtils.areSameSizeBoundingBoxesOverlapping(
          snakeHeadX, snakeHeadY, 
          snakeHeadX + snakeSqureBitSize, snakeHeadY + snakeSqureBitSize,
@@ -194,7 +194,7 @@ class SnakeGame
        do Screen.drawRectangle(foodX, foodY, foodX + snakeSqureBitSize, foodY + snakeSqureBitSize);
        do moveSnake();
        
-       if (snake.didSnakeHaveAnAccident()) { let exit = true; } // do Sys.halt();
+       if (snake.didSnakeHaveAnAccident()) { let exit = true; }
        
        do checkForFood();
        do updateSpeed();
@@ -224,15 +224,6 @@ class SnakeGame
    
    let maxBB = snake.getMaxBB();
    let minBB = snake.getMinBB();
-   
-   //do Output.printInt(minBB.getXCoord());
-   //do Output.printString(", ");
-   //do Output.printInt(minBB.getYCoord());
-   //do Output.printString(" ");
-   //do Output.printInt(maxBB.getXCoord());
-   //do Output.printString(", ");
-   //do Output.printInt(maxBB.getXCoord());    
-   //do Output.println();       
    
    if (minBB.getXCoord() > (screenMaxX / 2))
    {

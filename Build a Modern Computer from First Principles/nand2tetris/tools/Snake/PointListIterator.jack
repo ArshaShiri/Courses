@@ -52,7 +52,7 @@ class PointListIterator
 
   method void dispose() 
   {
-    // do currentNode.dispose();
+    // Iterator is not the owner of passed PointList. So it should not delte it.
     do Memory.deAlloc(this);
     return;
   }

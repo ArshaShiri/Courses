@@ -40,9 +40,7 @@ class PointList
         let currentNode = nextNode;
         let nextNode = currentNode.getNext();
       }
-      //do Output.printInt(x);
-      //do Output.printInt(y);
-      //do Output.println();
+
       do currentNode.setNextNode(newNode);
       return;
     }

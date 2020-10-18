@@ -35,6 +35,7 @@ class PointNode
   method void dispose() 
   {
       do data.dispose();
+      
       // Since a node is managed by the linked list, it should not dispose the next node.
       do Memory.deAlloc(this);
       return;

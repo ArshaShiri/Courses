@@ -8,25 +8,26 @@
   * Where x marks the stored point in the snakePoints list.*/
 
 class Snake
-{ 
-  field PointList snakePoints;
+{
+  // Stores the size of the square that represents each part of the snake.
   field int snakeSqureBitSize;
 
+  field PointList snakePoints;
+  field boolean snakeHadAnAccident;
+    
   field int screenMinX;
   field int screenMaxX;
   field int screenMinY;
   field int screenMaxY;
   
-  field boolean snakeHadAnAccident;
-
   // Snake's bounding box. This is used in the snake game to summon food outside of snake's BB.
   field Point minBB;
   field Point maxBB;
 
- /** Constructs a new snake which consists of one point and draws it 
+  /** Constructs a new snake which consists of one point and draws it 
   *  on top left of the screen */
- constructor Snake new(int minX, int maxX, int minY, int maxY) 
- {
+  constructor Snake new(int minX, int maxX, int minY, int maxY) 
+  {
     let snakePoints = PointList.new();
     let minBB = Point.new(0, 0);
     let maxBB = Point.new(0, 0);
@@ -43,19 +44,20 @@ class Snake
 
     do draw(0, 0);
     return this;
- }
+  }
  
- function int getSnakeSqureBitSize() { return 8; }
+  /** Returns the size of the square that represents each part of the snake. */
+  function int getSnakeSqureBitSize() { return 8; }
 
- /** Disposes this snake. */
- method void dispose() 
- {
+  /** Disposes this snake. */
+  method void dispose() 
+  {
     do snakePoints.dispose();
     do minBB.dispose();
     do maxBB.dispose();
     do Memory.deAlloc(this);
     return;
- }
+  }
  
   /** Gets the head of the snake. */
   method Point getHeadPoint() 
@@ -68,6 +70,7 @@ class Snake
     return headLocation;
   }
 
+  // Geters for snake's bounding box.
   method Point getMaxBB() { return maxBB; }
   method Point getMinBB() { return minBB; }
   
@@ -76,23 +79,14 @@ class Snake
     return snakeHadAnAccident;
   }
   
+  /** Checks if snake had an accident with itself. */
   method void isSnakeBitOverlappingWithHead(int snakeBitX, int snakeBitY)
   {
     var PointNode headNode;
     var Point head;
     
     let headNode = snakePoints.getHead();
-    let head = headNode.getPoint();
-    
-   //do Output.printInt(head.getXCoord());
-   //do Output.printString(", ");
-   //do Output.printInt(head.getYCoord());
-   //do Output.printString(" ");
-   //do Output.printInt(snakeBitX);
-   //do Output.printString(", ");
-   //do Output.printInt(snakeBitY);    
-   //do Output.println();    
-    
+    let head = headNode.getPoint();    
     
     if (SnakeUtils.areSameSizeBoundingBoxesOverlapping(
           head.getXCoord(), head.getYCoord(), 
@@ -121,7 +115,12 @@ class Snake
 
     let pointIt = PointListIterator.new(snakePoints);
     let counter = 0;
-    
+
+    // Get the current point (Start from the head).
+    // Store its current position.
+    // Update its position based on the passed x and y to this function.
+    // Go the next node attached to the current node if it exists.
+    // Repeat the above procedure.
     do Screen.setColor(true);
     while(pointIt.hasMoreNode())
     {
@@ -148,12 +147,16 @@ class Snake
       
       do currentNode.setPoint(x, y);
       do Screen.drawRectangle(x, y, x + snakeSqureBitSize, y + snakeSqureBitSize);
-      //do isSnakeBitOverlappingWithHead(x, y);
-      if (counter > 3) { do isSnakeBitOverlappingWithHead(x, y); }
+      
+      // For a snake bigger than size 4, we check if the snake had an accident with itself.
+      // The head of the snake can only touch its parts with numbers bigger than 4.
+      if (counter > 4) { do isSnakeBitOverlappingWithHead(x, y); }
+      
       let x = previousX;
       let y = previousY;
       let counter = counter + 1;
     }
+    
     do pointIt.dispose();
     return;
   }
