@@ -1,0 +1,18 @@
+class SnakeUtils
+{
+  /** checks if two 2D bounding box of same size are overlapping. */
+  function boolean areSameSizeBoundingBoxesOverlapping(
+    int xMinBB1, int yMinBB1,
+    int xMaxBB1, int yMaxBB1,
+    int xMinBB2, int yMinBB2,
+    int xMaxBB2, int yMaxBB2)
+  {
+    var boolean isBB1AndBB2ProjectionOnXAxisNotOverlapping;
+    var boolean isBB1AndBB2ProjectionOnYAxisNotOverlapping;
+    
+    let isBB1AndBB2ProjectionOnXAxisNotOverlapping = (xMinBB1 > xMaxBB2) | (xMaxBB1 < xMinBB2);
+    let isBB1AndBB2ProjectionOnYAxisNotOverlapping = (yMinBB1 > yMaxBB2) | (yMaxBB1 < yMinBB2);
+
+    return ~(isBB1AndBB2ProjectionOnXAxisNotOverlapping | isBB1AndBB2ProjectionOnYAxisNotOverlapping);
+  }
+}

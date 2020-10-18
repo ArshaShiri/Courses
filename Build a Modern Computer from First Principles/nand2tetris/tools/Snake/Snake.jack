@@ -1,41 +1,58 @@
-/** Represents a snake which is a collection of 2D points.
-  * A snake consists of multiple rectangles */
-
+/** Represents a snake which is a collection of 2D snakeSqureBit.
+  * We only need to store one of the corner nodes of each square.
+  * In the screen coordinate where x is from left to right and y 
+  * from top to bottom a snake is stored as below:
+  * x--0x--0x--0x--0x--0x--0
+  * |  ||  ||  ||  ||  ||  |....
+  * 0--00--00--00--00--00--0
+  * Where x marks the stored point in the snakePoints list.*/
 
 class Snake
 { 
   field PointList snakePoints;
-  field int snakePartSize;
+  field int snakeSqureBitSize;
 
-  field int xMin;
-  field int xMax;
-  field int yMin;
-  field int yMax;
+  field int screenMinX;
+  field int screenMaxX;
+  field int screenMinY;
+  field int screenMaxY;
+  
+  field boolean snakeHadAnAccident;
 
- /** Constructs a new snake which consists of one point  and draws it 
+  // Snake's bounding box. This is used in the snake game to summon food outside of snake's BB.
+  field Point minBB;
+  field Point maxBB;
+
+ /** Constructs a new snake which consists of one point and draws it 
   *  on top left of the screen */
- constructor Snake new() 
+ constructor Snake new(int minX, int maxX, int minY, int maxY) 
  {
     let snakePoints = PointList.new();
-    // do snakePoints.addPoint(0, 4);
+    let minBB = Point.new(0, 0);
+    let maxBB = Point.new(0, 0);
     do snakePoints.addPoint(0, 0);
     
-    let snakePartSize = 4;
-    let xMin = snakePartSize - 1;
-    let xMax = 511 - snakePartSize - snakePartSize + 1;
-    let yMin = snakePartSize - 1;
-    let yMax = 255 - snakePartSize - snakePartSize + 1;
+    let snakeSqureBitSize = Snake.getSnakeSqureBitSize();
+    
+    let screenMinX = minX;
+    let screenMaxX = maxX;
+    let screenMinY = minY;
+    let screenMaxY = maxY;  
 
-    do draw(0, 4);
+    let snakeHadAnAccident = false;
+
+    do draw(0, 0);
     return this;
  }
  
- method int getSnakePartSize() { return snakePartSize; }
+ function int getSnakeSqureBitSize() { return 8; }
 
  /** Disposes this snake. */
  method void dispose() 
  {
     do snakePoints.dispose();
+    do minBB.dispose();
+    do maxBB.dispose();
     do Memory.deAlloc(this);
     return;
  }
@@ -49,7 +66,46 @@ class Snake
     let head = snakePoints.getHead();
     let headLocation = head.getPoint();
     return headLocation;
-  } 
+  }
+
+  method Point getMaxBB() { return maxBB; }
+  method Point getMinBB() { return minBB; }
+  
+  method boolean didSnakeHaveAnAccident()
+  {
+    return snakeHadAnAccident;
+  }
+  
+  method void isSnakeBitOverlappingWithHead(int snakeBitX, int snakeBitY)
+  {
+    var PointNode headNode;
+    var Point head;
+    
+    let headNode = snakePoints.getHead();
+    let head = headNode.getPoint();
+    
+   //do Output.printInt(head.getXCoord());
+   //do Output.printString(", ");
+   //do Output.printInt(head.getYCoord());
+   //do Output.printString(" ");
+   //do Output.printInt(snakeBitX);
+   //do Output.printString(", ");
+   //do Output.printInt(snakeBitY);    
+   //do Output.println();    
+    
+    
+    if (SnakeUtils.areSameSizeBoundingBoxesOverlapping(
+          head.getXCoord(), head.getYCoord(), 
+          head.getXCoord() + snakeSqureBitSize, head.getYCoord() + snakeSqureBitSize,
+          snakeBitX, snakeBitY,
+          snakeBitX + snakeSqureBitSize, snakeBitY + snakeSqureBitSize))
+   
+    {
+      let snakeHadAnAccident = true;
+    }
+
+    return;
+  }
 
   /** Draws the snake on the screen.
   *  It gets the new coordinates for the head of the snake and draws the rest
@@ -61,29 +117,43 @@ class Snake
     var PointListIterator pointIt;
     var int previousX;
     var int previousY;
-    
+    var int counter;
 
     let pointIt = PointListIterator.new(snakePoints);
+    let counter = 0;
+    
     do Screen.setColor(true);
     while(pointIt.hasMoreNode())
     {
       do pointIt.advance();
       let currentNode = pointIt.getCurrentNode();
       let currentPoint = currentNode.getPoint();
-      let previousX = currentPoint.getXCoord();
-      let previousY =currentPoint.getYCoord();
-      do currentNode.setPoint(x, y);
 
-      do Screen.drawRectangle(x, y, x + snakePartSize, y + snakePartSize);
-      //do Output.printInt(x);
-      //do Output.printInt(y);
+      let previousX = currentPoint.getXCoord();
+      let previousY = currentPoint.getYCoord();
       
+      if (counter = 0)
+      {
+        do maxBB.setXCoord(previousX);
+        do minBB.setXCoord(previousX);
+        do maxBB.setYCoord(previousY);
+        do minBB.setYCoord(previousY);
+      }
+
+      // Update snake's bounding box.
+      if (previousX > maxBB.getXCoord()) { do maxBB.setXCoord(previousX); }
+      if (previousX < minBB.getXCoord()) { do minBB.setXCoord(previousX); }
+      if (previousY > maxBB.getYCoord()) { do maxBB.setYCoord(previousY); }
+      if (previousY < minBB.getYCoord()) { do minBB.setYCoord(previousY); }            
+      
+      do currentNode.setPoint(x, y);
+      do Screen.drawRectangle(x, y, x + snakeSqureBitSize, y + snakeSqureBitSize);
+      //do isSnakeBitOverlappingWithHead(x, y);
+      if (counter > 3) { do isSnakeBitOverlappingWithHead(x, y); }
       let x = previousX;
       let y = previousY;
-      // do Output.printInt(testNumber);
-      // let testNumber = 2;
+      let counter = counter + 1;
     }
-    do Output.println();
     do pointIt.dispose();
     return;
   }
@@ -107,14 +177,14 @@ class Snake
       let currentPoint = currentNode.getPoint();
       let x = currentPoint.getXCoord();
       let y = currentPoint.getYCoord();
-      do Screen.drawRectangle(x, y, x + snakePartSize, y + snakePartSize);
+      do Screen.drawRectangle(x, y, x + snakeSqureBitSize, y + snakeSqureBitSize);
     }
 
     do pointIt.dispose();
     return;
   }
  
-/** Moves the snake up by snakePartSize pixel. */
+/** Moves the snake up by snakeSqureBitSize pixel. */
   method void moveUp()
   {
     var int x;
@@ -127,17 +197,18 @@ class Snake
     let x = headLocation.getXCoord();
     let y = headLocation.getYCoord();    
     
-    if (y > 0)
+    if (y > screenMinY)
     {
      do erase();
-     let y = y - snakePartSize;
+     let y = y - snakeSqureBitSize;
      do draw(x, y);
     }
+    else { let snakeHadAnAccident = true; }
 
     return;
   }
 
- /** Moves the down up by snakePartSize pixel. */
+ /** Moves the down up by snakeSqureBitSize pixel. */
  method void moveDown()
  {
     var int x;
@@ -150,20 +221,18 @@ class Snake
     let x = headLocation.getXCoord();
     let y = headLocation.getYCoord();    
     
-    if (y < yMax)
+    if (y < screenMaxY)
     {
      do erase();
-     let y = y + snakePartSize;
-     //do Output.printInt(x);
-     //do Output.printInt(y);
-     //do Output.println();     
+     let y = y + snakeSqureBitSize;
      do draw(x, y);
     }
+    else { let snakeHadAnAccident = true; }
 
     return;
  }
 
-  /** Moves the right up by snakePartSize pixel. */
+  /** Moves the right up by snakeSqureBitSize pixel. */
   method void moveRight()
   {
     var int x;
@@ -176,17 +245,18 @@ class Snake
     let x = headLocation.getXCoord();
     let y = headLocation.getYCoord(); 
     
-    if (x < xMax)
+    if (x < screenMaxX)
     {
      do erase();
-     let x = x + snakePartSize;
+     let x = x + snakeSqureBitSize;
      do draw(x, y);
     }
+    else { let snakeHadAnAccident = true; }
 
     return;
   }
 
-  /** Moves the left up by snakePartSize pixel. */
+  /** Moves the left up by snakeSqureBitSize pixel. */
   method void moveLeft()
   {
     var int x;
@@ -199,12 +269,13 @@ class Snake
     let x = headLocation.getXCoord();
     let y = headLocation.getYCoord(); 
     
-    if (x > xMin)
+    if (x > screenMinX)
     {
      do erase();
-     let x = x - snakePartSize;
+     let x = x - snakeSqureBitSize;
      do draw(x, y);
     }
+    else { let snakeHadAnAccident = true; }
 
     return;
   }

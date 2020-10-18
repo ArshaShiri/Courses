@@ -1,85 +1,287 @@
-/**
- * Implements the Snake
- */
+/** Implements the Snake game.
+  * It manages a snake object described in Snake.jack. 
+  * The snake's growth has a limit to maintain fps on
+  * the screen. As explained under Snake.jack, all the
+  * snake parts are represented by single poins and 
+  * when they are drawn, they are expanded to squares. 
+  * The same holds for the food of the snake. */
  
- class SnakeGame
- { 
-   field Snake snake;
-   field int snakePartSize;
-   field int direction; // the snake's current direction: 
-                        // 1=up, 2=down, 3=left, 4=right
-                        // By default, the snake starts going right.
+class SnakeGame
+{ 
+  field Snake snake;
+  field Point food;
+  
+  // Stores the size of the square that represents each part of the snake.
+  field int snakeSqureBitSize;
 
-   field int delay;
+  field int screenMinX;
+  field int screenMaxX;
+  field int screenMinY;
+  field int screenMaxY;  
+
+  field int delay;
+  field int score;
+  field int growLimit;  
+
+  // The snake's current direction: 
+  // 1=up, 2=down, 3=left, 4=right
+  // By default, the snake starts going right.  
+  field int direction;
+
+  /** Constructs a new Snake Game. */
+  constructor SnakeGame new() 
+  {
+    let snakeSqureBitSize = Snake.getSnakeSqureBitSize();
+
+    // Set the limts of the screen, if the snake is passed these limits the game will be finished.
+    let screenMinX = snakeSqureBitSize - 1;
+    let screenMaxX = 511 - snakeSqureBitSize - snakeSqureBitSize + 1;
+    let screenMinY = snakeSqureBitSize - 1;
+    let screenMaxY = 255 - snakeSqureBitSize - snakeSqureBitSize + 1;
+
+    let snake = Snake.new(screenMinX, screenMaxX, screenMinY, screenMaxY);
+
+    
+    let food = Point.new(0, 0);
+    let delay = 50;
+    let direction = 2;
+    let score = 0;
+    let growLimit = 10;     
+
+    //do LCGRandom.setSeed(10);
+    return this;
+  }
+
+  /** Disposes this game. */
+  method void dispose() 
+  {
+    do snake.dispose();
+    do food.dispose();
+    do Memory.deAlloc(this);
+    return;
+  }
+
+  /** Moves the snake in the current direction. */
+  method void moveSnake() 
+  {
+    if (direction = 1) { do snake.moveUp(); }
+    if (direction = 2) { do snake.moveDown(); }
+    if (direction = 3) { do snake.moveLeft(); }
+    if (direction = 4) { do snake.moveRight(); }
+
+    // delays the next movement
+    do Sys.wait(delay);   
+    return;
+  }
+  
+  /** Check if there is food at the current location. If yes, the snake will grow. */
+  method void checkForFood()
+  {
+   var Point snakeHead;
+   var int snakeHeadX;
+   var int snakeHeadY;
+   var int foodX;
+   var int foodY;
+   var bool snakeCanEatFood;
+  
+   let snakeHead = snake.getHeadPoint();
+   let snakeHeadX = snakeHead.getXCoord();
+   let snakeHeadY = snakeHead.getYCoord();
+   let foodX = food.getXCoord();
+   let foodY = food.getYCoord();
    
-   /** Constructs a new Snake Game. */
-   constructor SnakeGame new() 
+   // We will check if the bounding box of the snake's had overlaps with the food.
+   if (SnakeUtils.areSameSizeBoundingBoxesOverlapping(
+         snakeHeadX, snakeHeadY, 
+         snakeHeadX + snakeSqureBitSize, snakeHeadY + snakeSqureBitSize,
+         foodX, foodY, 
+         foodX + snakeSqureBitSize, foodY + snakeSqureBitSize))
    {
-      let snake = Snake.new();
-      let delay = 50;
-      let direction = 2;
-      let snakePartSize = snake.getSnakePartSize();
-      return this;
-   }
-
-   /** Disposes this game. */
-   method void dispose() 
-   {
-      do snake.dispose();
-      do Memory.deAlloc(this);
-      return;
-   }
-
-   /** Moves the snake in the current direction. */
-   method void moveSnake() 
-   {
-      if (direction = 1) { do snake.moveUp(); }
-      if (direction = 2) { do snake.moveDown(); }
-      if (direction = 3) { do snake.moveLeft(); }
-      if (direction = 4) { do snake.moveRight(); }
-      do Sys.wait(delay);   // delays the next movement
-      return;
-   }
-
-
-   /** Runs the game: handles the user's inputs and moves the snake accordingly */
-   method void run() 
-   {
-      var char key;  // the key currently pressed by the user
-      var boolean exit;
-      let exit = false;
-      
-      while (~exit) 
-      {
-         let key = Keyboard.keyPressed();
-
-         if (key = 81)  { let exit = true; }     // q key
-         if (key = 131) { let direction = 1; }   // up arrow
-         if (key = 133) { let direction = 2; }   // down arrow
-         if (key = 130) { let direction = 3; }   // left arrow
-         if (key = 132) { let direction = 4; }   // right arrow
-         
-         if (key = 65) { do addPoint(); }   // for debugging purposes
-         do moveSnake();  
-     }
-     return;
-   }
-
-   method void addPoint()
-   {
-     var int x;
-     var int y;
-     var Point snakeHead;
+     do Screen.setColor(false);
+     do Screen.drawRectangle(foodX, foodY, foodX + snakeSqureBitSize, foodY + snakeSqureBitSize);
+     do summonFood();
      
-     let snakeHead = snake.getHeadPoint();
-     let x = snakeHead.getXCoord();
-     let y = snakeHead.getYCoord();
+     if (score < (growLimit + 1)) { do grow(); }
      
-     if (direction = 1) { do snake.addPoint(x, y + snakePartSize); } // Up
-     if (direction = 2) { do snake.addPoint(x, y - snakePartSize); } // Down
-     if (direction = 3) { do snake.addPoint(x - snakePartSize, y); } // Left
-     if (direction = 4) { do snake.addPoint(x + snakePartSize, y); } // Right
-     
-     return;
-   } 
- }
+     do Screen.setColor(true);
+     let score = score + 1;
+   }                                           
+   
+   return;
+  }
+  
+  /** Based on the score, increase the speed of the snake so the game becomes more difficult. */
+  method void updateSpeed()
+  {
+    if (score > 5) {let delay = 40 ;}
+    if (score > 15) {let delay = 35 ;}
+    if (score > 25) {let delay = 30 ;}
+    if (score > 35) {let delay = 20 ;}
+    if (score > 45) {let delay = 10 ;}
+    
+    return;
+  }
+  
+  /** Runs the game: handles the user's inputs and moves the snake accordingly */
+  method void run() 
+  {
+    var boolean startGame;
+    var boolean exit;
+    
+    // The key currently pressed by the user
+    var char key;
+
+    var int foodX;
+    var int foodY;
+
+    // Stores the seed that is used to generate random numbers. 
+    // These random numbers are used to summon food for the 
+    // snake.
+    var int seed;
+    
+    let startGame = false;
+    let seed = 0;
+    do Output.printString("Press Enter to start the game!");
+    do Output.println();
+    while (~startGame)
+    {
+      let key = Keyboard.keyPressed();
+      if (seed < 500) { let seed = seed + 1; }
+      if (key = 128) { let startGame = true; } // Enter key
+    }
+    
+    do LCGRandom.setSeed(seed);
+    do Screen.clearScreen();
+    
+    let exit = false;
+    do summonFood();
+    while (~exit) 
+    {
+       let key = Keyboard.keyPressed();
+
+       if (key = 81) { let exit = true; } // q key
+       
+       // up arrow
+       if (key = 131)
+       {
+         if (~(direction = 2)) { let direction = 1; }
+       }
+
+       // down arrow
+       if (key = 133)
+       {
+         if (~(direction = 1)) { let direction = 2; }
+       }
+       
+       // left arrow
+       if (key = 130)
+       {
+         if (~(direction = 4)) { let direction = 3; }
+       }
+       
+       // right arrow
+       if (key = 132)
+       {
+         if (~(direction = 3)) { let direction = 4; }
+       }
+       
+       // For debugging purposes
+       // if (key = 65) { do grow(); }
+       
+       let foodX = food.getXCoord();
+       let foodY = food.getYCoord();
+       
+       do Screen.drawRectangle(foodX, foodY, foodX + snakeSqureBitSize, foodY + snakeSqureBitSize);
+       do moveSnake();
+       
+       if (snake.didSnakeHaveAnAccident()) { let exit = true; } // do Sys.halt();
+       
+       do checkForFood();
+       do updateSpeed();
+   }
+   
+   do Screen.clearScreen();
+   do Output.moveCursor(0, 0);
+   do Output.printString("Your score is: ");
+   do Output.printInt(score);
+   do Output.println();
+    
+   return;
+  }
+
+  /** Randomly summons food. The food is summoned away from the snake's bounding box. */
+  method void summonFood()
+  {
+   var int x;
+   var int y;
+   var Point maxBB;
+   var Point minBB;
+   
+   var int xMinRange;
+   var int xMaxRange;
+   var int yMinRange;
+   var int yMaxRange;   
+   
+   let maxBB = snake.getMaxBB();
+   let minBB = snake.getMinBB();
+   
+   //do Output.printInt(minBB.getXCoord());
+   //do Output.printString(", ");
+   //do Output.printInt(minBB.getYCoord());
+   //do Output.printString(" ");
+   //do Output.printInt(maxBB.getXCoord());
+   //do Output.printString(", ");
+   //do Output.printInt(maxBB.getXCoord());    
+   //do Output.println();       
+   
+   if (minBB.getXCoord() > (screenMaxX / 2))
+   {
+     let xMaxRange = minBB.getXCoord() - 1;
+     let xMinRange = screenMinX;
+   }
+   else 
+   {
+     let xMinRange = maxBB.getXCoord() - 1;
+     let xMaxRange = screenMaxX - snakeSqureBitSize;   
+   }
+   
+   if (minBB.getYCoord() > (screenMaxY / 2))
+   {
+     let yMaxRange = minBB.getYCoord() - 1;
+     let yMinRange = screenMinY;
+   }
+   else 
+   {
+     let yMinRange = maxBB.getYCoord() + 1;
+     let yMaxRange = screenMaxY - snakeSqureBitSize;
+   }   
+   
+   
+   let x = LCGRandom.randRange(xMinRange, xMaxRange);
+   let y = LCGRandom.randRange(yMinRange, yMaxRange);
+   
+   do food.setXCoord(x);
+   do food.setYCoord(y);
+   
+   return;
+  }
+
+  /** Randomly summons food. The food is summoned away from the snake's bounding box. */
+  method void grow()
+  {
+   var int x;
+   var int y;
+   var Point snakeHead;
+   
+   let snakeHead = snake.getHeadPoint();
+   let x = snakeHead.getXCoord();
+   let y = snakeHead.getYCoord();
+   
+   if (direction = 1) { do snake.addPoint(x, y + snakeSqureBitSize); } // Up
+   if (direction = 2) { do snake.addPoint(x, y - snakeSqureBitSize); } // Down
+   if (direction = 3) { do snake.addPoint(x - snakeSqureBitSize, y); } // Left
+   if (direction = 4) { do snake.addPoint(x + snakeSqureBitSize, y); } // Right
+   
+   return;
+  } 
+}
