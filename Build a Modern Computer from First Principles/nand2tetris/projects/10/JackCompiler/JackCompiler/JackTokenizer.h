@@ -15,15 +15,16 @@ public:
   const Token* getCurrentToken() const;
 
 private:
-  void storeProgram_(std::ifstream &inputFile);
-  void setStringTokensInNextLine_();
+  void storeTokens_(std::ifstream &inputFile);
+  void extractTokensInString_(const std::string &txt);
+  //void setStringTokensInNextLine_();
 
-  std::vector<std::string> program_;
-  std::vector<std::string> stringTokensInCurrentLine_;
+  std::vector<std::string> tokens_;
+  //std::vector<std::string> stringTokensInCurrentLine_;
 
   bool hasMoreTokens_;
-  size_t currentLineNumber_;
-  size_t currentTokenNumberInLine_;
+  size_t currentTokenNumber_;
+  //size_t currentTokenNumberInLine_;
   std::unique_ptr<Token> pToken_;
 };
 

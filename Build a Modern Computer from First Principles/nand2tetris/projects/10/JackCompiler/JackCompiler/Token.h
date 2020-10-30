@@ -18,7 +18,7 @@ public:
   Token(const std::string &name);
   const std::string& getName() const;
 
-  virtual bool isTerminal() { return true; };
+  virtual bool isTerminal() const { return true; };
   friend std::ostream& operator<<(std::ostream &os, const Token &token);
   
 private:
@@ -92,7 +92,7 @@ class Keyword : public Token
 {
 public:
   Keyword(const std::string &name);
-  bool isTerminal() override { return true; };
+  bool isTerminal() const override { return true; };
   KeywordType getKeywordType() const;
 
 private:

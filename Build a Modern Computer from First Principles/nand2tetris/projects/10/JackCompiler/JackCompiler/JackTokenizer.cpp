@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iterator>
 #include <sstream>
+#include <string_view>
 
 #include "JackTokenizer.h"
 #include "TokenFactory.h"
@@ -11,56 +12,94 @@ void removeComments(std::string &string);
 } // end of namespace declaration
 
 JackTokenizer::JackTokenizer(const std::string &inputFilepath) : 
-  currentLineNumber_{0}, currentTokenNumberInLine_{0}
+  currentTokenNumber_{0}//, currentTokenNumberInLine_{0}
 {
   auto inputFile = std::ifstream(inputFilepath);
 
   if (!inputFile)
     throw std::runtime_error("Could not open file" + inputFilepath);
 
-  storeProgram_(inputFile);
-  hasMoreTokens_ = !program_.empty();
+  storeTokens_(inputFile);
+  hasMoreTokens_ = !tokens_.empty();
 }
 
 bool JackTokenizer::hasMoreTokens() const
 {
-  return hasMoreTokens_;
+  return currentTokenNumber_ < tokens_.size();
 }
 
 void JackTokenizer::advance()
 {
-  if (currentLineNumber_ < program_.size())
-  {
-    if ((stringTokensInCurrentLine_.empty()) ||
-        (currentTokenNumberInLine_ == stringTokensInCurrentLine_.size()))
-      setStringTokensInNextLine_();
-  }
-
-  if (currentTokenNumberInLine_ < stringTokensInCurrentLine_.size())
-  {
-    auto tokenFactory = TokenFactory{stringTokensInCurrentLine_.at(currentTokenNumberInLine_)};
-    pToken_ = tokenFactory.tokenize();
-    ++currentTokenNumberInLine_;
-  }
+  auto tokenFactory = TokenFactory{tokens_.at(currentTokenNumber_)};
+  pToken_ = tokenFactory.tokenize();
+  ++currentTokenNumber_;
 }
 
-void JackTokenizer::setStringTokensInNextLine_()
+// Move this function to a common place....
+bool isSymbol(const char  &token)
 {
-  const auto &currentLine = program_.at(currentLineNumber_);
-  std::istringstream iss(currentLine);
+  if (token == '}')  return true;
+  if (token == '(')  return true;
+  if (token == '{')  return true;
+               
+  if (token == ')')  return true;
+  if (token == '[')  return true;
+  if (token == ']')  return true;
 
-  stringTokensInCurrentLine_.clear();
+  if (token == '.')  return true;
+  if (token == ',')  return true;
+  if (token == ';')  return true;
 
-  for (auto it = std::istream_iterator<std::string>{iss}; it !=
-       std::istream_iterator<std::string>{};
-       ++it)
-    stringTokensInCurrentLine_.emplace_back((*it));
+  if (token == '+')  return true;
+  if (token == '-')  return true;
+  if (token == '*')  return true;
 
-  currentTokenNumberInLine_ = 0;
-  currentLineNumber_++;
+  if (token == '/')  return true;
+  if (token == '*')  return true;
+  if (token == '|')  return true;
+
+  if (token == '<')  return true;
+  if (token == '>')  return true;
+  if (token == '=')  return true;
+
+  // if (tokenName_ == "")        return true; Not sure what is this in the specs??
+
+  return false;
 }
 
-void JackTokenizer::storeProgram_(std::ifstream &inputFile)
+void JackTokenizer::extractTokensInString_(const std::string &txt)
+{
+  auto token = std::string{};
+  for (const auto currentChar : txt)
+  {
+    if (currentChar == ' ')
+    {
+      if (!token.empty())
+      {
+        tokens_.emplace_back(token);
+        token.clear();
+      }
+
+      continue;
+    }
+
+    if (isSymbol(currentChar))
+    {
+      if (!token.empty())
+      {
+        tokens_.emplace_back(token);
+        token.clear();
+      }
+      tokens_.emplace_back(std::string{currentChar});
+
+      continue;
+    }
+
+    token.push_back(currentChar);
+  }
+}
+
+void JackTokenizer::storeTokens_(std::ifstream &inputFile)
 {
   auto currentLine = std::string{};
 
@@ -68,8 +107,7 @@ void JackTokenizer::storeProgram_(std::ifstream &inputFile)
   {
     removeComments(currentLine);
     if (currentLine.empty()) continue;
-
-    program_.emplace_back(currentLine);
+    extractTokensInString_(currentLine);
   }
 }
 
@@ -94,17 +132,20 @@ void removeComments(std::string &string)
   if ((commentType1StartingPosition == string.npos) && 
       (commentType2StartingPosition == string.npos)) return;
 
-  
-  if (commentType1StartingPosition != string.npos)
-  { 
-    // The entire string is a comment.
-    if (commentType1StartingPosition == 0)
-      string.clear();
+  auto removeComment = [&string](size_t startPos)
+  {
+    if (startPos != string.npos)
+    {
+      // The entire string is a comment.
+      if (startPos == 0)
+        string.clear();
+      else
+        // Remove the comment.
+        string.erase(startPos);
+    }
+  };
 
-    return;
-  }
-
-  // Remove the comment.
-  string.erase(commentType2StartingPosition);
+  removeComment(commentType1StartingPosition);
+  removeComment(commentType2StartingPosition);
 }
 } // end of namespace definition
