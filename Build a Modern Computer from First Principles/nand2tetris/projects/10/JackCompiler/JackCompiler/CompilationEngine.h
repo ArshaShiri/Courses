@@ -30,6 +30,12 @@ private:
   void compileTerm_();
 
   void compileExpressionList_();
+  void compileSubroutineCall_();
+
+
+  // move to another file.
+  bool isOp_(const char symbol) const;
+  bool isUnaryOp_(const char symbol) const;
 
   const Token* advanceAndGetNextToken();
 
