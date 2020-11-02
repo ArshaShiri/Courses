@@ -9,8 +9,8 @@ int main()
 {
   try
   {
-    auto tokenizer = JackTokenizer{"Main.jack"};
-    CompilationEngine{"Main", tokenizer};
+    auto tokenizer = JackTokenizer{"SquareGame.jack"};
+    CompilationEngine{"SquareGame", tokenizer};
   }
   catch (std::runtime_error &e)
   {

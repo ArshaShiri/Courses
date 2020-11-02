@@ -31,7 +31,9 @@ private:
 
   void compileExpressionList_();
   void compileSubroutineCall_();
-
+  
+  void compileReturn_();
+  void handleKeywordInStatements_(const Token *pCurrentToken);
 
   // move to another file.
   bool isOp_(const char symbol) const;

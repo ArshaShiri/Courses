@@ -31,7 +31,7 @@ void CompilationEngine::compileClass_()
 {
   outputFile_ << "<class>" << '\n';
 
-  // The current 3 tokens are class followed by { and an identifier
+  // The current 3 tokens are "class" followed by '{' and an identifier
   outputFile_ << *tokenizer_.getCurrentToken();
   outputFile_ << *advanceAndGetNextToken();
   outputFile_ << *advanceAndGetNextToken();
@@ -69,7 +69,7 @@ void CompilationEngine::compileClass_()
       break;
   }
 
-  // Next token is {
+  // Next token is '{'
   outputFile_ << *pNextToken;
 
   outputFile_ << "</class>" << '\n';
@@ -79,7 +79,7 @@ void CompilationEngine::compileClassVarDec_()
 {
   outputFile_ << "<classVarDec>" << '\n';
 
-  // Either static or field.
+  // Either "static" or "field".
   outputFile_ << *tokenizer_.getCurrentToken();
 
   // Type
@@ -149,6 +149,35 @@ void CompilationEngine::compileClassSubroutine_()
 void CompilationEngine::compileParameterList_()
 {
   outputFile_ << "<parameterList>" << '\n';
+
+  auto pCurrentToken = tokenizer_.getCurrentToken();
+  if (pCurrentToken->getValue<TokenType::SYMBOL>() == ')')
+  {
+    outputFile_ << "</parameterList>" << '\n';
+    return;
+  }
+
+  // type
+  outputFile_ << *pCurrentToken;
+
+  // name
+  outputFile_ << *advanceAndGetNextToken();
+
+  // Check for comma and repeat the process.
+  pCurrentToken = advanceAndGetNextToken();
+  while (pCurrentToken->getValue<TokenType::SYMBOL>() == ',')
+  {
+    // ,
+    outputFile_ << *pCurrentToken;
+
+    // type
+    outputFile_ << *advanceAndGetNextToken();
+
+    // name
+    outputFile_ << *advanceAndGetNextToken();
+    pCurrentToken = advanceAndGetNextToken();
+  }
+
   outputFile_ << "</parameterList>" << '\n';
 }
 
@@ -192,6 +221,60 @@ void CompilationEngine::compileVarDec_()
   }
 }
 
+void CompilationEngine::compileReturn_()
+{
+  outputFile_ << "<returnStatement>" << '\n';
+
+  // Return
+  outputFile_ << *tokenizer_.getCurrentToken();
+
+  if (advanceAndGetNextToken()->getTokenType() != TokenType::SYMBOL)
+  {
+    // Expression
+    compileExpression_();
+  }
+
+  // ;
+  outputFile_ << *tokenizer_.getCurrentToken();
+  outputFile_ << "</returnStatement>" << '\n';
+  tokenizer_.advance();
+}
+
+void CompilationEngine::handleKeywordInStatements_(const Token *pCurrentToken)
+{
+  switch (pCurrentToken->getValue<TokenType::KEYWORD>())
+  {
+  case KeywordType::LET:
+  {
+    compileLet_();
+    break;
+  }
+  case KeywordType::IF:
+  {
+    compileIf_();
+    break;
+  }
+  case KeywordType::WHILE:
+  {
+    compileWhile_();
+    break;
+  }
+  case KeywordType::DO:
+  {
+    compileDo_();
+    break;
+  }
+  case KeywordType::RETURN:
+  {
+    compileReturn_();
+    break;
+  }
+  default:
+    throw std::runtime_error("Wrong expression in compileStatements_!");
+    break;
+  }
+}
+
 void CompilationEngine::compileStatements_()
 {
   outputFile_ << "<statements>" << '\n';
@@ -199,52 +282,7 @@ void CompilationEngine::compileStatements_()
 
   while (pCurrentToken->getTokenType() == TokenType::KEYWORD)
   {
-    switch (pCurrentToken->getValue<TokenType::KEYWORD>())
-    {
-    case KeywordType::LET:
-    {
-      compileLet_();
-      break;
-    }
-    case KeywordType::IF:
-    {
-      compileIf_();
-      break;
-    }
-    case KeywordType::WHILE:
-    {
-      compileWhile_();
-      break;
-    }
-    case KeywordType::DO:
-    {
-      compileDo_();
-      break;
-    }
-    case KeywordType::RETURN:
-    {
-      outputFile_ << "<returnStatement>" << '\n';
-
-      // Return
-      outputFile_ << *tokenizer_.getCurrentToken();
-
-      if (advanceAndGetNextToken()->getTokenType() != TokenType::SYMBOL)
-      {
-        // Expression
-        compileExpression_();
-      }
-
-      // ;
-      outputFile_ << *tokenizer_.getCurrentToken();
-      outputFile_ << "</returnStatement>" << '\n';
-      tokenizer_.advance();
-      break;
-    }
-    default:
-      throw std::runtime_error("Wrong expression in compileStatements_!");
-      break;
-    }
-
+    handleKeywordInStatements_(pCurrentToken);
     pCurrentToken = tokenizer_.getCurrentToken();
   }
 
@@ -254,26 +292,29 @@ void CompilationEngine::compileStatements_()
 void CompilationEngine::compileSubroutineCall_()
 {
   // subroutine name or class name or variable name.
-  outputFile_ << *advanceAndGetNextToken();
+  outputFile_ << *tokenizer_.getCurrentToken();
 
   // We want to check if we are calling a method on class or variable. We have to check for the
   // '.' symbol.
 
-  const auto pCurrentToken = advanceAndGetNextToken();
+  auto pCurrentToken = advanceAndGetNextToken();
   if (pCurrentToken->getValue<TokenType::SYMBOL>() == '.')
   {
     // The previous token was a class or variable name.
     // Subroutine name is the current token.
 
-    // .
+    // '.'
     outputFile_ << *pCurrentToken;
 
     // subroutine name
     outputFile_ << *advanceAndGetNextToken();
+
+    // Set the next token which is '(' to pCurrentToken
+    pCurrentToken = advanceAndGetNextToken();
   }
 
   // (
-  outputFile_ << *advanceAndGetNextToken();
+  outputFile_ << *pCurrentToken;
 
   tokenizer_.advance();
   compileExpressionList_();
@@ -290,7 +331,7 @@ void CompilationEngine::compileDo_()
 
   // do
   outputFile_ << *tokenizer_.getCurrentToken();
-
+  tokenizer_.advance();
   compileSubroutineCall_();
 
   // ;
@@ -341,11 +382,76 @@ void CompilationEngine::compileLet_()
 }
 
 void CompilationEngine::compileWhile_()
-{}
+{
+  // The code is very similar to if statement. Take out some common functionality, in general 
+  // compiling inside a parentheses and inside a body {} is common.
+  outputFile_ << "<whileStatement>" << '\n';
+
+  // while
+  outputFile_ << *tokenizer_.getCurrentToken();
+
+  // '('
+  outputFile_ << *advanceAndGetNextToken();
+
+  tokenizer_.advance();
+  compileExpression_();
+
+  // ')'
+  outputFile_ << *tokenizer_.getCurrentToken();
+
+  // '{'
+  outputFile_ << *advanceAndGetNextToken();
+  tokenizer_.advance();
+
+  compileStatements_();
+
+  // '}'
+  outputFile_ << *tokenizer_.getCurrentToken();
+  tokenizer_.advance();
+
+  outputFile_ << "</whileStatement>" << '\n';
+}
 
 void CompilationEngine::compileIf_()
 {
-  throw std::runtime_error("compileIf_ not implemented yet!");
+  outputFile_ << "<ifStatement>" << '\n';
+
+  auto compileIfBody = [this]()
+  {
+    // '{'
+    outputFile_ << *advanceAndGetNextToken();
+    tokenizer_.advance();
+
+    compileStatements_();
+
+    // '}'
+    outputFile_ << *tokenizer_.getCurrentToken();
+    tokenizer_.advance();
+  };
+
+  // If
+  outputFile_ << *tokenizer_.getCurrentToken();
+
+  // '('
+  outputFile_ << *advanceAndGetNextToken();
+
+  tokenizer_.advance();
+  compileExpression_();
+
+  // ')'
+  outputFile_ << *tokenizer_.getCurrentToken();
+
+  compileIfBody();
+
+  // Check if we have an else statement.
+  if (tokenizer_.getCurrentToken()->getValue<TokenType::KEYWORD>() == KeywordType::ELSE)
+  {
+    // else
+    outputFile_ << *tokenizer_.getCurrentToken();
+    compileIfBody();
+  }
+
+  outputFile_ << "</ifStatement>" << '\n';
 }
 
 bool CompilationEngine::isOp_(const char symbol) const
@@ -385,6 +491,9 @@ void CompilationEngine::compileExpression_()
   while ((pCurrentToken->getTokenType() == TokenType::SYMBOL) &&
          (isOp_(pCurrentToken->getValue<TokenType::SYMBOL>())))
   {
+    // Print the operator.
+    outputFile_ << *pCurrentToken;
+    tokenizer_.advance();
     compileTerm_();
     pCurrentToken = tokenizer_.getCurrentToken();
   }
@@ -400,10 +509,10 @@ void CompilationEngine::compileTerm_()
   const auto pCurrentToken = tokenizer_.getCurrentToken();
   outputFile_ << *pCurrentToken;
 
-  if (pCurrentToken->getTokenType() == TokenType::SYMBOL)
+  if ((pCurrentToken->getTokenType() == TokenType::SYMBOL) &&
+      (isUnaryOp_(pCurrentToken->getValue<TokenType::SYMBOL>())))
   {
-    if (!isUnaryOp_(pCurrentToken->getValue<TokenType::SYMBOL>()))
-      throw std::runtime_error("Term cannot start with a symbol rather than unary operator!");
+    tokenizer_.advance();
 
     // The previous token was a unary operator, so we need to compile the next term as well
     compileTerm_();
@@ -418,15 +527,18 @@ void CompilationEngine::compileExpressionList_()
   outputFile_ << "<expressionList>" << '\n';
 
   // In case there are no expressions
-  if (!tokenizer_.getCurrentToken()->getValue<TokenType::SYMBOL>() == ')')
+  if (!(tokenizer_.getCurrentToken()->getValue<TokenType::SYMBOL>() == ')'))
   {
     compileExpression_();
 
     auto pCurrentToken = tokenizer_.getCurrentToken();
     while (pCurrentToken->getValue<TokenType::SYMBOL>() == ',')
     {
-      pCurrentToken = advanceAndGetNextToken();
+      // ','
+      outputFile_ << *pCurrentToken;
+      tokenizer_.advance();
       compileExpression_();
+      pCurrentToken = tokenizer_.getCurrentToken();
     }
   }
 
