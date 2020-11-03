@@ -7,7 +7,7 @@
 CompilationEngine::CompilationEngine(
   const std::string &otputFilepath, JackTokenizer &tokenizer) : tokenizer_{tokenizer}
 {
-  outputFile_.open(otputFilepath + ".xml");
+  outputFile_.open(otputFilepath);
 
   if (tokenizer.hasMoreTokens())
   {
@@ -40,9 +40,9 @@ void CompilationEngine::compileClass_()
   auto pNextToken = advanceAndGetNextToken();
   while (tokenizer_.hasMoreTokens())
   {
-    if (pNextToken->getTokenType() == TokenType::KEYWORD)
+    if (pNextToken->getTokenType() == JackTokenType::KEYWORD)
     {
-      switch (pNextToken->getValue<TokenType::KEYWORD>())
+      switch (pNextToken->getValue<JackTokenType::KEYWORD>())
       {
         case KeywordType::STATIC:
         case KeywordType::FIELD:
@@ -91,7 +91,7 @@ void CompilationEngine::compileClassVarDec_()
   auto pNextToken = advanceAndGetNextToken();
 
   // check if there are other variables by checking if the next token is a ','
-  while (pNextToken->getValue<TokenType::SYMBOL>() == ',')
+  while (pNextToken->getValue<JackTokenType::SYMBOL>() == ',')
   {
     outputFile_ << *pNextToken;
 
@@ -151,7 +151,7 @@ void CompilationEngine::compileParameterList_()
   outputFile_ << "<parameterList>" << '\n';
 
   auto pCurrentToken = tokenizer_.getCurrentToken();
-  if (pCurrentToken->getValue<TokenType::SYMBOL>() == ')')
+  if (pCurrentToken->getValue<JackTokenType::SYMBOL>() == ')')
   {
     outputFile_ << "</parameterList>" << '\n';
     return;
@@ -165,7 +165,7 @@ void CompilationEngine::compileParameterList_()
 
   // Check for comma and repeat the process.
   pCurrentToken = advanceAndGetNextToken();
-  while (pCurrentToken->getValue<TokenType::SYMBOL>() == ',')
+  while (pCurrentToken->getValue<JackTokenType::SYMBOL>() == ',')
   {
     // ,
     outputFile_ << *pCurrentToken;
@@ -185,9 +185,9 @@ void CompilationEngine::compileVarDec_()
 {
   auto pCurrentToken = tokenizer_.getCurrentToken();
 
-  while (pCurrentToken->getTokenType() == TokenType::KEYWORD)
+  while (pCurrentToken->getTokenType() == JackTokenType::KEYWORD)
   {
-    if (pCurrentToken->getValue<TokenType::KEYWORD>() != KeywordType::VAR)
+    if (pCurrentToken->getValue<JackTokenType::KEYWORD>() != KeywordType::VAR)
       break;
 
     outputFile_ << "<varDec>" << '\n';
@@ -204,7 +204,7 @@ void CompilationEngine::compileVarDec_()
     pCurrentToken = advanceAndGetNextToken();
 
     // Check if there are other variables by checking if the next token is a ','
-    while (pCurrentToken->getValue<TokenType::SYMBOL>() == ',')
+    while (pCurrentToken->getValue<JackTokenType::SYMBOL>() == ',')
     {
       outputFile_ << *pCurrentToken;
 
@@ -228,7 +228,7 @@ void CompilationEngine::compileReturn_()
   // Return
   outputFile_ << *tokenizer_.getCurrentToken();
 
-  if (advanceAndGetNextToken()->getTokenType() != TokenType::SYMBOL)
+  if (advanceAndGetNextToken()->getTokenType() != JackTokenType::SYMBOL)
   {
     // Expression
     compileExpression_();
@@ -242,7 +242,7 @@ void CompilationEngine::compileReturn_()
 
 void CompilationEngine::handleKeywordInStatements_(const Token *pCurrentToken)
 {
-  switch (pCurrentToken->getValue<TokenType::KEYWORD>())
+  switch (pCurrentToken->getValue<JackTokenType::KEYWORD>())
   {
   case KeywordType::LET:
   {
@@ -280,7 +280,7 @@ void CompilationEngine::compileStatements_()
   outputFile_ << "<statements>" << '\n';
   auto pCurrentToken = tokenizer_.getCurrentToken();
 
-  while (pCurrentToken->getTokenType() == TokenType::KEYWORD)
+  while (pCurrentToken->getTokenType() == JackTokenType::KEYWORD)
   {
     handleKeywordInStatements_(pCurrentToken);
     pCurrentToken = tokenizer_.getCurrentToken();
@@ -298,7 +298,7 @@ void CompilationEngine::compileSubroutineCall_()
   // '.' symbol.
 
   auto pCurrentToken = advanceAndGetNextToken();
-  if (pCurrentToken->getValue<TokenType::SYMBOL>() == '.')
+  if (pCurrentToken->getValue<JackTokenType::SYMBOL>() == '.')
   {
     // The previous token was a class or variable name.
     // Subroutine name is the current token.
@@ -354,8 +354,8 @@ void CompilationEngine::compileLet_()
   // We want to check if we are addressing and array here.
   auto pNextToken = advanceAndGetNextToken();
 
-  if ((pNextToken->getTokenType() == TokenType::SYMBOL) && 
-       pNextToken->getValue<TokenType::SYMBOL>() == '[')
+  if ((pNextToken->getTokenType() == JackTokenType::SYMBOL) && 
+       pNextToken->getValue<JackTokenType::SYMBOL>() == '[')
   {
     // [
     outputFile_ << *pNextToken;
@@ -444,7 +444,7 @@ void CompilationEngine::compileIf_()
   compileIfBody();
 
   // Check if we have an else statement.
-  if (tokenizer_.getCurrentToken()->getValue<TokenType::KEYWORD>() == KeywordType::ELSE)
+  if (tokenizer_.getCurrentToken()->getValue<JackTokenType::KEYWORD>() == KeywordType::ELSE)
   {
     // else
     outputFile_ << *tokenizer_.getCurrentToken();
@@ -488,8 +488,8 @@ void CompilationEngine::compileExpression_()
 
   // Check if we have an operator next, if yes we need to compile more terms.
   auto pCurrentToken = tokenizer_.getCurrentToken();
-  while ((pCurrentToken->getTokenType() == TokenType::SYMBOL) &&
-         (isOp_(pCurrentToken->getValue<TokenType::SYMBOL>())))
+  while ((pCurrentToken->getTokenType() == JackTokenType::SYMBOL) &&
+         (isOp_(pCurrentToken->getValue<JackTokenType::SYMBOL>())))
   {
     // Print the operator.
     outputFile_ << *pCurrentToken;
@@ -509,8 +509,8 @@ void CompilationEngine::compileTerm_()
   const auto pCurrentToken = tokenizer_.getCurrentToken();
   outputFile_ << *pCurrentToken;
 
-  if ((pCurrentToken->getTokenType() == TokenType::SYMBOL) &&
-      (isUnaryOp_(pCurrentToken->getValue<TokenType::SYMBOL>())))
+  if ((pCurrentToken->getTokenType() == JackTokenType::SYMBOL) &&
+      (isUnaryOp_(pCurrentToken->getValue<JackTokenType::SYMBOL>())))
   {
     tokenizer_.advance();
 
@@ -527,12 +527,12 @@ void CompilationEngine::compileExpressionList_()
   outputFile_ << "<expressionList>" << '\n';
 
   // In case there are no expressions
-  if (!(tokenizer_.getCurrentToken()->getValue<TokenType::SYMBOL>() == ')'))
+  if (!(tokenizer_.getCurrentToken()->getValue<JackTokenType::SYMBOL>() == ')'))
   {
     compileExpression_();
 
     auto pCurrentToken = tokenizer_.getCurrentToken();
-    while (pCurrentToken->getValue<TokenType::SYMBOL>() == ',')
+    while (pCurrentToken->getValue<JackTokenType::SYMBOL>() == ',')
     {
       // ','
       outputFile_ << *pCurrentToken;

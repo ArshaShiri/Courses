@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-enum class TokenType
+enum class JackTokenType
 {
   KEYWORD,
   SYMBOL,
@@ -21,7 +21,7 @@ enum class KeywordType
   INT,
   BOOLEAN,
   CHAR,
-  VOID,
+  VOID_,
   VAR,
   STATIC,
   FIELD,
@@ -31,7 +31,7 @@ enum class KeywordType
   ELSE,
   WHILE,
   RETURN,
-  TRUE,
+  TRUE_,
   FASLE,
   NULL_,
   THIS
@@ -40,15 +40,14 @@ enum class KeywordType
 class Token
 {
 public:
-  Token(const std::string &name, TokenType tokenType);
+  Token(const std::string &name, JackTokenType tokenType);
 
-  TokenType getTokenType() const;
+  JackTokenType getTokenType() const;
 
-  template <TokenType TT>
+  template <JackTokenType TT>
   decltype(auto) getValue() const;
 
   friend std::ostream& operator<<(std::ostream &os, const Token &token);
-
 
 private:
   KeywordType getKeyWordType_() const;
@@ -57,83 +56,16 @@ private:
   std::string getType_() const;
 
   std::string name_;
-  TokenType tokenType_;
+  JackTokenType tokenType_;
 };
 
-template <TokenType TT>
+template <JackTokenType TT>
 decltype(auto) Token::getValue() const
 {
-  if constexpr (TT == TokenType::KEYWORD)
+  if constexpr (TT == JackTokenType::KEYWORD)
     return getKeyWordType_();
-  else if constexpr (TT == TokenType::SYMBOL)
+  else if constexpr (TT == JackTokenType::SYMBOL)
     return getSymbol_();
   else
     return getName_();
 }
-
-
-
-
-//class Token
-//{
-//public:
-//  Token(const std::string &name);
-//  const std::string& getName() const;
-//
-//  friend std::ostream& operator<<(std::ostream &os, const Token &token);
-//  
-//private:
-//  virtual std::string getType_() const = 0;
-//
-//  std::string name_;
-//};
-//
-//class Symbol : public Token
-//{
-//public:
-//  Symbol(const std::string &name);
-//
-//private:
-//  std::string getType_() const override;
-//};
-//
-//class IntegerConstant : public Token
-//{
-//public:
-//  IntegerConstant(const std::string &name);
-//
-//private:
-//  std::string getType_() const override;
-//};
-//
-//class StringConstant : public Token
-//{
-//public:
-//  StringConstant(const std::string &name);
-//
-//private:
-//  std::string getType_() const override;
-//};
-//
-//class Identifier : public Token
-//{
-//public:
-//  Identifier(const std::string &name);
-//
-//private:
-//  std::string getType_() const override;
-//};
-//
-
-//
-//class Keyword : public Token
-//{
-//public:
-//  Keyword(const std::string &name);
-//  KeywordType getKeywordType() const;
-//
-//private:
-//  std::string getType_() const override;
-//
-//  KeywordType keywordType_;
-//};

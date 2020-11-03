@@ -9,11 +9,11 @@ TokenFactory::TokenFactory(const std::string &token) : tokenName_{token}
 
 std::unique_ptr<Token> TokenFactory::tokenize()
 {
-  if (isKeyword()) return std::make_unique<Token>(tokenName_, TokenType::KEYWORD);
-  if (isSymbol()) return std::make_unique<Token>(tokenName_, TokenType::SYMBOL);
-  if (isIntegerConst()) return std::make_unique<Token>(tokenName_, TokenType::INTEGERCONSTATNT);
-  if (isStringConst()) return std::make_unique<Token>(tokenName_, TokenType::STRINGCONSTANT);
-  if (isIdentifier()) return std::make_unique<Token>(tokenName_, TokenType::IDENTIFIER);
+  if (isKeyword()) return std::make_unique<Token>(tokenName_, JackTokenType::KEYWORD);
+  if (isSymbol()) return std::make_unique<Token>(tokenName_, JackTokenType::SYMBOL);
+  if (isIntegerConst()) return std::make_unique<Token>(tokenName_, JackTokenType::INTEGERCONSTATNT);
+  if (isStringConst()) return std::make_unique<Token>(tokenName_, JackTokenType::STRINGCONSTANT);
+  if (isIdentifier()) return std::make_unique<Token>(tokenName_, JackTokenType::IDENTIFIER);
 
   throw std::runtime_error("Cannot tokenize the current token: " + tokenName_);
 }
