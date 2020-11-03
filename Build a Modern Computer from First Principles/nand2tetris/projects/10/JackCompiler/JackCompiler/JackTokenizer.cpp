@@ -69,27 +69,49 @@ bool isSymbol(const char  &token)
 
 void JackTokenizer::extractTokensInString_(const std::string &txt)
 {
-  auto token = std::string{};
-  for (const auto currentChar : txt)
+  auto addToken = [this](std::string &token)
   {
-    if (currentChar == ' ')
+    if (!token.empty())
     {
-      if (!token.empty())
+      tokens_.emplace_back(token);
+      token.clear();
+    }
+  };
+
+  auto token = std::string{};
+  for (auto charIndex = 0; charIndex < txt.size(); ++charIndex)
+  {
+    const auto currentChar = txt.at(charIndex);
+
+    // We want to capture string literals given in the input completely.
+    if (currentChar == '\"')
+    {
+      token.push_back('\"');
+      for (auto strIdx = charIndex + 1; strIdx < txt.size(); ++strIdx)
       {
-        tokens_.emplace_back(token);
-        token.clear();
+        const auto strPart = txt.at(strIdx);
+        token.push_back(strPart);
+
+        if (strPart == '\"')
+          break;
+
+        charIndex = strIdx + 1;
       }
 
+      addToken(token);
+      continue;
+    }
+
+    // If we reach white space or tab, store the current token.
+    if ((currentChar == ' ') || (currentChar == '\t'))
+    {
+      addToken(token);
       continue;
     }
 
     if (isSymbol(currentChar))
     {
-      if (!token.empty())
-      {
-        tokens_.emplace_back(token);
-        token.clear();
-      }
+      addToken(token);
       tokens_.emplace_back(std::string{currentChar});
 
       continue;

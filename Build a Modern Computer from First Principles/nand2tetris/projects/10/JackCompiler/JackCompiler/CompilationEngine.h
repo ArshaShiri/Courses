@@ -13,12 +13,22 @@ public:
   CompilationEngine(const std::string &otputFilepath, JackTokenizer &tokenizer);
 
 private:
+
+  /*Compiles a complete class.*/
   void compileClass_();
+
+  /*Compiles static or field declarations.*/
   void compileClassVarDec_();
+
+  /*Compiles a class subroutine.*/
   void compileClassSubroutine_();
 
+  /*Compiles a possibly empty parameter list, not including the enclosing ().*/
   void compileParameterList_();
+
+  /*Compiles a var declaration.*/
   void compileVarDec_();
+
   void compileStatements_();
 
   void compileDo_();

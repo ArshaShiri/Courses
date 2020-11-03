@@ -298,7 +298,7 @@ void CompilationEngine::compileSubroutineCall_()
   // '.' symbol.
 
   auto pCurrentToken = advanceAndGetNextToken();
-  if (pCurrentToken->getValue<JackTokenType::SYMBOL>() == '.')
+  while (pCurrentToken->getValue<JackTokenType::SYMBOL>() == '.')
   {
     // The previous token was a class or variable name.
     // Subroutine name is the current token.
@@ -505,20 +505,56 @@ void CompilationEngine::compileTerm_()
 {
   outputFile_ << "<term>" << '\n';
 
-  // Compile the current term.
-  const auto pCurrentToken = tokenizer_.getCurrentToken();
+  auto pCurrentToken = tokenizer_.getCurrentToken();
   outputFile_ << *pCurrentToken;
 
-  if ((pCurrentToken->getTokenType() == JackTokenType::SYMBOL) &&
-      (isUnaryOp_(pCurrentToken->getValue<JackTokenType::SYMBOL>())))
+  switch (pCurrentToken->getTokenType())
   {
-    tokenizer_.advance();
+  case JackTokenType::SYMBOL:
+  {
+    const auto symbol = pCurrentToken->getValue<JackTokenType::SYMBOL>();
+    if (!isOp_(symbol) || !isUnaryOp_(symbol))
+      throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" before term");
 
-    // The previous token was a unary operator, so we need to compile the next term as well
+    // The previous token was an operator, so we need to compile the next term as well
     compileTerm_();
+
+    break;
+  }
+  default:
+  {
+    // The previous token was not a symbol.
+    pCurrentToken = advanceAndGetNextToken();
+
+    // We first want to check if there is a '[' or '(' or '.'
+    if (pCurrentToken->getTokenType() == JackTokenType::SYMBOL)
+    {
+      const auto symbol = pCurrentToken->getValue<JackTokenType::SYMBOL>();
+
+      // Print the symbol.
+      outputFile_ << *pCurrentToken;
+      tokenizer_.advance();
+
+      // Array or call.
+      if ((symbol == '[') || (symbol == '('))
+      {
+        compileExpression_();
+
+        // ']' or ')'
+        outputFile_ << *tokenizer_.getCurrentToken();
+        tokenizer_.advance();
+      }
+
+      // Subroutine call.
+      else if (symbol == '.')
+        compileSubroutineCall_();
+      else
+        throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" after term");
+    }
+    break;
+  }
   }
 
-  tokenizer_.advance();
   outputFile_ << "</term>" << '\n';
 }
 

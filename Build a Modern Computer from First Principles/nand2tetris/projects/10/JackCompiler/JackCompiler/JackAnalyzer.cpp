@@ -66,8 +66,6 @@ int main(int argc, char *argv[])
     for (const auto &inputFile : jackFilesList)
     {
       auto tokenizer = JackTokenizer{inputFile + ".jack"};
-
-
       CompilationEngine{inputFile + "Ans_.xml", tokenizer};
     }
   }
