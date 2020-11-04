@@ -8,7 +8,7 @@
 
 namespace
 {
-void removeComments(std::string &string);
+void removeComments(std::string &string, bool &isMultiLineComment);
 } // end of namespace declaration
 
 JackTokenizer::JackTokenizer(const std::string &inputFilepath) : 
@@ -55,14 +55,13 @@ bool isSymbol(const char  &token)
   if (token == '*')  return true;
 
   if (token == '/')  return true;
-  if (token == '*')  return true;
+  if (token == '&')  return true;
   if (token == '|')  return true;
 
   if (token == '<')  return true;
   if (token == '>')  return true;
   if (token == '=')  return true;
-
-  // if (tokenName_ == "")        return true; Not sure what is this in the specs??
+  if (token == '~')  return true; 
 
   return false;
 }
@@ -124,10 +123,11 @@ void JackTokenizer::extractTokensInString_(const std::string &txt)
 void JackTokenizer::storeTokens_(std::ifstream &inputFile)
 {
   auto currentLine = std::string{};
+  auto isMultiLineComment = false;
 
   while (std::getline(inputFile, currentLine))
   {
-    removeComments(currentLine);
+    removeComments(currentLine, isMultiLineComment);
     if (currentLine.empty()) continue;
     extractTokensInString_(currentLine);
   }
@@ -140,19 +140,38 @@ const Token* JackTokenizer::getCurrentToken() const
 
 namespace
 {
-void removeComments(std::string &string)
+void removeComments(std::string &string, bool &isMultiLineComment)
 {
   // This function is limited. It assumes if a comment starts with /**, the entire line is a
   // comment. It will probably have issues when // and /** are used in the same line as well.
 
   const auto commentType1Start = "//";
-  const auto commentType2Start = "/**";
+  const auto multiLineCommentStart = "/**";
+  const auto multiLineCommentEnd = "*/";
+
   const auto commentType1StartingPosition = string.find(commentType1Start);
-  const auto commentType2StartingPosition = string.find(commentType2Start);
+  const auto multiLineCommentStartingPosition = string.find(multiLineCommentStart);
+  const auto multiLineCommentEndPosition = string.find(multiLineCommentEnd);
+
+  if (multiLineCommentStartingPosition != string.npos)
+    isMultiLineComment = true;
+
+  if (isMultiLineComment)
+  {
+    if (multiLineCommentEndPosition != string.npos)
+    {
+      string.erase(0, multiLineCommentEndPosition + 2);
+      isMultiLineComment = false;
+    }
+    else
+      string.clear();
+
+    return;
+  }
 
   // No comment in this string.
   if ((commentType1StartingPosition == string.npos) && 
-      (commentType2StartingPosition == string.npos)) return;
+      (multiLineCommentStartingPosition == string.npos)) return;
 
   auto removeComment = [&string](size_t startPos)
   {
@@ -168,6 +187,6 @@ void removeComments(std::string &string)
   };
 
   removeComment(commentType1StartingPosition);
-  removeComment(commentType2StartingPosition);
+  removeComment(multiLineCommentStartingPosition);
 }
 } // end of namespace definition

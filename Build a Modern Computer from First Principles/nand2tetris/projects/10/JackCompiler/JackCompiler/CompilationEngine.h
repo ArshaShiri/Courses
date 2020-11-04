@@ -54,3 +54,4 @@ private:
   JackTokenizer &tokenizer_;
   std::ofstream outputFile_;
 };
+

@@ -36,7 +36,7 @@ KeywordType Token::getKeyWordType_() const
     else if (name_ == "false")       { return KeywordType::FASLE; }
     else if (name_ == "null")        { return KeywordType::NULL_; }
     else if (name_ == "this")        { return KeywordType::THIS; }
-    else { throw std::runtime_error("Unsupported keyword"); }
+    else { throw std::runtime_error("Unsupported keyword: " + name_); }
 }
 
 char Token::getSymbol_() const

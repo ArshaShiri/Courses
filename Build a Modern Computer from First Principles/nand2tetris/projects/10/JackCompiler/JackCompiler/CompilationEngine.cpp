@@ -508,22 +508,27 @@ void CompilationEngine::compileTerm_()
   auto pCurrentToken = tokenizer_.getCurrentToken();
   outputFile_ << *pCurrentToken;
 
-  switch (pCurrentToken->getTokenType())
-  {
-  case JackTokenType::SYMBOL:
+  // It can be '(' or a unary operator.
+  if (pCurrentToken->getTokenType() == JackTokenType::SYMBOL)
   {
     const auto symbol = pCurrentToken->getValue<JackTokenType::SYMBOL>();
-    if (!isOp_(symbol) || !isUnaryOp_(symbol))
+    tokenizer_.advance();
+
+    if (symbol == '(')
+    {
+      compileExpression_();
+
+      // ')'
+      outputFile_ << *tokenizer_.getCurrentToken();
+      tokenizer_.advance();
+    }
+    else if (isUnaryOp_(symbol))
+      compileTerm_();
+    else
       throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" before term");
-
-    // The previous token was an operator, so we need to compile the next term as well
-    compileTerm_();
-
-    break;
   }
-  default:
+  else
   {
-    // The previous token was not a symbol.
     pCurrentToken = advanceAndGetNextToken();
 
     // We first want to check if there is a '[' or '(' or '.'
@@ -531,29 +536,85 @@ void CompilationEngine::compileTerm_()
     {
       const auto symbol = pCurrentToken->getValue<JackTokenType::SYMBOL>();
 
-      // Print the symbol.
+      if ((symbol == '(') || (symbol == '[') || (symbol == '.'))
+      {
+        // Print the symbol.
+        outputFile_ << *pCurrentToken;
+        tokenizer_.advance();
+
+        // Array or call.
+        if ((symbol == '[') || (symbol == '('))
+        {
+          compileExpression_();
+
+          // ']' or ')'
+          outputFile_ << *tokenizer_.getCurrentToken();
+          tokenizer_.advance();
+        }
+
+        // Subroutine call.
+        else if (symbol == '.')
+          compileSubroutineCall_();
+        else
+          throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" after term");
+      }
+    }
+    else
+    {
       outputFile_ << *pCurrentToken;
       tokenizer_.advance();
-
-      // Array or call.
-      if ((symbol == '[') || (symbol == '('))
-      {
-        compileExpression_();
-
-        // ']' or ')'
-        outputFile_ << *tokenizer_.getCurrentToken();
-        tokenizer_.advance();
-      }
-
-      // Subroutine call.
-      else if (symbol == '.')
-        compileSubroutineCall_();
-      else
-        throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" after term");
     }
-    break;
   }
-  }
+
+  //switch (pCurrentToken->getTokenType())
+  //{
+  //case JackTokenType::SYMBOL:
+  //{
+  //  //const auto symbol = pCurrentToken->getValue<JackTokenType::SYMBOL>();
+  //  //if (!isOp_(symbol) || !isUnaryOp_(symbol))
+  //  //  throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" before term");
+  //  tokenizer_.advance();
+  //  // The previous token was an operator, so we need to compile the next term as well
+  //  compileTerm_();
+
+  //  break;
+  //}
+  //default:
+  //{
+  //  // The previous token was not a symbol.
+  //  pCurrentToken = advanceAndGetNextToken();
+
+  //  // We first want to check if there is a '[' or '(' or '.'
+  //  if (pCurrentToken->getTokenType() == JackTokenType::SYMBOL)
+  //  {
+  //    const auto symbol = pCurrentToken->getValue<JackTokenType::SYMBOL>();
+
+  //    if ((symbol == '(') || (symbol == '[') || (symbol == '.'))
+  //    {
+  //      // Print the symbol.
+  //      outputFile_ << *pCurrentToken;
+  //      tokenizer_.advance();
+
+  //      // Array or call.
+  //      if ((symbol == '[') || (symbol == '('))
+  //      {
+  //        compileExpression_();
+
+  //        // ']' or ')'
+  //        outputFile_ << *tokenizer_.getCurrentToken();
+  //        tokenizer_.advance();
+  //      }
+
+  //      // Subroutine call.
+  //      else if (symbol == '.')
+  //        compileSubroutineCall_();
+  //      else
+  //        throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" after term");
+  //    }
+  //  }
+  //  break;
+  //}
+  //}
 
   outputFile_ << "</term>" << '\n';
 }

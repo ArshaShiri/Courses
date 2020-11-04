@@ -12,13 +12,24 @@ TokenFactory::TokenFactory(const std::string &token) : tokenName_{token}
 std::unique_ptr<Token> TokenFactory::tokenize()
 {
   if (isKeyword()) return std::make_unique<Token>(tokenName_, JackTokenType::KEYWORD);
-  if (isSymbol()) return std::make_unique<Token>(tokenName_, JackTokenType::SYMBOL);
+
+  if (isSymbol())
+  {
+    if (tokenName_ == "<") return std::make_unique<Token>("&lt;", JackTokenType::SYMBOL);
+    if (tokenName_ == ">") return std::make_unique<Token>("&gt;", JackTokenType::SYMBOL);
+    if (tokenName_ == "&") return std::make_unique<Token>("&amp;", JackTokenType::SYMBOL);
+
+    return std::make_unique<Token>(tokenName_, JackTokenType::SYMBOL);
+  }
+
   if (isIntegerConst()) return std::make_unique<Token>(tokenName_, JackTokenType::INTEGERCONSTATNT);
+
   if (isStringConst())
   {
     const auto tokenNameWithoutQuotation = tokenName_.substr(1, tokenName_.size() - 2);
     return std::make_unique<Token>(tokenNameWithoutQuotation, JackTokenType::STRINGCONSTANT);
   }
+
   if (isIdentifier()) return std::make_unique<Token>(tokenName_, JackTokenType::IDENTIFIER);
 
   throw std::runtime_error("Cannot tokenize the current token: " + tokenName_);
@@ -77,14 +88,13 @@ bool TokenFactory::isSymbol()
   if (tokenName_ == "*")  return true;
 
   if (tokenName_ == "/")  return true;
-  if (tokenName_ == "*")  return true;
+  if (tokenName_ == "&")  return true;
   if (tokenName_ == "|")  return true;
 
   if (tokenName_ == "<")  return true;
   if (tokenName_ == ">")  return true;
   if (tokenName_ == "=")  return true;
-
-  // if (tokenName_ == "")        return true; Not sure what is this in the specs??
+  if (tokenName_ == "~")  return true;
 
   return false;
 }
