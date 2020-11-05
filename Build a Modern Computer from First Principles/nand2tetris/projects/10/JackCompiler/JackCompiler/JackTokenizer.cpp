@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string_view>
 
+#include "Helper.h"
 #include "JackTokenizer.h"
 #include "TokenFactory.h"
 
@@ -33,37 +34,6 @@ void JackTokenizer::advance()
   auto tokenFactory = TokenFactory{tokens_.at(currentTokenNumber_)};
   pToken_ = tokenFactory.tokenize();
   ++currentTokenNumber_;
-}
-
-// Move this function to a common place....
-bool isSymbol(const char  &token)
-{
-  if (token == '}')  return true;
-  if (token == '(')  return true;
-  if (token == '{')  return true;
-               
-  if (token == ')')  return true;
-  if (token == '[')  return true;
-  if (token == ']')  return true;
-
-  if (token == '.')  return true;
-  if (token == ',')  return true;
-  if (token == ';')  return true;
-
-  if (token == '+')  return true;
-  if (token == '-')  return true;
-  if (token == '*')  return true;
-
-  if (token == '/')  return true;
-  if (token == '&')  return true;
-  if (token == '|')  return true;
-
-  if (token == '<')  return true;
-  if (token == '>')  return true;
-  if (token == '=')  return true;
-  if (token == '~')  return true; 
-
-  return false;
 }
 
 void JackTokenizer::extractTokensInString_(const std::string &txt)

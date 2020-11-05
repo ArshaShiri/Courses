@@ -1,4 +1,5 @@
 #include "CompilationEngine.h"
+#include "Helper.h"
 #include "Token.h"
 
 // General rule, each compile method first prints the current token and at the end
@@ -454,31 +455,6 @@ void CompilationEngine::compileIf_()
   outputFile_ << "</ifStatement>" << '\n';
 }
 
-bool CompilationEngine::isOp_(const char symbol) const
-{
-  if (symbol == '+') return true;
-  if (symbol == '-') return true;
-  if (symbol == '*') return true;
-
-  if (symbol == '/') return true;
-  if (symbol == '&') return true;
-  if (symbol == '|') return true;
-
-  if (symbol == '<') return true;
-  if (symbol == '>') return true;
-  if (symbol == '=') return true;
-
-  return false;
-}
-
-bool CompilationEngine::isUnaryOp_(const char symbol) const
-{
-  if (symbol == '-') return true;
-  if (symbol == '~') return true;
-
-  return false;
-}
-
 void CompilationEngine::compileExpression_()
 {
   outputFile_ << "<expression>" << '\n';
@@ -489,7 +465,7 @@ void CompilationEngine::compileExpression_()
   // Check if we have an operator next, if yes we need to compile more terms.
   auto pCurrentToken = tokenizer_.getCurrentToken();
   while ((pCurrentToken->getTokenType() == JackTokenType::SYMBOL) &&
-         (isOp_(pCurrentToken->getValue<JackTokenType::SYMBOL>())))
+         (isOp(pCurrentToken->getValue<JackTokenType::SYMBOL>())))
   {
     // Print the operator.
     outputFile_ << *pCurrentToken;
@@ -522,7 +498,7 @@ void CompilationEngine::compileTerm_()
       outputFile_ << *tokenizer_.getCurrentToken();
       tokenizer_.advance();
     }
-    else if (isUnaryOp_(symbol))
+    else if (isUnaryOp(symbol))
       compileTerm_();
     else
       throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" before term");
@@ -565,56 +541,6 @@ void CompilationEngine::compileTerm_()
       tokenizer_.advance();
     }
   }
-
-  //switch (pCurrentToken->getTokenType())
-  //{
-  //case JackTokenType::SYMBOL:
-  //{
-  //  //const auto symbol = pCurrentToken->getValue<JackTokenType::SYMBOL>();
-  //  //if (!isOp_(symbol) || !isUnaryOp_(symbol))
-  //  //  throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" before term");
-  //  tokenizer_.advance();
-  //  // The previous token was an operator, so we need to compile the next term as well
-  //  compileTerm_();
-
-  //  break;
-  //}
-  //default:
-  //{
-  //  // The previous token was not a symbol.
-  //  pCurrentToken = advanceAndGetNextToken();
-
-  //  // We first want to check if there is a '[' or '(' or '.'
-  //  if (pCurrentToken->getTokenType() == JackTokenType::SYMBOL)
-  //  {
-  //    const auto symbol = pCurrentToken->getValue<JackTokenType::SYMBOL>();
-
-  //    if ((symbol == '(') || (symbol == '[') || (symbol == '.'))
-  //    {
-  //      // Print the symbol.
-  //      outputFile_ << *pCurrentToken;
-  //      tokenizer_.advance();
-
-  //      // Array or call.
-  //      if ((symbol == '[') || (symbol == '('))
-  //      {
-  //        compileExpression_();
-
-  //        // ']' or ')'
-  //        outputFile_ << *tokenizer_.getCurrentToken();
-  //        tokenizer_.advance();
-  //      }
-
-  //      // Subroutine call.
-  //      else if (symbol == '.')
-  //        compileSubroutineCall_();
-  //      else
-  //        throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" after term");
-  //    }
-  //  }
-  //  break;
-  //}
-  //}
 
   outputFile_ << "</term>" << '\n';
 }

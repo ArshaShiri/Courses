@@ -45,10 +45,6 @@ private:
   void compileReturn_();
   void handleKeywordInStatements_(const Token *pCurrentToken);
 
-  // move to another file.
-  bool isOp_(const char symbol) const;
-  bool isUnaryOp_(const char symbol) const;
-
   const Token* advanceAndGetNextToken();
 
   JackTokenizer &tokenizer_;
