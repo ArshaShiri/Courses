@@ -43,9 +43,9 @@ private:
   void compileSubroutineCall_();
   
   void compileReturn_();
-  void handleKeywordInStatements_(const Token *pCurrentToken);
+  void handleKeywordInStatements_(const Token &currentToken);
 
-  const Token* advanceAndGetNextToken();
+  const Token advanceAndGetNextToken();
 
   JackTokenizer &tokenizer_;
   std::ofstream outputFile_;

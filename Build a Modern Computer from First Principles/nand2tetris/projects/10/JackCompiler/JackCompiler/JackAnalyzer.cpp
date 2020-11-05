@@ -1,3 +1,8 @@
+/* Give explanations: .... It is assumed that the input file does not have a syntax error. */
+
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>

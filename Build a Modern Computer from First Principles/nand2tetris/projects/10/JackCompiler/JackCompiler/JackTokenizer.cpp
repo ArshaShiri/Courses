@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <fstream>
 #include <iterator>
 #include <sstream>
@@ -5,23 +6,30 @@
 
 #include "Helper.h"
 #include "JackTokenizer.h"
-#include "TokenFactory.h"
 
 namespace
 {
 void removeComments(std::string &string, bool &isMultiLineComment);
+std::string extractStringLiteral(const std::string &txt,
+                                 int &txtIdx);
+
+bool isKeyword(const std::string &token);
+bool isSymbol(const std::string &token);
+bool isIntegerConst(const std::string &token);
+bool isStringConst(const std::string &token);
+bool isIdentifier(const std::string &token);
 } // end of namespace declaration
 
 JackTokenizer::JackTokenizer(const std::string &inputFilepath) : 
-  currentTokenNumber_{0}//, currentTokenNumberInLine_{0}
+  currentTokenNumber_{0}, waitingForFirstCall_{true}
 {
   auto inputFile = std::ifstream(inputFilepath);
 
   if (!inputFile)
     throw std::runtime_error("Could not open file" + inputFilepath);
 
-  storeTokens_(inputFile);
-  hasMoreTokens_ = !tokens_.empty();
+  tokenize_(inputFile);
+
 }
 
 bool JackTokenizer::hasMoreTokens() const
@@ -31,42 +39,59 @@ bool JackTokenizer::hasMoreTokens() const
 
 void JackTokenizer::advance()
 {
-  auto tokenFactory = TokenFactory{tokens_.at(currentTokenNumber_)};
-  pToken_ = tokenFactory.tokenize();
-  ++currentTokenNumber_;
+  if (waitingForFirstCall_)
+  {
+    currentTokenNumber_ = 0;
+    waitingForFirstCall_ = false;
+  }
+  else
+    ++currentTokenNumber_;
 }
 
-void JackTokenizer::extractTokensInString_(const std::string &txt)
+const Token& JackTokenizer::getCurrentToken() const
 {
-  auto addToken = [this](std::string &token)
+  return tokens_.at(currentTokenNumber_);
+}
+
+void JackTokenizer::tokenize_(std::ifstream &inputFile)
+{
+  auto currentLine = std::string{};
+  auto isMultiLineComment = false;
+
+  while (std::getline(inputFile, currentLine))
+  {
+    removeComments(currentLine, isMultiLineComment);
+    if (currentLine.empty()) continue;
+    auto tokens = extractTokensInString_(currentLine);
+    buildTokens_(std::move(tokens));
+  }
+}
+
+std::vector<std::string> JackTokenizer::extractTokensInString_(const std::string &txt) const
+{
+  auto tokens = std::vector<std::string>{};
+
+  auto addToken = [&tokens](std::string &token)
   {
     if (!token.empty())
     {
-      tokens_.emplace_back(token);
+      tokens.emplace_back(token);
       token.clear();
     }
   };
 
+  // We walk the given string(txt) one character at a time and extract tokens as soon as we reach 
+  // them. Tokens are usually separated by white space. Symbols are usually an exception to this 
+  // rule.
   auto token = std::string{};
   for (auto charIndex = 0; charIndex < txt.size(); ++charIndex)
   {
     const auto currentChar = txt.at(charIndex);
 
-    // We want to capture string literals given in the input completely.
+    // We want to store the string literals given in the input file with "".
     if (currentChar == '\"')
     {
-      token.push_back('\"');
-      for (auto strIdx = charIndex + 1; strIdx < txt.size(); ++strIdx)
-      {
-        const auto strPart = txt.at(strIdx);
-        token.push_back(strPart);
-
-        if (strPart == '\"')
-          break;
-
-        charIndex = strIdx + 1;
-      }
-
+      token = extractStringLiteral(txt, charIndex);
       addToken(token);
       continue;
     }
@@ -78,34 +103,75 @@ void JackTokenizer::extractTokensInString_(const std::string &txt)
       continue;
     }
 
+    // We check if we found a symbol.
     if (isSymbol(currentChar))
     {
+      // Add the toke that has been build before symbol.
       addToken(token);
-      tokens_.emplace_back(std::string{currentChar});
+
+      // Now add the symbol as another token.
+      tokens.emplace_back(std::string{currentChar});
 
       continue;
     }
 
     token.push_back(currentChar);
   }
+
+  return tokens;
 }
 
-void JackTokenizer::storeTokens_(std::ifstream &inputFile)
+void JackTokenizer::buildTokens_(const std::vector<std::string> &tokens)
 {
-  auto currentLine = std::string{};
-  auto isMultiLineComment = false;
+  for (const auto &token : tokens)
+    buildToken_(std::move(token));
+}
 
-  while (std::getline(inputFile, currentLine))
+void JackTokenizer::buildToken_(const std::string &token)
+{
+  if (isKeyword(token))
   {
-    removeComments(currentLine, isMultiLineComment);
-    if (currentLine.empty()) continue;
-    extractTokensInString_(currentLine);
+    tokens_.emplace_back(Token{std::move(token), JackTokenType::KEYWORD});
+    return;
   }
-}
 
-const Token* JackTokenizer::getCurrentToken() const
-{
-  return pToken_.get();
+  if (isSymbol(token))
+  {
+    // The '<', '>' and '&' characters are replaced by "&lt;", "&gt;" and "&amp;" because they are
+    // used by xml format internally.
+    if (token == "<")
+      tokens_.emplace_back(Token{"&lt;", JackTokenType::SYMBOL});
+    else if (token == ">")
+      tokens_.emplace_back(Token{"&gt;", JackTokenType::SYMBOL});
+    else if (token == "&")
+      tokens_.emplace_back(Token{"&amp;", JackTokenType::SYMBOL});
+    else
+      tokens_.emplace_back(Token{std::move(token), JackTokenType::SYMBOL});
+
+    return;
+  }
+
+  if (isIntegerConst(token))
+  {
+    tokens_.emplace_back(Token{std::move(token), JackTokenType::INTEGERCONSTATNT});
+    return;
+  }
+
+  if (isStringConst(token))
+  {
+    // Remove the quotation marks from the string.
+    const auto tokenNameWithoutQuotation = token.substr(1, token.size() - 2);
+    tokens_.emplace_back(Token{std::move(tokenNameWithoutQuotation), JackTokenType::STRINGCONSTANT});
+    return;
+  }
+
+  if (isIdentifier(token))
+  {
+    tokens_.emplace_back(Token{std::move(token), JackTokenType::IDENTIFIER});
+    return;
+  }
+
+  throw std::runtime_error("Cannot tokenize the current token: " + token);
 }
 
 namespace
@@ -158,5 +224,84 @@ void removeComments(std::string &string, bool &isMultiLineComment)
 
   removeComment(commentType1StartingPosition);
   removeComment(multiLineCommentStartingPosition);
+}
+
+std::string extractStringLiteral(const std::string &txt,
+                                 int &txtIdx)
+{
+  auto token = std::string{};
+
+  token.push_back('\"');
+  for (auto strIdx = txtIdx + 1; strIdx < txt.size(); ++strIdx)
+  {
+    const auto strPart = txt.at(strIdx);
+    token.push_back(strPart);
+
+    if (strPart == '\"')
+      break;
+
+    // We captured the string literal, now set the index to the next character.
+    txtIdx = strIdx + 1;
+  }
+
+  return token;
+}
+
+bool isKeyword(const std::string &token)
+{
+  if (token == "class")        return true;
+  if (token == "method")       return true;
+  if (token == "function")     return true;
+
+  if (token == "constructor")  return true;
+  if (token == "int")          return true;
+  if (token == "boolean")      return true;
+
+  if (token == "char")         return true;
+  if (token == "void")         return true;
+  if (token == "var")          return true;
+
+  if (token == "static")       return true;
+  if (token == "field")        return true;
+  if (token == "let")          return true;
+
+  if (token == "do")           return true;
+  if (token == "if")           return true;
+  if (token == "else")         return true;
+
+  if (token == "while")        return true;
+  if (token == "return")       return true;
+  if (token == "true")         return true;
+
+  if (token == "false")        return true;
+  if (token == "null")         return true;
+  if (token == "this")         return true;
+
+  return false;
+}
+
+bool isSymbol(const std::string &token)
+{
+  if (::isSymbol(token.at(0))) return true;
+
+  return false;
+}
+
+bool isIntegerConst(const std::string &token)
+{
+  return !token.empty() && std::all_of(token.begin(), token.end(), ::isdigit);
+}
+
+bool isStringConst(const std::string &token)
+{
+  const auto startsWithQuotation = token.find_first_of("\"") == 0;
+  const auto endsWithQuotation = token.find_last_of("\"") == token.size() - 1;
+
+  return startsWithQuotation && endsWithQuotation;
+}
+
+bool isIdentifier(const std::string &token)
+{
+  return !token.empty();
 }
 } // end of namespace definition
