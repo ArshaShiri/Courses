@@ -1,4 +1,5 @@
 #include <dirent.h>
+#include <stdexcept>
 
 #include "Helper.h"
 
@@ -38,7 +39,7 @@ std::vector<std::string> getListOfJackFiles(const std::string &fileOrDirPath)
       }
     }
     else
-      throw std::runtime_error("Cannot open the given directory!");
+      throw std::runtime_error("Cannot open the given directory: " + fileOrDirPath);
   }
   else
     listOfJackFiles.emplace_back(fileOrDirPath);

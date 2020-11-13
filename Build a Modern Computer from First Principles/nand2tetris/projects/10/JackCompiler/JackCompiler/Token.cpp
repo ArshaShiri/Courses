@@ -3,9 +3,9 @@
 
 std::ostream& operator<<(std::ostream &os, const Token &token)
 {
-  os << "<" + token.getType_() + '>' + " " <<
+  os << "<" + token.getType() + '>' + " " <<
     token.name_ + " "  <<
-    "</" + token.getType_() + '>' << '\n';
+    "</" + token.getType() + '>' << '\n';
 
   return os;
 }
@@ -13,7 +13,7 @@ std::ostream& operator<<(std::ostream &os, const Token &token)
 Token::Token(const std::string &name, JackTokenType tokenType) : name_{name}, tokenType_{tokenType}
 {}
 
-KeywordType Token::getKeyWordType_() const
+KeywordType Token::getKeyWordType() const
 {
     if (name_ == "class")            { return KeywordType::CLASS; }
     else if (name_ == "method")      { return KeywordType::METHOD; }
@@ -39,12 +39,12 @@ KeywordType Token::getKeyWordType_() const
     else { throw std::runtime_error("Unsupported keyword: " + name_); }
 }
 
-char Token::getSymbol_() const
+char Token::getSymbol() const
 {
   return name_.at(0);
 }
 
-std::string Token::getName_() const
+std::string Token::getName() const
 {
   return name_;
 }
@@ -54,7 +54,7 @@ JackTokenType Token::getTokenType() const
   return tokenType_;
 }
 
-std::string Token::getType_() const
+std::string Token::getType() const
 {
   switch (tokenType_)
   {

@@ -44,28 +44,31 @@ public:
 
   JackTokenType getTokenType() const;
 
-  template <JackTokenType TT>
-  decltype(auto) getValue() const;
+  KeywordType getKeyWordType() const;
+  char getSymbol() const;
+  std::string getName() const;
+  std::string getType() const;
+
 
   friend std::ostream& operator<<(std::ostream &os, const Token &token);
 
+  //template <JackTokenType TT>
+  //decltype(auto) getValue() const;
+
 private:
-  KeywordType getKeyWordType_() const;
-  char getSymbol_() const;
-  std::string getName_() const;
-  std::string getType_() const;
 
   std::string name_;
   JackTokenType tokenType_;
 };
 
-template <JackTokenType TT>
-decltype(auto) Token::getValue() const
-{
-  if constexpr (TT == JackTokenType::KEYWORD)
-    return getKeyWordType_();
-  else if constexpr (TT == JackTokenType::SYMBOL)
-    return getSymbol_();
-  else
-    return getName_();
-}
+
+//template <JackTokenType TT>
+//decltype(auto) Token::getValue() const
+//{
+//  if constexpr (TT == JackTokenType::KEYWORD)
+//    return getKeyWordType_();
+//  else if constexpr (TT == JackTokenType::SYMBOL)
+//    return getSymbol_();
+//  else
+//    return getName_();
+//}

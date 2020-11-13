@@ -13,6 +13,7 @@ void removeComments(std::string &string, bool &isMultiLineComment);
 std::string extractStringLiteral(const std::string &txt,
                                  int &txtIdx);
 
+/* These methods classify the tokens type according to Jack documentation. */
 bool isKeyword(const std::string &token);
 bool isSymbol(const std::string &token);
 bool isIntegerConst(const std::string &token);
@@ -26,10 +27,9 @@ JackTokenizer::JackTokenizer(const std::string &inputFilepath) :
   auto inputFile = std::ifstream(inputFilepath);
 
   if (!inputFile)
-    throw std::runtime_error("Could not open file" + inputFilepath);
+    throw std::runtime_error("Could not open file " + inputFilepath);
 
   tokenize_(inputFile);
-
 }
 
 bool JackTokenizer::hasMoreTokens() const
@@ -81,7 +81,7 @@ std::vector<std::string> JackTokenizer::extractTokensInString_(const std::string
   };
 
   // We walk the given string(txt) one character at a time and extract tokens as soon as we reach 
-  // them. Tokens are usually separated by white space. Symbols are usually an exception to this 
+  // them. Tokens are usually separated by white space. Symbols are mostly an exception to this 
   // rule.
   auto token = std::string{};
   for (auto charIndex = 0; charIndex < txt.size(); ++charIndex)
@@ -121,13 +121,13 @@ std::vector<std::string> JackTokenizer::extractTokensInString_(const std::string
   return tokens;
 }
 
-void JackTokenizer::buildTokens_(const std::vector<std::string> &tokens)
+void JackTokenizer::buildTokens_(std::vector<std::string> &&tokens)
 {
-  for (const auto &token : tokens)
+  for (auto &token : tokens)
     buildToken_(std::move(token));
 }
 
-void JackTokenizer::buildToken_(const std::string &token)
+void JackTokenizer::buildToken_(std::string &&token)
 {
   if (isKeyword(token))
   {
@@ -176,6 +176,19 @@ void JackTokenizer::buildToken_(const std::string &token)
 
 namespace
 {
+void removeComment(size_t startPos, std::string &string)
+{
+  if (startPos != string.npos)
+  {
+    // The entire string is a comment.
+    if (startPos == 0)
+      string.clear();
+    else
+      // Remove the comment.
+      string.erase(startPos);
+  }
+}
+
 void removeComments(std::string &string, bool &isMultiLineComment)
 {
   // This function is limited. It assumes if a comment starts with /**, the entire line is a
@@ -209,21 +222,8 @@ void removeComments(std::string &string, bool &isMultiLineComment)
   if ((commentType1StartingPosition == string.npos) && 
       (multiLineCommentStartingPosition == string.npos)) return;
 
-  auto removeComment = [&string](size_t startPos)
-  {
-    if (startPos != string.npos)
-    {
-      // The entire string is a comment.
-      if (startPos == 0)
-        string.clear();
-      else
-        // Remove the comment.
-        string.erase(startPos);
-    }
-  };
-
-  removeComment(commentType1StartingPosition);
-  removeComment(multiLineCommentStartingPosition);
+  removeComment(commentType1StartingPosition, string);
+  removeComment(multiLineCommentStartingPosition, string);
 }
 
 std::string extractStringLiteral(const std::string &txt,

@@ -43,7 +43,7 @@ void CompilationEngine::compileClass_()
   {
     if (nextToken.getTokenType() == JackTokenType::KEYWORD)
     {
-      switch (nextToken.getValue<JackTokenType::KEYWORD>())
+      switch (nextToken.getKeyWordType())
       {
         case KeywordType::STATIC:
         case KeywordType::FIELD:
@@ -92,7 +92,7 @@ void CompilationEngine::compileClassVarDec_()
   auto nextToken = advanceAndGetNextToken();
 
   // check if there are other variables by checking if the next token is a ','
-  while (nextToken.getValue<JackTokenType::SYMBOL>() == ',')
+  while (nextToken.getSymbol() == ',')
   {
     outputFile_ << nextToken;
 
@@ -152,7 +152,7 @@ void CompilationEngine::compileParameterList_()
   outputFile_ << "<parameterList>" << '\n';
 
   auto currentToken = tokenizer_.getCurrentToken();
-  if (currentToken.getValue<JackTokenType::SYMBOL>() == ')')
+  if (currentToken.getSymbol() == ')')
   {
     outputFile_ << "</parameterList>" << '\n';
     return;
@@ -166,7 +166,7 @@ void CompilationEngine::compileParameterList_()
 
   // Check for comma and repeat the process.
   currentToken = advanceAndGetNextToken();
-  while (currentToken.getValue<JackTokenType::SYMBOL>() == ',')
+  while (currentToken.getSymbol() == ',')
   {
     // ,
     outputFile_ << currentToken;
@@ -188,7 +188,7 @@ void CompilationEngine::compileVarDec_()
 
   while (currentToken.getTokenType() == JackTokenType::KEYWORD)
   {
-    if (currentToken.getValue<JackTokenType::KEYWORD>() != KeywordType::VAR)
+    if (currentToken.getKeyWordType() != KeywordType::VAR)
       break;
 
     outputFile_ << "<varDec>" << '\n';
@@ -205,7 +205,7 @@ void CompilationEngine::compileVarDec_()
     currentToken = advanceAndGetNextToken();
 
     // Check if there are other variables by checking if the next token is a ','
-    while (currentToken.getValue<JackTokenType::SYMBOL>() == ',')
+    while (currentToken.getSymbol() == ',')
     {
       outputFile_ << currentToken;
 
@@ -243,7 +243,7 @@ void CompilationEngine::compileReturn_()
 
 void CompilationEngine::handleKeywordInStatements_(const Token &currentToken)
 {
-  switch (currentToken.getValue<JackTokenType::KEYWORD>())
+  switch (currentToken.getKeyWordType())
   {
   case KeywordType::LET:
   {
@@ -299,7 +299,7 @@ void CompilationEngine::compileSubroutineCall_()
   // '.' symbol.
 
   auto currentToken = advanceAndGetNextToken();
-  while (currentToken.getValue<JackTokenType::SYMBOL>() == '.')
+  while (currentToken.getSymbol() == '.')
   {
     // The previous token was a class or variable name.
     // Subroutine name is the current token.
@@ -356,7 +356,7 @@ void CompilationEngine::compileLet_()
   auto nextToken = advanceAndGetNextToken();
 
   if ((nextToken.getTokenType() == JackTokenType::SYMBOL) &&
-       nextToken.getValue<JackTokenType::SYMBOL>() == '[')
+       nextToken.getSymbol() == '[')
   {
     // [
     outputFile_ << nextToken;
@@ -445,7 +445,7 @@ void CompilationEngine::compileIf_()
   compileIfBody();
 
   // Check if we have an else statement.
-  if (tokenizer_.getCurrentToken().getValue<JackTokenType::KEYWORD>() == KeywordType::ELSE)
+  if (tokenizer_.getCurrentToken().getKeyWordType() == KeywordType::ELSE)
   {
     // else
     outputFile_ << tokenizer_.getCurrentToken();
@@ -465,7 +465,7 @@ void CompilationEngine::compileExpression_()
   // Check if we have an operator next, if yes we need to compile more terms.
   auto currentToken = tokenizer_.getCurrentToken();
   while ((currentToken.getTokenType() == JackTokenType::SYMBOL) &&
-         (isOp(currentToken.getValue<JackTokenType::SYMBOL>())))
+         (isOp(currentToken.getSymbol())))
   {
     // Print the operator.
     outputFile_ << currentToken;
@@ -487,7 +487,7 @@ void CompilationEngine::compileTerm_()
   // It can be '(' or a unary operator.
   if (currentToken.getTokenType() == JackTokenType::SYMBOL)
   {
-    const auto symbol = currentToken.getValue<JackTokenType::SYMBOL>();
+    const auto symbol = currentToken.getSymbol();
     tokenizer_.advance();
 
     if (symbol == '(')
@@ -510,7 +510,7 @@ void CompilationEngine::compileTerm_()
     // We first want to check if there is a '[' or '(' or '.'
     if (currentToken.getTokenType() == JackTokenType::SYMBOL)
     {
-      const auto symbol = currentToken.getValue<JackTokenType::SYMBOL>();
+      const auto symbol = currentToken.getSymbol();
 
       if ((symbol == '(') || (symbol == '[') || (symbol == '.'))
       {
@@ -550,12 +550,12 @@ void CompilationEngine::compileExpressionList_()
   outputFile_ << "<expressionList>" << '\n';
 
   // In case there are no expressions
-  if (!(tokenizer_.getCurrentToken().getValue<JackTokenType::SYMBOL>() == ')'))
+  if (!(tokenizer_.getCurrentToken().getSymbol() == ')'))
   {
     compileExpression_();
 
     auto currentToken = tokenizer_.getCurrentToken();
-    while (currentToken.getValue<JackTokenType::SYMBOL>() == ',')
+    while (currentToken.getSymbol() == ',')
     {
       // ','
       outputFile_ << currentToken;

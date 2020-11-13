@@ -1,7 +1,6 @@
-/* Give explanations: .... It is assumed that the input file does not have a syntax error. */
-
-
-
+/* This program compiles a file written in jack language to virtual machine code which is then
+   used to create machine level code. It is assumed that the given file to this compiler does not
+   have any syntax errors. */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,10 +19,11 @@ int main(int argc, char *argv[])
 
     const auto jackFilesList = getListOfJackFiles(argv[1]);
 
+    // For each input jack file, create a tokenizer and then use that to compile the file.
     for (const auto &inputFile : jackFilesList)
     {
       auto tokenizer = JackTokenizer{inputFile + ".jack"};
-      CompilationEngine{inputFile + "Ans_.xml", tokenizer};
+      CompilationEngine{inputFile + ".xml", tokenizer};
     }
   }
   catch (std::runtime_error &e)
