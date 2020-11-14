@@ -4,6 +4,8 @@
 #include <string>
 
 #include "JackTokenizer.h"
+#include "SymbolTable.h"
+#include "VMWriter.h"
 
 class Token;
 
@@ -13,6 +15,7 @@ public:
   CompilationEngine(const std::string &otputFilepath, JackTokenizer &tokenizer);
 
 private:
+  // Private methods
 
   /*Compiles a complete class.*/
   void compileClass_();
@@ -46,8 +49,13 @@ private:
   void handleKeywordInStatements_(const Token &currentToken);
 
   const Token advanceAndGetNextToken();
+  void addToSymbolTable_(const std::string &identifierName,
+                        const std::string &identifierType,
+                        KeywordType keywordType);
 
+  // Private attributes.
   JackTokenizer &tokenizer_;
-  std::ofstream outputFile_;
+  VMWriter VMWriter_;
+  SymbolTable symbolTable_;
 };
 

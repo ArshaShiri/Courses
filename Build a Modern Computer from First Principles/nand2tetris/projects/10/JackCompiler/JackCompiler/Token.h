@@ -1,3 +1,5 @@
+/*Define all the token types based on Jack language documentations.*/
+
 #pragma once
 
 #include <iostream>
@@ -49,9 +51,9 @@ public:
   std::string getName() const;
   std::string getType() const;
 
-
   friend std::ostream& operator<<(std::ostream &os, const Token &token);
 
+  // This uses C++17 which is not supported by the grader of this course on coursera.
   //template <JackTokenType TT>
   //decltype(auto) getValue() const;
 

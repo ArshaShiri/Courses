@@ -5,11 +5,9 @@
 // General rule, each compile method first prints the current token and at the end
 // advances the token. (some exceptions... explain well)
 
-CompilationEngine::CompilationEngine(
-  const std::string &otputFilepath, JackTokenizer &tokenizer) : tokenizer_{tokenizer}
+CompilationEngine::CompilationEngine(const std::string &otputFilepath, JackTokenizer &tokenizer) : 
+  tokenizer_{tokenizer}, VMWriter_{otputFilepath}
 {
-  outputFile_.open(otputFilepath);
-
   if (tokenizer.hasMoreTokens())
   {
     tokenizer.advance();
@@ -30,12 +28,10 @@ const Token CompilationEngine::advanceAndGetNextToken()
 
 void CompilationEngine::compileClass_()
 {
-  outputFile_ << "<class>" << '\n';
-
-  // The current 3 tokens are "class" followed by '{' and an identifier
-  outputFile_ << tokenizer_.getCurrentToken();
-  outputFile_ << advanceAndGetNextToken();
-  outputFile_ << advanceAndGetNextToken();
+  // The current tokenm is "class". The following two tokens are an identifier and '{'.
+  // These are not useful for compilation so we just skip them.
+  tokenizer_.advance();
+  tokenizer_.advance();
 
   // We might have  0 to many variable declaration of this class
   auto nextToken = advanceAndGetNextToken();
@@ -71,41 +67,52 @@ void CompilationEngine::compileClass_()
   }
 
   // Next token is '{'
-  outputFile_ << nextToken;
+ // outputFile_ << nextToken;
 
-  outputFile_ << "</class>" << '\n';
+ // outputFile_ << "</class>" << '\n';
+}
+
+void CompilationEngine::addToSymbolTable_(const std::string &identifierName,
+                                          const std::string &identifierType,
+                                          KeywordType keywordType)
+{
+  switch (keywordType)
+  {
+  case KeywordType::STATIC: 
+    symbolTable_.define(identifierName, identifierType, IdentifierKind::STATIC); break;
+
+  case KeywordType::FIELD:
+    symbolTable_.define(identifierName, identifierType, IdentifierKind::FIELD); break;
+
+  case KeywordType::VAR:
+    symbolTable_.define(identifierName, identifierType, IdentifierKind::VAR); break;
+
+  default:
+    symbolTable_.define(identifierName, identifierType, IdentifierKind::ARG); break;
+  }
 }
 
 void CompilationEngine::compileClassVarDec_()
 {
-  outputFile_ << "<classVarDec>" << '\n';
+  // We are not outputting anything. Just update the symbol table.
 
   // Either "static" or "field".
-  outputFile_ << tokenizer_.getCurrentToken();
+  const auto keywordType = tokenizer_.getCurrentToken().getKeyWordType();
+  const auto symbolType = advanceAndGetNextToken().getName();
+  auto symbolName = advanceAndGetNextToken().getName();
 
-  // Type
-  outputFile_ << advanceAndGetNextToken();
-
-  // Var name
-  outputFile_ << advanceAndGetNextToken();
+  addToSymbolTable_(symbolName, symbolType, keywordType);
 
   auto nextToken = advanceAndGetNextToken();
 
   // check if there are other variables by checking if the next token is a ','
   while (nextToken.getSymbol() == ',')
   {
-    outputFile_ << nextToken;
-
     // Another var name
-    outputFile_ << advanceAndGetNextToken();
-
+    symbolName = advanceAndGetNextToken().getName();
+    addToSymbolTable_(symbolName, symbolType, keywordType);
     nextToken = advanceAndGetNextToken();
   }
-
-  // ;
-  outputFile_ << nextToken;
-  tokenizer_.advance();
-  outputFile_ << "</classVarDec>" << '\n';
 }
 
 void CompilationEngine::compileClassSubroutine_()

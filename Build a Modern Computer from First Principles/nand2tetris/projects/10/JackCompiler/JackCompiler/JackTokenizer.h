@@ -1,3 +1,6 @@
+/*Tokenizes the string that found in a jack file. It goes through the file character by *character
+  and stores the found tokens.*/
+
 #pragma once
 
 #include<memory>
