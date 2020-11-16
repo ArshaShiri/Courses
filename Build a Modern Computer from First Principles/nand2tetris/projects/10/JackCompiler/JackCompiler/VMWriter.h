@@ -40,8 +40,8 @@ public:
   void writeGoTo(const std::string &label);
 
   void writeIf(const std::string &label);
-  void writeCall(std::string &name, int numberOfArgs);
-  void writeFunction(std::string &name, int numberOfLocals);
+  void writeCall(const std::string &name, int numberOfArgs);
+  void writeFunction(const std::string &name, int numberOfLocals);
   void writeReturn();
   void close();
 
