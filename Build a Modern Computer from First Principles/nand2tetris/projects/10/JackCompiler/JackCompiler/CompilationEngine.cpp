@@ -1,9 +1,7 @@
 #include "CompilationEngine.h"
 #include "Helper.h"
+#include "OSFunctionWriterHelper.h"
 #include "Token.h"
-
-// General rule, each compile method first prints the current token and at the end
-// advances the token. (some exceptions... explain well)
 
 CompilationEngine::CompilationEngine(const std::string &otputFilepath, JackTokenizer &tokenizer) : 
   tokenizer_{tokenizer}, VMWriter_{otputFilepath}
@@ -13,6 +11,8 @@ CompilationEngine::CompilationEngine(const std::string &otputFilepath, JackToken
     tokenizer.advance();
     compileClass_();
   }
+
+  VMWriter_.close();
 }
 
 const Token CompilationEngine::advanceAndGetNextToken()
@@ -28,9 +28,11 @@ const Token CompilationEngine::advanceAndGetNextToken()
 
 void CompilationEngine::compileClass_()
 {
-  // The current tokenm is "class". The following two tokens are an identifier and '{'.
-  // These are not useful for compilation so we just skip them.
-  tokenizer_.advance();
+  // The current token is "class". The following two tokens are an identifier(class name) and '{'.
+  // We store the class name as it is useful to generate names for static methods as they contain
+  // the name of the class in them. Also class name is useful in method symbol tables too. We can
+  // skip the '{' symbol.
+  className_ = advanceAndGetNextToken().getName();
   tokenizer_.advance();
 
   // We might have  0 to many variable declaration of this class
@@ -65,11 +67,6 @@ void CompilationEngine::compileClass_()
     else
       break;
   }
-
-  // Next token is '{'
- // outputFile_ << nextToken;
-
- // outputFile_ << "</class>" << '\n';
 }
 
 void CompilationEngine::addToSymbolTable_(const std::string &identifierName,
@@ -86,9 +83,11 @@ void CompilationEngine::addToSymbolTable_(const std::string &identifierName,
 
   case KeywordType::VAR:
     symbolTable_.define(identifierName, identifierType, IdentifierKind::VAR); break;
-
+  
+  // There is no specific keyword for arguments, so we have to add that manually to the symbol table
+  // when we are parsing parameter lists.
   default:
-    symbolTable_.define(identifierName, identifierType, IdentifierKind::ARG); break;
+    throw std::runtime_error("Cannot add this keyword type to the symbol table! " __FUNCTION__);
   }
 }
 
@@ -117,80 +116,98 @@ void CompilationEngine::compileClassVarDec_()
 
 void CompilationEngine::compileClassSubroutine_()
 {
-  outputFile_ << "<subroutineDec>" << '\n';
+  // We are in a scope of a new subroutine. Clear the symbol table for the subroutine before adding
+  // new entries.
+  symbolTable_.clearSubroutineSymbolTable();
+  const auto currentToken = tokenizer_.getCurrentToken();
+  auto subRoutineName = std::string{};
+  switch (currentToken.getKeyWordType())
+  {
+  case KeywordType::CONSTRUCTOR:
+  {
+    // We first need to allocate the needed amount of memory. To do so, we have to count the number
+    // of field variables and push it to the stack and call alloc with it.
+    const auto filedVarCount = symbolTable_.varCount(IdentifierKind::FIELD);
+    VMWriter_.writePush(MemorySegment::CONST, filedVarCount);
+    VMWriter_.writeCall(OSMemoryWriterHelper::allocName(), OSMemoryWriterHelper::allocnumberOfArgs());
+    break;
+  }
+  case KeywordType::FUNCTION:
+  {
+    // In the generate vm code, a function name is translated to the class name followed by a dot
+    // and the function name.
+    subRoutineName += className_ + ".";
+  }
+  default:
+    break;
+  }
 
-  // constructor, function or method.
-  outputFile_ << tokenizer_.getCurrentToken();
+  // skip the token that specifies constructor, function or method.
+  tokenizer_.advance();
 
-  // Type
-  outputFile_ << advanceAndGetNextToken();
+  // skip the token that specifies the return type.
+  tokenizer_.advance();
 
-  // Function's name.
-  outputFile_ << advanceAndGetNextToken();
+  // Store the function's name.
+  subRoutineName += tokenizer_.getCurrentToken().getName();
 
-  // (
-  outputFile_ << advanceAndGetNextToken();
+  // skip '('
+  tokenizer_.advance();
 
   tokenizer_.advance();
   compileParameterList_();
 
-  // )
-  outputFile_ << tokenizer_.getCurrentToken();
+  // After compiling the parameter list, the symbol table should have all the arguments stored and
+  // and we can write the vm command for this subroutine.
+  VMWriter_.writeFunction(subRoutineName, symbolTable_.varCount(IdentifierKind::VAR));
 
-  outputFile_ << "<subroutineBody>" << '\n';
+  // skip ')'
+  tokenizer_.advance();
 
-  // {
-  outputFile_ << advanceAndGetNextToken();
+  // <subroutineBody>
 
+  // skip '{'
   tokenizer_.advance();
   compileVarDec_();
   compileStatements_();
 
-  // }
-  outputFile_ << tokenizer_.getCurrentToken();
-
-  outputFile_ << "</subroutineBody>" << '\n';
-  outputFile_ << "</subroutineDec>" << '\n';
+  // skip '}'
   tokenizer_.advance();
+  // </subroutineBody>
 }
 
 void CompilationEngine::compileParameterList_()
 {
-  outputFile_ << "<parameterList>" << '\n';
-
   auto currentToken = tokenizer_.getCurrentToken();
-  if (currentToken.getSymbol() == ')')
-  {
-    outputFile_ << "</parameterList>" << '\n';
-    return;
-  }
 
-  // type
-  outputFile_ << currentToken;
+  // No parameters are available.
+  if (currentToken.getSymbol() == ')')
+    return;
+  
+  // type: int, char, or any other object type.
+  auto symbolType = currentToken.getName();
 
   // name
-  outputFile_ << advanceAndGetNextToken();
+  auto symbolName = advanceAndGetNextToken().getName();
+  symbolTable_.define(symbolName, symbolType, IdentifierKind::ARG);
 
   // Check for comma and repeat the process.
   currentToken = advanceAndGetNextToken();
   while (currentToken.getSymbol() == ',')
   {
-    // ,
-    outputFile_ << currentToken;
+    // skip over ',' as we do not need it.
+    tokenizer_.advance();
 
-    // type
-    outputFile_ << advanceAndGetNextToken();
-
-    // name
-    outputFile_ << advanceAndGetNextToken();
+    symbolType = advanceAndGetNextToken().getName();
+    symbolName = advanceAndGetNextToken().getName();
+    symbolTable_.define(symbolName, symbolType, IdentifierKind::ARG);
     currentToken = advanceAndGetNextToken();
   }
-
-  outputFile_ << "</parameterList>" << '\n';
 }
 
 void CompilationEngine::compileVarDec_()
 {
+  // Only updating the symbol table.
   auto currentToken = tokenizer_.getCurrentToken();
 
   while (currentToken.getTokenType() == JackTokenType::KEYWORD)
@@ -198,53 +215,54 @@ void CompilationEngine::compileVarDec_()
     if (currentToken.getKeyWordType() != KeywordType::VAR)
       break;
 
-    outputFile_ << "<varDec>" << '\n';
-
-    // Var
-    outputFile_ << currentToken;
+    // skip the keyword var
+    tokenizer_.advance();
 
     // Type
-    outputFile_ << advanceAndGetNextToken();
+    const auto varType = advanceAndGetNextToken().getName();
 
     // Var name
-    outputFile_ << advanceAndGetNextToken();
+    auto varName = advanceAndGetNextToken().getName();
+
+    addToSymbolTable_(varName, varType, KeywordType::VAR);
 
     currentToken = advanceAndGetNextToken();
 
     // Check if there are other variables by checking if the next token is a ','
     while (currentToken.getSymbol() == ',')
     {
-      outputFile_ << currentToken;
+      // Skip ','
+      tokenizer_.advance();
 
       // Another var name
-      outputFile_ << advanceAndGetNextToken();
-
+      varName = advanceAndGetNextToken().getName();
+      addToSymbolTable_(varName, varType, KeywordType::VAR);
       currentToken = advanceAndGetNextToken();
     }
 
-    // ;
-    outputFile_ << currentToken;
-    outputFile_ << "</varDec>" << '\n';
+    // skip ';'
+    tokenizer_.advance();
     currentToken = advanceAndGetNextToken();
   }
 }
 
 void CompilationEngine::compileReturn_()
 {
-  outputFile_ << "<returnStatement>" << '\n';
+  // Check if the next token is ';' if yes it means it was: return; meaning the subroutine was void
+  auto isSubroutineVoid = advanceAndGetNextToken().getTokenType() == JackTokenType::SYMBOL;
+  if (isSubroutineVoid)
+    VMWriter_.writePush(MemorySegment::CONST, 0);
 
   // Return
-  outputFile_ << tokenizer_.getCurrentToken();
+  VMWriter_.writeReturn();
 
-  if (advanceAndGetNextToken().getTokenType() != JackTokenType::SYMBOL)
+  if (!isSubroutineVoid)
   {
     // Expression
     compileExpression_();
   }
 
-  // ;
-  outputFile_ << tokenizer_.getCurrentToken();
-  outputFile_ << "</returnStatement>" << '\n';
+  // skip ';'
   tokenizer_.advance();
 }
 
@@ -285,7 +303,6 @@ void CompilationEngine::handleKeywordInStatements_(const Token &currentToken)
 
 void CompilationEngine::compileStatements_()
 {
-  outputFile_ << "<statements>" << '\n';
   auto currentToken = tokenizer_.getCurrentToken();
 
   while (currentToken.getTokenType() == JackTokenType::KEYWORD)
@@ -293,179 +310,235 @@ void CompilationEngine::compileStatements_()
     handleKeywordInStatements_(currentToken);
     currentToken = tokenizer_.getCurrentToken();
   }
-
-  outputFile_ << "</statements>" << '\n';
 }
 
 void CompilationEngine::compileSubroutineCall_()
 {
-  // subroutine name or class name or variable name.
-  outputFile_ << tokenizer_.getCurrentToken();
+  // identifier, can be var name, class name or subroutine name.
+  auto identifier = tokenizer_.getCurrentToken().getName();
+
+  auto currentToken = advanceAndGetNextToken();
+  auto subroutineName = std::string{};
+  subroutineName += identifier;
 
   // We want to check if we are calling a method on class or variable. We have to check for the
   // '.' symbol.
-
-  auto currentToken = advanceAndGetNextToken();
-  while (currentToken.getSymbol() == '.')
+  if (currentToken.getSymbol() == '.')
   {
     // The previous token was a class or variable name.
     // Subroutine name is the current token.
 
-    // '.'
-    outputFile_ << currentToken;
+    // skip '.'
+    tokenizer_.advance();
 
-    // subroutine name
-    outputFile_ << advanceAndGetNextToken();
-
-    // Set the next token which is '(' to pCurrentToken
-    currentToken = advanceAndGetNextToken();
+    
+    if (!symbolTable_.doesIdentifierExist(identifier))
+    {
+      // When an identifier does not exist, it means that the method is a static method of the 
+      // current class or another class.
+      subroutineName += ".";
+    }
+    subroutineName += tokenizer_.getCurrentToken().getName();
+    tokenizer_.advance();
   }
 
-  // (
-  outputFile_ << currentToken;
-
+  // skip '('
   tokenizer_.advance();
-  compileExpressionList_();
+  auto numberOfExpressions = compileExpressionList_();
+  VMWriter_.writeCall(subroutineName, numberOfExpressions);
 
-  // )
-  outputFile_ << tokenizer_.getCurrentToken();
-
+  // skip ')'
   tokenizer_.advance();
 }
 
 void CompilationEngine::compileDo_()
 {
-  outputFile_ << "<doStatement>" << '\n';
+  // This means we are calling a void method. Otherwise we are not going to be in do.
 
-  // do
-  outputFile_ << tokenizer_.getCurrentToken();
+  // skip "do"
   tokenizer_.advance();
   compileSubroutineCall_();
 
-  // ;
-  outputFile_ << tokenizer_.getCurrentToken();
-  outputFile_ << "</doStatement>" << '\n';
-
+  // skip ';'
   tokenizer_.advance();
+  VMWriter_.writePop(MemorySegment::TEMPT, 0);
 }
 
 void CompilationEngine::compileLet_()
 {
-  outputFile_ << "<letStatement>" << '\n';
+  //outputFile_ << "<letStatement>" << '\n';
 
-  // Let
-  outputFile_ << tokenizer_.getCurrentToken();
+  //// Let
+  //outputFile_ << tokenizer_.getCurrentToken();
 
-  // Var name
-  outputFile_ << advanceAndGetNextToken();
+  //// Var name
+  //outputFile_ << advanceAndGetNextToken();
 
-  // We want to check if we are addressing and array here.
-  auto nextToken = advanceAndGetNextToken();
+  //// We want to check if we are addressing and array here.
+  //auto nextToken = advanceAndGetNextToken();
 
-  if ((nextToken.getTokenType() == JackTokenType::SYMBOL) &&
-       nextToken.getSymbol() == '[')
-  {
-    // [
-    outputFile_ << nextToken;
-    tokenizer_.advance();
+  //if ((nextToken.getTokenType() == JackTokenType::SYMBOL) &&
+  //     nextToken.getSymbol() == '[')
+  //{
+  //  // [
+  //  outputFile_ << nextToken;
+  //  tokenizer_.advance();
 
-    compileExpression_();
+  //  compileExpression_();
 
-    // ]
-    outputFile_ << tokenizer_.getCurrentToken();
-    nextToken = advanceAndGetNextToken();
-  }
+  //  // ]
+  //  outputFile_ << tokenizer_.getCurrentToken();
+  //  nextToken = advanceAndGetNextToken();
+  //}
 
-  // =
-  outputFile_ << nextToken;
-  tokenizer_.advance();
+  //// =
+  //outputFile_ << nextToken;
+  //tokenizer_.advance();
 
-  compileExpression_();
+  //compileExpression_();
 
-  // ;
-  outputFile_ << tokenizer_.getCurrentToken();
+  //// ;
+  //outputFile_ << tokenizer_.getCurrentToken();
 
-  tokenizer_.advance();
-  outputFile_ << "</letStatement>" << '\n';
+  //tokenizer_.advance();
+  //outputFile_ << "</letStatement>" << '\n';
 }
 
 void CompilationEngine::compileWhile_()
 {
-  // The code is very similar to if statement. Take out some common functionality, in general 
-  // compiling inside a parentheses and inside a body {} is common.
-  outputFile_ << "<whileStatement>" << '\n';
+  //// The code is very similar to if statement. Take out some common functionality, in general 
+  //// compiling inside a parentheses and inside a body {} is common.
+  //outputFile_ << "<whileStatement>" << '\n';
 
-  // while
-  outputFile_ << tokenizer_.getCurrentToken();
+  //// while
+  //outputFile_ << tokenizer_.getCurrentToken();
 
-  // '('
-  outputFile_ << advanceAndGetNextToken();
+  //// '('
+  //outputFile_ << advanceAndGetNextToken();
 
-  tokenizer_.advance();
-  compileExpression_();
+  //tokenizer_.advance();
+  //compileExpression_();
 
-  // ')'
-  outputFile_ << tokenizer_.getCurrentToken();
+  //// ')'
+  //outputFile_ << tokenizer_.getCurrentToken();
 
-  // '{'
-  outputFile_ << advanceAndGetNextToken();
-  tokenizer_.advance();
+  //// '{'
+  //outputFile_ << advanceAndGetNextToken();
+  //tokenizer_.advance();
 
-  compileStatements_();
+  //compileStatements_();
 
-  // '}'
-  outputFile_ << tokenizer_.getCurrentToken();
-  tokenizer_.advance();
+  //// '}'
+  //outputFile_ << tokenizer_.getCurrentToken();
+  //tokenizer_.advance();
 
-  outputFile_ << "</whileStatement>" << '\n';
+  //outputFile_ << "</whileStatement>" << '\n';
 }
 
 void CompilationEngine::compileIf_()
 {
-  outputFile_ << "<ifStatement>" << '\n';
+  //outputFile_ << "<ifStatement>" << '\n';
 
-  auto compileIfBody = [this]()
+  //auto compileIfBody = [this]()
+  //{
+  //  // '{'
+  //  outputFile_ << advanceAndGetNextToken();
+  //  tokenizer_.advance();
+
+  //  compileStatements_();
+
+  //  // '}'
+  //  outputFile_ << tokenizer_.getCurrentToken();
+  //  tokenizer_.advance();
+  //};
+
+  //// If
+  //outputFile_ << tokenizer_.getCurrentToken();
+
+  //// '('
+  //outputFile_ << advanceAndGetNextToken();
+
+  //tokenizer_.advance();
+  //compileExpression_();
+
+  //// ')'
+  //outputFile_ << tokenizer_.getCurrentToken();
+
+  //compileIfBody();
+
+  //// Check if we have an else statement.
+  //if (tokenizer_.getCurrentToken().getKeyWordType() == KeywordType::ELSE)
+  //{
+  //  // else
+  //  outputFile_ << tokenizer_.getCurrentToken();
+  //  compileIfBody();
+  //}
+
+  //outputFile_ << "</ifStatement>" << '\n';
+}
+
+void CompilationEngine::handleOperator(const char character)
+{
+  if (character == '+')
   {
-    // '{'
-    outputFile_ << advanceAndGetNextToken();
-    tokenizer_.advance();
-
-    compileStatements_();
-
-    // '}'
-    outputFile_ << tokenizer_.getCurrentToken();
-    tokenizer_.advance();
-  };
-
-  // If
-  outputFile_ << tokenizer_.getCurrentToken();
-
-  // '('
-  outputFile_ << advanceAndGetNextToken();
-
-  tokenizer_.advance();
-  compileExpression_();
-
-  // ')'
-  outputFile_ << tokenizer_.getCurrentToken();
-
-  compileIfBody();
-
-  // Check if we have an else statement.
-  if (tokenizer_.getCurrentToken().getKeyWordType() == KeywordType::ELSE)
-  {
-    // else
-    outputFile_ << tokenizer_.getCurrentToken();
-    compileIfBody();
+    VMWriter_.writeArithmetic(ArithmeticCommand::ADD);
+    return;
   }
 
-  outputFile_ << "</ifStatement>" << '\n';
+  if (character == '-')
+  {
+    VMWriter_.writeArithmetic(ArithmeticCommand::SUB);
+    return;
+  }
+
+  if (character == '*')
+  {
+    // Multiplication is handled by the operations system.
+    VMWriter_.writeCall(OSMathWriterHelper::multName(), OSMathWriterHelper::multnumberOfArgs());
+    return;
+  }
+
+  if (character == '/')
+  {
+    throw std::runtime_error("Arithmetic operator is not implemented.");
+    return;
+  }
+
+  if (character == '&')
+  {
+    throw std::runtime_error("Arithmetic operator is not implemented.");
+    return;
+  }
+
+  if (character == '|')
+  {
+    throw std::runtime_error("Arithmetic operator is not implemented.");
+    return;
+  }
+
+  if (character == '<')
+  {
+    throw std::runtime_error("Arithmetic operator is not implemented.");
+    return;
+  }
+
+  if (character == '>')
+  {
+    throw std::runtime_error("Arithmetic operator is not implemented.");
+    return;
+  }
+
+  if (character == '=')
+  {
+    throw std::runtime_error("Arithmetic operator is not implemented.");
+    return;
+  }
+
+  throw std::runtime_error("Operator " + std::string{character} +"is not supported." __FUNCTION__);
 }
 
 void CompilationEngine::compileExpression_()
 {
-  outputFile_ << "<expression>" << '\n';
-
   // Compile the current term.
   compileTerm_();
 
@@ -474,26 +547,23 @@ void CompilationEngine::compileExpression_()
   while ((currentToken.getTokenType() == JackTokenType::SYMBOL) &&
          (isOp(currentToken.getSymbol())))
   {
-    // Print the operator.
-    outputFile_ << currentToken;
     tokenizer_.advance();
     compileTerm_();
+
+    // Apply operator
+    handleOperator(currentToken.getSymbol());
     currentToken = tokenizer_.getCurrentToken();
   }
-
-  outputFile_ << "</expression>" << '\n';
 }
 
 void CompilationEngine::compileTerm_()
 {
-  outputFile_ << "<term>" << '\n';
-
-  auto currentToken = tokenizer_.getCurrentToken();
-  outputFile_ << currentToken;
-
-  // It can be '(' or a unary operator.
-  if (currentToken.getTokenType() == JackTokenType::SYMBOL)
+  const auto currentToken = tokenizer_.getCurrentToken();
+  switch (currentToken.getTokenType())
   {
+  case JackTokenType::SYMBOL:
+  {
+    // It can be '(' or a unary operator.
     const auto symbol = currentToken.getSymbol();
     tokenizer_.advance();
 
@@ -501,76 +571,111 @@ void CompilationEngine::compileTerm_()
     {
       compileExpression_();
 
-      // ')'
-      outputFile_ << tokenizer_.getCurrentToken();
+      // skip ')'
       tokenizer_.advance();
     }
     else if (isUnaryOp(symbol))
       compileTerm_();
     else
       throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" before term");
+    break;
   }
-  else
+  case JackTokenType::INTEGERCONSTATNT:
   {
-    currentToken = advanceAndGetNextToken();
-
-    // We first want to check if there is a '[' or '(' or '.'
-    if (currentToken.getTokenType() == JackTokenType::SYMBOL)
-    {
-      const auto symbol = currentToken.getSymbol();
-
-      if ((symbol == '(') || (symbol == '[') || (symbol == '.'))
-      {
-        // Print the symbol.
-        outputFile_ << currentToken;
-        tokenizer_.advance();
-
-        // Array or call.
-        if ((symbol == '[') || (symbol == '('))
-        {
-          compileExpression_();
-
-          // ']' or ')'
-          outputFile_ << tokenizer_.getCurrentToken();
-          tokenizer_.advance();
-        }
-
-        // Subroutine call.
-        else if (symbol == '.')
-          compileSubroutineCall_();
-        else
-          throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" after term");
-      }
-    }
-    else
-    {
-      outputFile_ << currentToken;
-      tokenizer_.advance();
-    }
+    VMWriter_.writePush(MemorySegment::CONST, std::stoi(tokenizer_.getCurrentToken().getName()));
+    tokenizer_.advance();
+    break;
+  }
+  case JackTokenType::STRINGCONSTANT:
+    throw std::runtime_error("STRINGCONSTANT is not implemented yet in " __FUNCTION__);
+  case JackTokenType::IDENTIFIER:
+    throw std::runtime_error("IDENTIFIER is not implemented yet in " __FUNCTION__);
+  default:
+    throw std::runtime_error("This token should not be in " __FUNCTION__);
   }
 
-  outputFile_ << "</term>" << '\n';
+  //auto currentToken = tokenizer_.getCurrentToken();
+  //outputFile_ << currentToken;
+
+  //if (currentToken.getTokenType() == JackTokenType::SYMBOL)
+  //{
+  //  const auto symbol = currentToken.getSymbol();
+  //  tokenizer_.advance();
+
+  //  if (symbol == '(')
+  //  {
+  //    compileExpression_();
+
+  //    // ')'
+  //    outputFile_ << tokenizer_.getCurrentToken();
+  //    tokenizer_.advance();
+  //  }
+  //  else if (isUnaryOp(symbol))
+  //    compileTerm_();
+  //  else
+  //    throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" before term");
+  //}
+  //else
+  //{
+  //  currentToken = advanceAndGetNextToken();
+
+  //  // We first want to check if there is a '[' or '(' or '.'
+  //  if (currentToken.getTokenType() == JackTokenType::SYMBOL)
+  //  {
+  //    const auto symbol = currentToken.getSymbol();
+
+  //    if ((symbol == '(') || (symbol == '[') || (symbol == '.'))
+  //    {
+  //      // Print the symbol.
+  //      outputFile_ << currentToken;
+  //      tokenizer_.advance();
+
+  //      // Array or call.
+  //      if ((symbol == '[') || (symbol == '('))
+  //      {
+  //        compileExpression_();
+
+  //        // ']' or ')'
+  //        outputFile_ << tokenizer_.getCurrentToken();
+  //        tokenizer_.advance();
+  //      }
+
+  //      // Subroutine call.
+  //      else if (symbol == '.')
+  //        compileSubroutineCall_();
+  //      else
+  //        throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" after term");
+  //    }
+  //  }
+  //  else
+  //  {
+  //    outputFile_ << currentToken;
+  //    tokenizer_.advance();
+  //  }
+  //}
 }
 
-void CompilationEngine::compileExpressionList_()
+size_t CompilationEngine::compileExpressionList_()
 {
-  outputFile_ << "<expressionList>" << '\n';
-
+  auto numberOfExpressions = 0;
   // In case there are no expressions
   if (!(tokenizer_.getCurrentToken().getSymbol() == ')'))
   {
+    numberOfExpressions++;
     compileExpression_();
 
     auto currentToken = tokenizer_.getCurrentToken();
     while (currentToken.getSymbol() == ',')
     {
-      // ','
-      outputFile_ << currentToken;
+      // skip ','
+      tokenizer_.advance();
+      
+      // Go to the next token.
       tokenizer_.advance();
       compileExpression_();
       currentToken = tokenizer_.getCurrentToken();
     }
   }
 
-  outputFile_ << "</expressionList>" << '\n';
+  return numberOfExpressions;
 }

@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     for (const auto &inputFile : jackFilesList)
     {
       auto tokenizer = JackTokenizer{inputFile + ".jack"};
-      CompilationEngine{inputFile + ".xml", tokenizer};
+      CompilationEngine{inputFile + "_And.vm", tokenizer};
     }
   }
   catch (std::runtime_error &e)

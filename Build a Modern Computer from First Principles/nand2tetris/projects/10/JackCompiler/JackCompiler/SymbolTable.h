@@ -16,12 +16,6 @@ enum class IdentifierKind
   VAR
 };
 
-enum class SymbolType
-{
-  CLASS,
-  SUBROUTINE
-};
-
 struct IdentifierInfo
 {
   IdentifierInfo(const std::string &type,
@@ -48,18 +42,23 @@ public:
               IdentifierKind kind);
 
   int varCount(IdentifierKind kind) const;
-
   IdentifierKind getKindOf(const std::string &identifierName) const;
   const std::string &getTypeOf(const std::string &identifierName) const;
   int getIndexOf(const std::string &identifierName) const;
 
+  void clearSubroutineSymbolTable();
+  bool doesIdentifierExist(const std::string &identifierName) const;
+
 private:
   // Private methods
-  const IdentifierInfo &getIdentifierInfo(const std::string &identifierName) const;
+  const IdentifierInfo &getIdentifierInfo_(const std::string &identifierName) const;
 
   // Private attributes 
   SymbolTableType classSymbolTable_;
   SymbolTableType subroutineSymbolTable_;
-  size_t classSymbolIndex;
-  size_t subroutineSymbolIndex;
+
+  size_t staticCounter_;
+  size_t fieldCounter_;
+  size_t argCounter_;
+  size_t varCounter_;
 };
