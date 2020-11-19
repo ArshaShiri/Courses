@@ -23,14 +23,14 @@ void SymbolTable::define(const std::string &identifierName,
   }
   case IdentifierKind::ARG:
   {
-    classSymbolTable_.emplace(identifierName,
-                              IdentifierInfo{identifierType, kind, argCounter_++});
+    subroutineSymbolTable_.emplace(identifierName,
+                                   IdentifierInfo{identifierType, kind, argCounter_++});
     break;
   }
   case IdentifierKind::VAR:
   {
-    classSymbolTable_.emplace(identifierName,
-                              IdentifierInfo{identifierType, kind, varCounter_++});
+    subroutineSymbolTable_.emplace(identifierName,
+                                   IdentifierInfo{identifierType, kind, varCounter_++});
     break;
   }
 
@@ -41,32 +41,19 @@ void SymbolTable::define(const std::string &identifierName,
 
 int SymbolTable::varCount(IdentifierKind kind) const
 {
-  auto getVarCount = [](const SymbolTableType &symbolTableType,
-                        IdentifierKind kind)
-  {
-    auto count = size_t{0};
-    if (symbolTableType.empty())
-      return count;
-
-    for (const auto &symbol : symbolTableType)
-    {
-      if (symbol.second.identifierKind == kind)
-        ++count;
-    }
-
-    return count;
-  };
-
-
   switch (kind)
   {
   case IdentifierKind::STATIC:
+    return staticCounter_;
+
   case IdentifierKind::FIELD:
-    return getVarCount(classSymbolTable_, kind);
+    return fieldCounter_;
 
   case IdentifierKind::ARG:
+    return argCounter_;
+
   case IdentifierKind::VAR:
-    return getVarCount(subroutineSymbolTable_, kind);
+    return varCounter_;
 
   default:
     throw std::runtime_error("Identifier kind cannot be categorized in " __FUNCTION__);

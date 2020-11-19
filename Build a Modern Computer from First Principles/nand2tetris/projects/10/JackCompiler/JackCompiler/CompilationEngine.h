@@ -47,23 +47,37 @@ private:
   /*Compiles while statement.*/
   void compileWhile_();
 
+  /*Compiles and if statement, possibly with a trailing else clause.*/
   void compileIf_();
   void compileExpression_();
+
   void compileTerm_();
+  void compileSymbolTerm_();
+  void compileIntegerTerm_();
+  void compileIdentifierTerm_();
+  void compileKeywordTerm_();
 
   /*Compiles a (possibly empty) comma-separated list of expressions, and returns the number of 
     expressions.*/
   size_t compileExpressionList_();
 
+  /*Compiles a subroutine call.*/
+  void compileSubroutineCall_();
 
-  void compileSubroutineCall_();  
+  /*Compiles a call on an var or class name which is followed by a '.' symbol.*/
+  void compileCallOnObject_(std::string classOrVarName);
+
   void compileReturn_();
   void handleKeywordInStatements_(const Token &currentToken);
 
   /*Translates the token which represents the operator and calls the vmwriter arithmetic writer.*/
-  void handleOperator(const char character);
+  void handleOperator_(const char character);
+  void handleUnaryOperator_(const char character);
 
-  const Token advanceAndGetNextToken();
+  /*Pushes or pops to the correct segment for local or argument.*/
+  void writePushPop_(const std::string &identifierName, int varIndex, bool isPush);
+  
+  const Token advanceAndGetNextToken_();
   void addToSymbolTable_(const std::string &identifierName,
                          const std::string &identifierType,
                          KeywordType keywordType);
@@ -73,5 +87,7 @@ private:
   std::string className_;
   VMWriter VMWriter_;
   SymbolTable symbolTable_;
+  size_t whileCounter_;
+  size_t ifCounter_;
 };
 

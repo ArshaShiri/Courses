@@ -45,21 +45,21 @@ void VMWriter::writeArithmetic(ArithmeticCommand command)
   case ArithmeticCommand::ADD:
     outputFile_ << "add" << '\n'; break;
   case ArithmeticCommand::SUB:
-    throw std::runtime_error("Arithmetic operator is not implemented.");
+    outputFile_ << "sub" << '\n'; break;
   case ArithmeticCommand::NEG:
-    throw std::runtime_error("Arithmetic operator is not implemented.");
+    outputFile_ << "neg" << '\n'; break;
   case ArithmeticCommand::EQ:
-    throw std::runtime_error("Arithmetic operator is not implemented.");
+    outputFile_ << "eq" << '\n'; break;
   case ArithmeticCommand::GT:
-    throw std::runtime_error("Arithmetic operator is not implemented.");
+    outputFile_ << "gt" << '\n'; break;
   case ArithmeticCommand::LT:
     throw std::runtime_error("Arithmetic operator is not implemented.");
   case ArithmeticCommand::AND:
-    throw std::runtime_error("Arithmetic operator is not implemented.");
+    outputFile_ << "and" << '\n'; break;
   case ArithmeticCommand::OR:
     throw std::runtime_error("Arithmetic operator is not implemented.");
   case ArithmeticCommand::NOT:
-    throw std::runtime_error("Arithmetic operator is not implemented.");
+    outputFile_ << "not" << '\n'; break;
   default:
     throw std::runtime_error("Arithmetic operator is not supported."); break;
   }
@@ -67,17 +67,17 @@ void VMWriter::writeArithmetic(ArithmeticCommand command)
 
 void VMWriter::writeLabel(const std::string &label)
 {
-  throw std::runtime_error(__FUNCTION__  " is not implemented");
+  outputFile_ << "label " + label << '\n';
 }
 
 void VMWriter::writeGoTo(const std::string &label)
 {
-  throw std::runtime_error(__FUNCTION__  " is not implemented");
+  outputFile_ << "goto " + label << '\n';
 }
 
 void VMWriter::writeIf(const std::string &label)
 {
-  throw std::runtime_error(__FUNCTION__  " is not implemented");
+  outputFile_ << "if-goto " + label << '\n';
 }
 
 void VMWriter::writeCall(const std::string &name, int numberOfArgs)

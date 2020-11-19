@@ -137,17 +137,7 @@ void JackTokenizer::buildToken_(std::string &&token)
 
   if (isSymbol(token))
   {
-    // The '<', '>' and '&' characters are replaced by "&lt;", "&gt;" and "&amp;" because they are
-    // used by xml format internally.
-    if (token == "<")
-      tokens_.emplace_back(Token{"&lt;", JackTokenType::SYMBOL});
-    else if (token == ">")
-      tokens_.emplace_back(Token{"&gt;", JackTokenType::SYMBOL});
-    else if (token == "&")
-      tokens_.emplace_back(Token{"&amp;", JackTokenType::SYMBOL});
-    else
-      tokens_.emplace_back(Token{std::move(token), JackTokenType::SYMBOL});
-
+    tokens_.emplace_back(Token{std::move(token), JackTokenType::SYMBOL});
     return;
   }
 
