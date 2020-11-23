@@ -97,7 +97,6 @@ const IdentifierInfo &SymbolTable::getIdentifierInfo_(const std::string &identif
   if (auto symbolIt = classSymbolTable_.find(identifierName);
     symbolIt != classSymbolTable_.end())
     return symbolIt->second;
-
-  throw std::runtime_error("Cannot find the identifier info for " + identifierName +
-    "in " __FUNCTION__);
+  
+  return {"", IdentifierKind::UNDEFINED, std::numeric_limits<size_t>::max()};
 }

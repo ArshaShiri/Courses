@@ -13,7 +13,8 @@ enum class IdentifierKind
   STATIC,
   FIELD,
   ARG,
-  VAR
+  VAR,
+  UNDEFINED
 };
 
 struct IdentifierInfo

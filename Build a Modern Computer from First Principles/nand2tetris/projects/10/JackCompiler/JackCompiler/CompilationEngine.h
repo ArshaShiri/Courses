@@ -65,7 +65,7 @@ private:
   void compileSubroutineCall_();
 
   /*Compiles a call on an var or class name which is followed by a '.' symbol.*/
-  void compileCallOnObject_(std::string classOrVarName);
+  void compileCallOnObject_(std::string &classOrVarName);
 
   void compileReturn_();
   void handleKeywordInStatements_(const Token &currentToken);
@@ -75,7 +75,7 @@ private:
   void handleUnaryOperator_(const char character);
 
   /*Pushes or pops to the correct segment for local or argument.*/
-  void writePushPop_(const std::string &identifierName, int varIndex, bool isPush);
+  void writeVarORArgPushPop_(const std::string &identifierName, int varIndex, bool isPush);
   
   const Token advanceAndGetNextToken_();
   void addToSymbolTable_(const std::string &identifierName,

@@ -114,6 +114,9 @@ void CompilationEngine::compileClassVarDec_()
     addToSymbolTable_(symbolName, symbolType, keywordType);
     nextToken = advanceAndGetNextToken_();
   }
+
+  // skip ';'
+  tokenizer_.advance();
 }
 
 void CompilationEngine::compileClassSubroutine_()
@@ -121,28 +124,13 @@ void CompilationEngine::compileClassSubroutine_()
   // We are in a scope of a new subroutine. Clear the symbol table for the subroutine before adding
   // new entries.
   symbolTable_.clearSubroutineSymbolTable();
-  const auto currentToken = tokenizer_.getCurrentToken();
-  auto subRoutineName = std::string{};
-  switch (currentToken.getKeyWordType())
-  {
-  case KeywordType::CONSTRUCTOR:
-  {
-    // We first need to allocate the needed amount of memory. To do so, we have to count the number
-    // of field variables and push it to the stack and call alloc with it.
-    const auto filedVarCount = symbolTable_.varCount(IdentifierKind::FIELD);
-    VMWriter_.writePush(MemorySegment::CONST, filedVarCount);
-    VMWriter_.writeCall(OSMemoryWriterHelper::allocName(), OSMemoryWriterHelper::allocnumberOfArgs());
-    break;
-  }
-  case KeywordType::FUNCTION:
-  {
-    // In the generate vm code, a function name is translated to the class name followed by a dot
-    // and the function name.
-    subRoutineName += className_ + ".";
-  }
-  default:
-    break;
-  }
+
+  // Can be function or constructor.
+  const auto classSubroutineType = tokenizer_.getCurrentToken().getKeyWordType();
+
+  // In the generate vm code, a function name is translated to the class name followed by a dot
+  // and the function name.
+  auto subRoutineName = className_ + ".";
 
   // skip the token that specifies constructor, function or method.
   tokenizer_.advance();
@@ -172,6 +160,28 @@ void CompilationEngine::compileClassSubroutine_()
   // After compiling the variable declaration, the symbol table should have all the arguments stored and
   // and we can write the vm command for this subroutine.
   VMWriter_.writeFunction(subRoutineName, symbolTable_.varCount(IdentifierKind::VAR));
+
+  if (classSubroutineType == KeywordType::CONSTRUCTOR)
+  {
+    // We first need to allocate the needed amount of memory. To do so, we have to count the number
+    // of field variables and push it to the stack and call alloc with it.
+    const auto filedVarCount = symbolTable_.varCount(IdentifierKind::FIELD);
+    VMWriter_.writePush(MemorySegment::CONST, filedVarCount);
+    VMWriter_.writeCall(OSMemoryWriterHelper::allocName(),
+                        OSMemoryWriterHelper::allocnumberOfArgs());
+
+    // alloc function returns the base address of the represented object on the heap. Pop it to this
+    // section of memory (pointer 0)
+    VMWriter_.writePop(MemorySegment::POINTER, 0);
+  }
+
+  if (classSubroutineType == KeywordType::METHOD)
+  {
+    // Push the argument zero which is the object that this method is being called on, on the this 
+    // pointer.
+    VMWriter_.writePush(MemorySegment::ARG, 0);
+    VMWriter_.writePop(MemorySegment::POINTER, 0);
+  }
 
   compileStatements_();
 
@@ -303,19 +313,30 @@ void CompilationEngine::compileStatements_()
   }
 }
 
-void CompilationEngine::compileCallOnObject_(std::string classOrVarName)
+void CompilationEngine::compileCallOnObject_(std::string &classOrVarName)
 {
-  const auto currentToken = tokenizer_.getCurrentToken();
+  // If we are calling a method on a variable, we want to push that variable on the stack and then
+  // call the associated method on it.
+  const auto varKind = symbolTable_.getKindOf(classOrVarName);
+  if (varKind != IdentifierKind::UNDEFINED)
+  {
+    writeVarORArgPushPop_(classOrVarName, symbolTable_.getIndexOf(classOrVarName), true);
+    classOrVarName = symbolTable_.getTypeOf(classOrVarName);
+  }
 
-  // Remove the symbol '.' from the name to get the identifier name.
-  const auto identifier = classOrVarName.substr(0, classOrVarName.size() - 1);
-  classOrVarName += tokenizer_.getCurrentToken().getName();
+  const auto methodName = tokenizer_.getCurrentToken().getName();
   tokenizer_.advance();
 
   // skip '('
   tokenizer_.advance();
   auto numberOfExpressions = compileExpressionList_();
-  VMWriter_.writeCall(classOrVarName, numberOfExpressions);
+
+  // If a method is called on a variable, the variable is passed as an implicit argument. 
+  // This increases the number of expressions by one.
+  if (varKind != IdentifierKind::UNDEFINED)
+    ++numberOfExpressions;
+
+  VMWriter_.writeCall(classOrVarName + "." + methodName, numberOfExpressions);
 
   // skip ')'
   tokenizer_.advance();
@@ -323,23 +344,46 @@ void CompilationEngine::compileCallOnObject_(std::string classOrVarName)
 
 void CompilationEngine::compileSubroutineCall_()
 {
+  // A subroutine call can be in one of the following shapes:
+  // foo.bar(); where foo is a variable.
+  // ClassName.bar(); happens when we are calling a static method.
+  // bar(); happens when a method of the current class is called (the method is called on this obj)
+
   // identifier, can be var name, class name or subroutine name.
   auto identifier = tokenizer_.getCurrentToken().getName();
 
   const auto currentToken = advanceAndGetNextToken_();
-  auto classOrVarName = std::string{};
-  classOrVarName += identifier;
+  const auto symbol = currentToken.getSymbol();
 
-  if (currentToken.getSymbol() != '.')
-    throw std::runtime_error(
-      "Var or class should be followed by a '.' to call a subroutine. " __FUNCTION__);
+  if (symbol != '.')
+  {
+    // It should be a method that is called on the current object.
+    if (symbol != '(')
+      throw std::runtime_error(
+        "Var or class should be followed by a '.' to call a subroutine. " __FUNCTION__);
+    
+    // skip '('
+    tokenizer_.advance();
+    
+    // push the current object on to stack so that method can be called on it.
+    VMWriter_.writePush(MemorySegment::POINTER, 0);
 
-  classOrVarName += currentToken.getSymbol();
+    auto numberOfExpressions = compileExpressionList_();
+
+    // If a method is called on a variable, the variable is passed as an implicit argument. 
+    // This increases the number of expressions by one.
+    ++numberOfExpressions;
+
+    VMWriter_.writeCall(className_ + "." + identifier, numberOfExpressions);
+
+    // skip ';'
+    tokenizer_.advance();
+    return;
+  }
 
   // skip '.'
   tokenizer_.advance();
-
-  compileCallOnObject_(classOrVarName);
+  compileCallOnObject_(identifier);
 }
 
 void CompilationEngine::compileDo_()
@@ -382,8 +426,7 @@ void CompilationEngine::compileLet_()
 
   // After compiling the expression, the result of the rhs is on the stack. We have to pop it to the
   // variable.
-  writePushPop_(varName, symbolTable_.getIndexOf(varName), false);
-  //VMWriter_.writePop(MemorySegment::LOCAL, symbolTable_.getIndexOf(varName));f
+  writeVarORArgPushPop_(varName, symbolTable_.getIndexOf(varName), false);
 
   // skip ';'
   tokenizer_.advance();
@@ -456,20 +499,20 @@ void CompilationEngine::compileIf_()
   tokenizer_.advance();
 
   compileIfBody();
-
-  // When the body is finished, goto the end of the if.
-  VMWriter_.writeGoTo(ifEnd);
+  VMWriter_.writeLabel(ifFalse);
 
   // Check if we have an else statement.
   if (tokenizer_.getCurrentToken().getKeyWordType() == KeywordType::ELSE)
   {
+    // If we have else block, add the goto to the end of the if else block so after if block is 
+    // executed a jump can be performed to the end.
+    VMWriter_.writeGoTo(ifEnd);
+
     // skip else
     tokenizer_.advance();
-    VMWriter_.writeLabel(ifFalse);
     compileIfBody();
+    VMWriter_.writeLabel(ifEnd);
   }
-
-  VMWriter_.writeLabel(ifEnd);
 }
 
 void CompilationEngine::handleOperator_(const char character)
@@ -507,13 +550,13 @@ void CompilationEngine::handleOperator_(const char character)
 
   if (character == '|')
   {
-    throw std::runtime_error("Arithmetic operator is not implemented.");
+    VMWriter_.writeArithmetic(ArithmeticCommand::OR);
     return;
   }
 
   if (character == '<')
   {
-    throw std::runtime_error("Arithmetic operator is not implemented.");
+    VMWriter_.writeArithmetic(ArithmeticCommand::LT);
     return;
   }
 
@@ -598,14 +641,15 @@ void CompilationEngine::compileIntegerTerm_()
 }
 
 
-void CompilationEngine::writePushPop_(const std::string &identifierName, int varIndex, bool isPush)
+void CompilationEngine::writeVarORArgPushPop_(const std::string &identifierName, int varIndex, bool isPush)
 {
   MemorySegment memorySegment;
 
   switch (symbolTable_.getKindOf(identifierName))
   {
-  case IdentifierKind::ARG: memorySegment = MemorySegment::ARG; break; //VMWriter_.writePush(MemorySegment::ARG, varIndex); break;
-  case IdentifierKind::VAR: memorySegment = MemorySegment::LOCAL; break; //VMWriter_.writePush(MemorySegment::LOCAL, varIndex); break;
+  case IdentifierKind::ARG: memorySegment = MemorySegment::ARG; break;
+  case IdentifierKind::VAR: memorySegment = MemorySegment::LOCAL; break;
+  case IdentifierKind::FIELD: memorySegment = MemorySegment::THIS; break;
   default: throw std::runtime_error("Not supported symbol type " __FUNCTION__);
   }
 
@@ -632,7 +676,7 @@ void CompilationEngine::compileIdentifierTerm_()
     }
   };
 
-  const auto identifierName = tokenizer_.getCurrentToken().getName();
+  auto identifierName = tokenizer_.getCurrentToken().getName();
   const auto currentToken = advanceAndGetNextToken_();
 
   // We first want to check if there is a '[' or '(' or '.'
@@ -655,13 +699,13 @@ void CompilationEngine::compileIdentifierTerm_()
     // Subroutine call.
     else if (symbol == '.')
     {
-      compileCallOnObject_(identifierName + std::string{symbol});
+      compileCallOnObject_(identifierName);
     }
     else
       throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" after term");
   }
   else
-    writePushPop_(identifierName, symbolTable_.getIndexOf(identifierName), true);
+    writeVarORArgPushPop_(identifierName, symbolTable_.getIndexOf(identifierName), true);
 }
 
 void CompilationEngine::compileKeywordTerm_()
@@ -676,6 +720,7 @@ void CompilationEngine::compileKeywordTerm_()
     break;
   }
   case KeywordType::FASLE: VMWriter_.writePush(MemorySegment::CONST, 0); break;
+  case KeywordType::THIS: VMWriter_.writePush(MemorySegment::POINTER, 0); break;
   default:
     throw std::runtime_error("Keyword is not supported in " __FUNCTION__);
   }

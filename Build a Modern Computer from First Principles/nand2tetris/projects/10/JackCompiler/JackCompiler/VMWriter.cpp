@@ -42,24 +42,15 @@ void VMWriter::writeArithmetic(ArithmeticCommand command)
 {
   switch (command)
   {
-  case ArithmeticCommand::ADD:
-    outputFile_ << "add" << '\n'; break;
-  case ArithmeticCommand::SUB:
-    outputFile_ << "sub" << '\n'; break;
-  case ArithmeticCommand::NEG:
-    outputFile_ << "neg" << '\n'; break;
-  case ArithmeticCommand::EQ:
-    outputFile_ << "eq" << '\n'; break;
-  case ArithmeticCommand::GT:
-    outputFile_ << "gt" << '\n'; break;
-  case ArithmeticCommand::LT:
-    throw std::runtime_error("Arithmetic operator is not implemented.");
-  case ArithmeticCommand::AND:
-    outputFile_ << "and" << '\n'; break;
-  case ArithmeticCommand::OR:
-    throw std::runtime_error("Arithmetic operator is not implemented.");
-  case ArithmeticCommand::NOT:
-    outputFile_ << "not" << '\n'; break;
+  case ArithmeticCommand::ADD: outputFile_ << "add" << '\n'; break;
+  case ArithmeticCommand::SUB: outputFile_ << "sub" << '\n'; break;
+  case ArithmeticCommand::NEG: outputFile_ << "neg" << '\n'; break;
+  case ArithmeticCommand::EQ: outputFile_ << "eq" << '\n'; break;
+  case ArithmeticCommand::GT: outputFile_ << "gt" << '\n'; break;
+  case ArithmeticCommand::LT: outputFile_ << "lt" << '\n'; break;
+  case ArithmeticCommand::AND: outputFile_ << "and" << '\n'; break;
+  case ArithmeticCommand::OR: outputFile_ << "or" << '\n'; break;
+  case ArithmeticCommand::NOT: outputFile_ << "not" << '\n'; break;
   default:
     throw std::runtime_error("Arithmetic operator is not supported."); break;
   }
