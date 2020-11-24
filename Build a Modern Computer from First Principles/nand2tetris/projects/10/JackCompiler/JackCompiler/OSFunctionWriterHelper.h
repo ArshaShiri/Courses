@@ -20,8 +20,21 @@ class OSMathWriterHelper
 public:
   static std::string multName();
   static int multnumberOfArgs();
+  static std::string divName();
+  static int divnumberOfArgs();
 
 private:
   static const std::string name_;
 };
 
+class OSStringWriterHelper
+{
+public:
+  static std::string stringNew();
+  static int stringNewNumberOfArgs();
+  static std::string stringAppendChar();
+  static int stringAppendCharNumberOfArgs();
+
+private:
+  static const std::string name_;
+};

@@ -54,6 +54,7 @@ private:
   void compileTerm_();
   void compileSymbolTerm_();
   void compileIntegerTerm_();
+  void compileStringTerm_();
   void compileIdentifierTerm_();
   void compileKeywordTerm_();
 
@@ -75,7 +76,7 @@ private:
   void handleUnaryOperator_(const char character);
 
   /*Pushes or pops to the correct segment for local or argument.*/
-  void writeVarORArgPushPop_(const std::string &identifierName, int varIndex, bool isPush);
+  void writeVarORArgPushPop_(const std::string &identifierName, bool isPush);
   
   const Token advanceAndGetNextToken_();
   void addToSymbolTable_(const std::string &identifierName,

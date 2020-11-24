@@ -320,7 +320,7 @@ void CompilationEngine::compileCallOnObject_(std::string &classOrVarName)
   const auto varKind = symbolTable_.getKindOf(classOrVarName);
   if (varKind != IdentifierKind::UNDEFINED)
   {
-    writeVarORArgPushPop_(classOrVarName, symbolTable_.getIndexOf(classOrVarName), true);
+    writeVarORArgPushPop_(classOrVarName, true);
     classOrVarName = symbolTable_.getTypeOf(classOrVarName);
   }
 
@@ -403,20 +403,25 @@ void CompilationEngine::compileLet_()
 {
   // skip Let and get the var name. The var name is used later to pop the rhs result into it.
   const auto varName = advanceAndGetNextToken_().getName();
+  const auto nextToken = advanceAndGetNextToken_();
 
   // We want to check if we are addressing and array here.
-  auto nextToken = advanceAndGetNextToken_();
+  const auto isArrayCall = (nextToken.getTokenType() == JackTokenType::SYMBOL) &&
+                           (nextToken.getSymbol() == '[');  
 
-  if ((nextToken.getTokenType() == JackTokenType::SYMBOL) &&
-       nextToken.getSymbol() == '[')
+  if (isArrayCall)
   {
     // skip '['
     tokenizer_.advance();
 
     compileExpression_();
 
-    // skip ']' and get the next token
-    nextToken = advanceAndGetNextToken_();
+    // The result of the expression should be added to the base address of the array.
+    writeVarORArgPushPop_(varName, true);
+    VMWriter_.writeArithmetic(ArithmeticCommand::ADD);
+
+    // skip ']'
+    tokenizer_.advance();
   }
 
   // skip '='
@@ -426,7 +431,23 @@ void CompilationEngine::compileLet_()
 
   // After compiling the expression, the result of the rhs is on the stack. We have to pop it to the
   // variable.
-  writeVarORArgPushPop_(varName, symbolTable_.getIndexOf(varName), false);
+  if (isArrayCall)
+  {
+    // pop the result of the expression to temp. 
+    VMWriter_.writePop(MemorySegment::TEMPT, 0);
+
+    // The next value on stack is the address in array where we want to be modified. Pop that to 
+    // array pointer part of the memory. (Pointer 1)
+    VMWriter_.writePop(MemorySegment::POINTER, 1);
+
+    // Bring back the result of the expression.
+    VMWriter_.writePush(MemorySegment::TEMPT, 0);
+
+    // Store it in the array.
+    VMWriter_.writePop(MemorySegment::THAT, 0);
+  }
+  else
+    writeVarORArgPushPop_(varName, false);
 
   // skip ';'
   tokenizer_.advance();
@@ -538,7 +559,7 @@ void CompilationEngine::handleOperator_(const char character)
 
   if (character == '/')
   {
-    throw std::runtime_error("Arithmetic operator is not implemented.");
+    VMWriter_.writeCall(OSMathWriterHelper::divName(), OSMathWriterHelper::divnumberOfArgs());
     return;
   }
 
@@ -634,15 +655,31 @@ void CompilationEngine::compileSymbolTerm_()
     throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" before term");
 }
 
+void CompilationEngine::compileStringTerm_()
+{
+  const auto currentString = tokenizer_.getCurrentToken().getName();
+  VMWriter_.writePush(MemorySegment::CONST, currentString.size());
+  VMWriter_.writeCall(OSStringWriterHelper::stringNew(), OSStringWriterHelper::stringNewNumberOfArgs());
+
+  for (auto currentCharIdx = size_t{0}; currentCharIdx < currentString.size(); ++currentCharIdx)
+  {
+    VMWriter_.writePush(MemorySegment::CONST, static_cast<int>(currentString.at(currentCharIdx)));
+    VMWriter_.writeCall(OSStringWriterHelper::stringAppendChar(), 
+                        OSStringWriterHelper::stringAppendCharNumberOfArgs());
+  }
+
+  tokenizer_.advance();
+}
+
 void CompilationEngine::compileIntegerTerm_()
 {
   VMWriter_.writePush(MemorySegment::CONST, std::stoi(tokenizer_.getCurrentToken().getName()));
   tokenizer_.advance();
 }
 
-
-void CompilationEngine::writeVarORArgPushPop_(const std::string &identifierName, int varIndex, bool isPush)
+void CompilationEngine::writeVarORArgPushPop_(const std::string &identifierName, bool isPush)
 {
+  const auto varIndex = symbolTable_.getIndexOf(identifierName);
   MemorySegment memorySegment;
 
   switch (symbolTable_.getKindOf(identifierName))
@@ -692,6 +729,20 @@ void CompilationEngine::compileIdentifierTerm_()
     {
       compileExpression_();
 
+      // array call
+      if (symbol == '[')
+      {
+        // The result of the expression should be added to the base address of the array.
+        writeVarORArgPushPop_(identifierName, true);
+        VMWriter_.writeArithmetic(ArithmeticCommand::ADD);
+
+        // Set the array pointer to the associated address.
+        VMWriter_.writePop(MemorySegment::POINTER, 1);
+
+        // Put the value stored at that address on the stack.
+        VMWriter_.writePush(MemorySegment::THAT, 0);
+      }
+
       // skip ']' or ')'
       tokenizer_.advance();
     }
@@ -705,7 +756,7 @@ void CompilationEngine::compileIdentifierTerm_()
       throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" after term");
   }
   else
-    writeVarORArgPushPop_(identifierName, symbolTable_.getIndexOf(identifierName), true);
+    writeVarORArgPushPop_(identifierName, true);
 }
 
 void CompilationEngine::compileKeywordTerm_()
@@ -734,73 +785,12 @@ void CompilationEngine::compileTerm_()
   {
   case JackTokenType::SYMBOL: compileSymbolTerm_(); break;
   case JackTokenType::INTEGERCONSTATNT: compileIntegerTerm_(); break;
-  case JackTokenType::STRINGCONSTANT:
-    throw std::runtime_error("STRINGCONSTANT is not implemented yet in " __FUNCTION__);
+  case JackTokenType::STRINGCONSTANT: compileStringTerm_(); break;
   case JackTokenType::IDENTIFIER: compileIdentifierTerm_(); break;
   case JackTokenType::KEYWORD: compileKeywordTerm_(); break;
   default:
     throw std::runtime_error("This token should not be in " __FUNCTION__);
   }
-
-  //auto currentToken = tokenizer_.getCurrentToken();
-  //outputFile_ << currentToken;
-
-  //if (currentToken.getTokenType() == JackTokenType::SYMBOL)
-  //{
-  //  const auto symbol = currentToken.getSymbol();
-  //  tokenizer_.advance();
-
-  //  if (symbol == '(')
-  //  {
-  //    compileExpression_();
-
-  //    // ')'
-  //    outputFile_ << tokenizer_.getCurrentToken();
-  //    tokenizer_.advance();
-  //  }
-  //  else if (isUnaryOp(symbol))
-  //    compileTerm_();
-  //  else
-  //    throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" before term");
-  //}
-  //else
-  //{
-  //  currentToken = advanceAndGetNextToken();
-
-  //  // We first want to check if there is a '[' or '(' or '.'
-  //  if (currentToken.getTokenType() == JackTokenType::SYMBOL)
-  //  {
-  //    const auto symbol = currentToken.getSymbol();
-
-  //    if ((symbol == '(') || (symbol == '[') || (symbol == '.'))
-  //    {
-  //      // Print the symbol.
-  //      outputFile_ << currentToken;
-  //      tokenizer_.advance();
-
-  //      // Array or call.
-  //      if ((symbol == '[') || (symbol == '('))
-  //      {
-  //        compileExpression_();
-
-  //        // ']' or ')'
-  //        outputFile_ << tokenizer_.getCurrentToken();
-  //        tokenizer_.advance();
-  //      }
-
-  //      // Subroutine call.
-  //      else if (symbol == '.')
-  //        compileSubroutineCall_();
-  //      else
-  //        throw std::runtime_error("Unsupported symbol " + std::string{symbol} +" after term");
-  //    }
-  //  }
-  //  else
-  //  {
-  //    outputFile_ << currentToken;
-  //    tokenizer_.advance();
-  //  }
-  //}
 }
 
 size_t CompilationEngine::compileExpressionList_()
