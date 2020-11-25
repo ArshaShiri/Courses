@@ -1,15 +1,5 @@
 #include "Token.h"
 
-
-std::ostream& operator<<(std::ostream &os, const Token &token)
-{
-  os << "<" + token.getType() + '>' + " " <<
-    token.name_ + " "  <<
-    "</" + token.getType() + '>' << '\n';
-
-  return os;
-}
-
 Token::Token(const std::string &name, JackTokenType tokenType) : name_{name}, tokenType_{tokenType}
 {}
 
@@ -36,7 +26,7 @@ KeywordType Token::getKeyWordType() const
     else if (name_ == "false")       { return KeywordType::FASLE; }
     else if (name_ == "null")        { return KeywordType::NULL_; }
     else if (name_ == "this")        { return KeywordType::THIS; }
-    else { throw std::runtime_error("Unsupported keyword: " + name_); }
+    else { throw std::runtime_error("Unsupported keyword: " + name_ + " " + __FUNCTION__); }
 }
 
 char Token::getSymbol() const
@@ -44,7 +34,7 @@ char Token::getSymbol() const
   return name_.at(0);
 }
 
-std::string Token::getName() const
+const std::string &Token::getName() const
 {
   return name_;
 }

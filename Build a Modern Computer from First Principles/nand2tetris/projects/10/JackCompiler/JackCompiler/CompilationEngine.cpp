@@ -17,7 +17,7 @@ CompilationEngine::CompilationEngine(const std::string &otputFilepath, JackToken
   VMWriter_.close();
 }
 
-const Token CompilationEngine::advanceAndGetNextToken_()
+const Token &CompilationEngine::advanceAndGetNextToken_()
 {
   if (tokenizer_.hasMoreTokens())
   {
@@ -125,17 +125,21 @@ void CompilationEngine::compileClassSubroutine_()
   // new entries.
   symbolTable_.clearSubroutineSymbolTable();
 
-  // Can be function or constructor.
+  // Can be function, constructor or method. We want to check if we are compiling a method, if so 
+  // the current class should be passed as an implicit argument to it.
   const auto classSubroutineType = tokenizer_.getCurrentToken().getKeyWordType();
+
+  if (classSubroutineType == KeywordType::METHOD)
+    symbolTable_.define("this", className_, IdentifierKind::ARG);
 
   // In the generate vm code, a function name is translated to the class name followed by a dot
   // and the function name.
   auto subRoutineName = className_ + ".";
 
-  // skip the token that specifies constructor, function or method.
+  // Skip the token that specifies constructor, function or method.
   tokenizer_.advance();
 
-  // skip the token that specifies the return type.
+  // Skip the token that specifies the return type.
   tokenizer_.advance();
 
   // Store the function's name.
@@ -144,16 +148,16 @@ void CompilationEngine::compileClassSubroutine_()
   // Go to the next token.
   tokenizer_.advance();
 
-  // skip '('
+  // Skip '('
   tokenizer_.advance();
   compileParameterList_();
 
-  // skip ')'
+  // Skip ')'
   tokenizer_.advance();
 
   // <subroutineBody>
 
-  // skip '{'
+  // Skip '{'
   tokenizer_.advance();
   compileVarDec_();
 
@@ -357,7 +361,7 @@ void CompilationEngine::compileSubroutineCall_()
 
   if (symbol != '.')
   {
-    // It should be a method that is called on the current object.
+    // It should be a method that is part of the current class that is being compiled.
     if (symbol != '(')
       throw std::runtime_error(
         "Var or class should be followed by a '.' to call a subroutine. " __FUNCTION__);
@@ -455,8 +459,8 @@ void CompilationEngine::compileLet_()
 
 void CompilationEngine::compileWhile_()
 {
-  const auto whileExpressionStartLable = "WHILE_EXP" + std::to_string(whileCounter_);
-  const auto whileExpressionEndLable = "WHILE_END" + std::to_string(whileCounter_);
+  const auto whileExpressionStartLable = "WHILE_EXP_" + std::to_string(whileCounter_);
+  const auto whileExpressionEndLable = "WHILE_END_" + std::to_string(whileCounter_);
   ++whileCounter_;
 
   // skip while
@@ -498,9 +502,9 @@ void CompilationEngine::compileIf_()
   };
 
   // Label names for if when it is true and when it is false.
-  const auto ifTrue = "IF_TRUE" + std::to_string(ifCounter_);
-  const auto ifFalse = "IF_FALSE" + std::to_string(ifCounter_);
-  const auto ifEnd = "IF_END" + std::to_string(ifCounter_);
+  const auto ifTrue = "IF_TRUE_" + std::to_string(ifCounter_);
+  const auto ifFalse = "IF_FALSE_" + std::to_string(ifCounter_);
+  const auto ifEnd = "IF_END_" + std::to_string(ifCounter_);
   ++ifCounter_;
 
   // skip If
@@ -520,20 +524,25 @@ void CompilationEngine::compileIf_()
   tokenizer_.advance();
 
   compileIfBody();
-  VMWriter_.writeLabel(ifFalse);
 
   // Check if we have an else statement.
-  if (tokenizer_.getCurrentToken().getKeyWordType() == KeywordType::ELSE)
+  const auto &currentToken = tokenizer_.getCurrentToken();
+  
+  if ((currentToken.getTokenType() == JackTokenType::KEYWORD) &&
+      (tokenizer_.getCurrentToken().getKeyWordType() == KeywordType::ELSE))
   {
     // If we have else block, add the goto to the end of the if else block so after if block is 
     // executed a jump can be performed to the end.
     VMWriter_.writeGoTo(ifEnd);
+    VMWriter_.writeLabel(ifFalse);
 
     // skip else
     tokenizer_.advance();
     compileIfBody();
     VMWriter_.writeLabel(ifEnd);
   }
+  else
+    VMWriter_.writeLabel(ifFalse);
 }
 
 void CompilationEngine::handleOperator_(const char character)
@@ -687,6 +696,7 @@ void CompilationEngine::writeVarORArgPushPop_(const std::string &identifierName,
   case IdentifierKind::ARG: memorySegment = MemorySegment::ARG; break;
   case IdentifierKind::VAR: memorySegment = MemorySegment::LOCAL; break;
   case IdentifierKind::FIELD: memorySegment = MemorySegment::THIS; break;
+  case IdentifierKind::STATIC: memorySegment = MemorySegment::STATIC; break;
   default: throw std::runtime_error("Not supported symbol type " __FUNCTION__);
   }
 
