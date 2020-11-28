@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <fstream>
-#include <iterator>
 #include <sstream>
 #include <string_view>
 
@@ -11,7 +10,7 @@ namespace
 {
 void removeComments(std::string &string, bool &isMultiLineComment);
 std::string extractStringLiteral(const std::string &txt,
-                                 int &txtIdx);
+                                 size_t &txtIdx);
 
 /* These methods classify the tokens type according to Jack documentation. */
 bool isKeyword(const std::string &token);
@@ -21,8 +20,8 @@ bool isStringConst(const std::string &token);
 bool isIdentifier(const std::string &token);
 } // end of namespace declaration
 
-JackTokenizer::JackTokenizer(const std::string &inputFilepath) : 
-  currentTokenNumber_{0}, waitingForFirstCall_{true}
+JackTokenizer::JackTokenizer(const std::string &inputFilepath) : currentTokenNumber_{0}, 
+                                                                 waitingForFirstCall_{true}
 {
   auto inputFile = std::ifstream(inputFilepath);
 
@@ -71,7 +70,7 @@ std::vector<std::string> JackTokenizer::extractTokensInString_(const std::string
 {
   auto tokens = std::vector<std::string>{};
 
-  auto addToken = [&tokens](std::string &token)
+  auto addAndClearToken = [&tokens](std::string &token)
   {
     if (!token.empty())
     {
@@ -84,7 +83,7 @@ std::vector<std::string> JackTokenizer::extractTokensInString_(const std::string
   // them. Tokens are usually separated by white space. Symbols are mostly an exception to this 
   // rule.
   auto token = std::string{};
-  for (auto charIndex = 0; charIndex < txt.size(); ++charIndex)
+  for (auto charIndex = size_t{0}; charIndex < txt.size(); ++charIndex)
   {
     const auto currentChar = txt.at(charIndex);
 
@@ -92,14 +91,14 @@ std::vector<std::string> JackTokenizer::extractTokensInString_(const std::string
     if (currentChar == '\"')
     {
       token = extractStringLiteral(txt, charIndex);
-      addToken(token);
+      addAndClearToken(token);
       continue;
     }
 
     // If we reach white space or tab, store the current token.
     if ((currentChar == ' ') || (currentChar == '\t'))
     {
-      addToken(token);
+      addAndClearToken(token);
       continue;
     }
 
@@ -107,7 +106,7 @@ std::vector<std::string> JackTokenizer::extractTokensInString_(const std::string
     if (isSymbol(currentChar))
     {
       // Add the toke that has been build before symbol.
-      addToken(token);
+      addAndClearToken(token);
 
       // Now add the symbol as another token.
       tokens.emplace_back(std::string{currentChar});
@@ -182,7 +181,7 @@ void removeComment(size_t startPos, std::string &string)
 void removeComments(std::string &string, bool &isMultiLineComment)
 {
   // This function is limited. It assumes if a comment starts with /**, the entire line is a
-  // comment. It will probably have issues when // and /** are used in the same line as well.
+  // comment. It will probably have issues when // and /** are used in the same line.
 
   const auto commentType1Start = "//";
   const auto multiLineCommentStart = "/**";
@@ -192,6 +191,13 @@ void removeComments(std::string &string, bool &isMultiLineComment)
   const auto multiLineCommentStartingPosition = string.find(multiLineCommentStart);
   const auto multiLineCommentEndPosition = string.find(multiLineCommentEnd);
 
+  // isMultiLineComment can be true from previous calls to this function. It is important to check
+  // this first because a line of multi-line comment can have no indication of it being a comment and
+  // can be only identified from the previous calls:
+  /*  the line starts with /* which can be recognized.
+      this line cannot be recognized as a comment just by itself. We should know it from the previous
+      line that the lines in the middle are part of multi-line comments.
+  */
   if (multiLineCommentStartingPosition != string.npos)
     isMultiLineComment = true;
 
@@ -209,7 +215,7 @@ void removeComments(std::string &string, bool &isMultiLineComment)
   }
 
   // No comment in this string.
-  if ((commentType1StartingPosition == string.npos) && 
+  if ((commentType1StartingPosition == string.npos) &&
       (multiLineCommentStartingPosition == string.npos)) return;
 
   removeComment(commentType1StartingPosition, string);
@@ -217,7 +223,7 @@ void removeComments(std::string &string, bool &isMultiLineComment)
 }
 
 std::string extractStringLiteral(const std::string &txt,
-                                 int &txtIdx)
+                                 size_t &txtIdx)
 {
   auto token = std::string{};
 
@@ -228,10 +234,11 @@ std::string extractStringLiteral(const std::string &txt,
     token.push_back(strPart);
 
     if (strPart == '\"')
+    {
+      // We captured the string literal, now set the index to the next character.
+      txtIdx = strIdx + 1;
       break;
-
-    // We captured the string literal, now set the index to the next character.
-    txtIdx = strIdx + 1;
+    }
   }
 
   return token;
@@ -279,7 +286,7 @@ bool isSymbol(const std::string &token)
 
 bool isIntegerConst(const std::string &token)
 {
-  return !token.empty() && std::all_of(token.begin(), token.end(), ::isdigit);
+  return (!token.empty()) && (std::all_of(token.begin(), token.end(), ::isdigit));
 }
 
 bool isStringConst(const std::string &token)

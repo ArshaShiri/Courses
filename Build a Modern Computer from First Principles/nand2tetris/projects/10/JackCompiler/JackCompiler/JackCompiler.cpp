@@ -2,8 +2,7 @@
    used to create machine level code. It is assumed that the given file to this compiler does not
    have any syntax errors. */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <string>
 
 #include "CompilationEngine.h"
@@ -23,13 +22,13 @@ int main(int argc, char *argv[])
     for (const auto &inputFile : jackFilesList)
     {
       auto tokenizer = JackTokenizer{inputFile + ".jack"};
-      CompilationEngine{inputFile + "_And.vm", tokenizer};
+      CompilationEngine{inputFile + ".vm", tokenizer};
     }
   }
   catch (std::runtime_error &e)
   {
-    std::cout << "Caught a runtime_error exception: "
-      << e.what() << '\n';
+    std::cout << "Caught a runtime_error exception: " << e.what() << '\n';
   }
+
   return 0;
 }

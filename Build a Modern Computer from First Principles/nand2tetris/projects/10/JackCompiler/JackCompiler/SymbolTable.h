@@ -44,7 +44,7 @@ public:
 
   int varCount(IdentifierKind kind) const;
   IdentifierKind getKindOf(const std::string &identifierName) const;
-  const std::string &getTypeOf(const std::string &identifierName) const;
+  const std::string getTypeOf(const std::string &identifierName) const;
   int getIndexOf(const std::string &identifierName) const;
 
   void clearSubroutineSymbolTable();
@@ -52,7 +52,7 @@ public:
 
 private:
   // Private methods
-  const IdentifierInfo &getIdentifierInfo_(const std::string &identifierName) const;
+  const IdentifierInfo getIdentifierInfo_(const std::string &identifierName) const;
 
   // Private attributes 
   SymbolTableType classSymbolTable_;

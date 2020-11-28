@@ -26,7 +26,7 @@ KeywordType Token::getKeyWordType() const
     else if (name_ == "false")       { return KeywordType::FASLE; }
     else if (name_ == "null")        { return KeywordType::NULL_; }
     else if (name_ == "this")        { return KeywordType::THIS; }
-    else { throw std::runtime_error("Unsupported keyword: " + name_ + " " + __FUNCTION__); }
+    else { throw std::runtime_error("Unsupported keyword: " + name_ + "in Token::getKeyWordType"); }
 }
 
 char Token::getSymbol() const
@@ -53,6 +53,7 @@ std::string Token::getType() const
     case JackTokenType::INTEGERCONSTATNT: return "integerConstant";
     case JackTokenType::STRINGCONSTANT: return "stringConstant";
     case JackTokenType::IDENTIFIER: return "identifier";
+
     default: throw std::runtime_error("Token type is not supported");
   }
 }

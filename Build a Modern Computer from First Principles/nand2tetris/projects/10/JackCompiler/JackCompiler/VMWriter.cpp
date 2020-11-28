@@ -13,7 +13,7 @@ std::string getMemorySegmentName(MemorySegment memorySegment)
   case MemorySegment::POINTER: return "pointer";
   case MemorySegment::TEMPT: return "temp";
 
-  default: throw std::runtime_error("Memory segment is not recognized in " __FUNCTION__);
+  default: throw std::runtime_error("Memory segment is not recognized in getMemorySegmentName");
   }
 }
 

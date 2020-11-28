@@ -1,4 +1,5 @@
 #include <functional>
+#include <stdexcept>
 
 #include "CompilationEngine.h"
 #include "Helper.h"
@@ -89,7 +90,7 @@ void CompilationEngine::addToSymbolTable_(const std::string &identifierName,
   // There is no specific keyword for arguments, so we have to add that manually to the symbol table
   // when we are parsing parameter lists.
   default:
-    throw std::runtime_error("Cannot add this keyword type to the symbol table! " __FUNCTION__);
+    throw std::runtime_error("Cannot add this keyword type to the symbol table! ");
   }
 }
 
@@ -364,7 +365,7 @@ void CompilationEngine::compileSubroutineCall_()
     // It should be a method that is part of the current class that is being compiled.
     if (symbol != '(')
       throw std::runtime_error(
-        "Var or class should be followed by a '.' to call a subroutine. " __FUNCTION__);
+        "Var or class should be followed by a '.' to call a subroutine. ");
     
     // skip '('
     tokenizer_.advance();
@@ -602,7 +603,7 @@ void CompilationEngine::handleOperator_(const char character)
     return;
   }
 
-  throw std::runtime_error("Operator " + std::string{character} +"is not supported." __FUNCTION__);
+  throw std::runtime_error("Operator " + std::string{character} +"is not supported.");
 }
 
 void CompilationEngine::handleUnaryOperator_(const char character)
@@ -619,7 +620,7 @@ void CompilationEngine::handleUnaryOperator_(const char character)
     return;
   }
 
-  throw std::runtime_error("Unary operator " + std::string{character} +"is not supported." __FUNCTION__);
+  throw std::runtime_error("Unary operator " + std::string{character} +"is not supported.");
 }
 
 void CompilationEngine::compileExpression_()
@@ -697,7 +698,7 @@ void CompilationEngine::writeVarORArgPushPop_(const std::string &identifierName,
   case IdentifierKind::VAR: memorySegment = MemorySegment::LOCAL; break;
   case IdentifierKind::FIELD: memorySegment = MemorySegment::THIS; break;
   case IdentifierKind::STATIC: memorySegment = MemorySegment::STATIC; break;
-  default: throw std::runtime_error("Not supported symbol type " __FUNCTION__);
+  default: throw std::runtime_error("Not supported symbol type ");
   }
 
   if (isPush)
@@ -780,10 +781,13 @@ void CompilationEngine::compileKeywordTerm_()
     VMWriter_.writeArithmetic(ArithmeticCommand::NOT);
     break;
   }
-  case KeywordType::FASLE: VMWriter_.writePush(MemorySegment::CONST, 0); break;
+  case KeywordType::FASLE:
+  case KeywordType::NULL_:
+    VMWriter_.writePush(MemorySegment::CONST, 0); break;
+
   case KeywordType::THIS: VMWriter_.writePush(MemorySegment::POINTER, 0); break;
   default:
-    throw std::runtime_error("Keyword is not supported in " __FUNCTION__);
+    throw std::runtime_error("Keyword is not supported in compileKeywordTerm_");
   }
 
   tokenizer_.advance();
@@ -799,7 +803,7 @@ void CompilationEngine::compileTerm_()
   case JackTokenType::IDENTIFIER: compileIdentifierTerm_(); break;
   case JackTokenType::KEYWORD: compileKeywordTerm_(); break;
   default:
-    throw std::runtime_error("This token should not be in " __FUNCTION__);
+    throw std::runtime_error("This token should not be in compileTerm_");
   }
 }
 

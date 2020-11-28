@@ -1,3 +1,5 @@
+#include <limits>
+
 #include "SymbolTable.h"
 
 SymbolTable::SymbolTable() : staticCounter_{0}, fieldCounter_{0}, argCounter_{0}, varCounter_{0}
@@ -35,7 +37,7 @@ void SymbolTable::define(const std::string &identifierName,
   }
 
   default:
-    throw std::runtime_error("Identifier kind cannot be categorized in " __FUNCTION__);
+    throw std::runtime_error("Identifier kind cannot be categorized in SymbolTable::define");
   }
 }
 
@@ -56,7 +58,7 @@ int SymbolTable::varCount(IdentifierKind kind) const
     return varCounter_;
 
   default:
-    throw std::runtime_error("Identifier kind cannot be categorized in " __FUNCTION__);
+    throw std::runtime_error("Identifier kind cannot be categorized in SymbolTable::varCount");
   }
 }
 
@@ -78,7 +80,7 @@ IdentifierKind SymbolTable::getKindOf(const std::string &identifierName) const
   return getIdentifierInfo_(identifierName).identifierKind;
 }
 
-const std::string &SymbolTable::getTypeOf(const std::string &identifierName) const
+const std::string SymbolTable::getTypeOf(const std::string &identifierName) const
 {
   return getIdentifierInfo_(identifierName).identifierType;
 }
@@ -88,15 +90,15 @@ int SymbolTable::getIndexOf(const std::string &identifierName) const
   return getIdentifierInfo_(identifierName).identifierIndex;
 }
 
-const IdentifierInfo &SymbolTable::getIdentifierInfo_(const std::string &identifierName) const
+const IdentifierInfo SymbolTable::getIdentifierInfo_(const std::string &identifierName) const
 {
-  if (auto symbolIt = subroutineSymbolTable_.find(identifierName);
-    symbolIt != subroutineSymbolTable_.end())
-    return symbolIt->second;
+  auto subroutineSymbolIt = subroutineSymbolTable_.find(identifierName);
+  if (subroutineSymbolIt != subroutineSymbolTable_.end())
+    return subroutineSymbolIt->second;
 
-  if (auto symbolIt = classSymbolTable_.find(identifierName);
-    symbolIt != classSymbolTable_.end())
-    return symbolIt->second;
+  auto classSymbolIt = classSymbolTable_.find(identifierName);
+  if (classSymbolIt != classSymbolTable_.end())
+    return classSymbolIt->second;
   
   return {"", IdentifierKind::UNDEFINED, std::numeric_limits<size_t>::max()};
 }
