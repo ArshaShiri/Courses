@@ -45,17 +45,10 @@ int SymbolTable::varCount(IdentifierKind kind) const
 {
   switch (kind)
   {
-  case IdentifierKind::STATIC:
-    return staticCounter_;
-
-  case IdentifierKind::FIELD:
-    return fieldCounter_;
-
-  case IdentifierKind::ARG:
-    return argCounter_;
-
-  case IdentifierKind::VAR:
-    return varCounter_;
+  case IdentifierKind::STATIC: return staticCounter_;
+  case IdentifierKind::FIELD: return fieldCounter_;
+  case IdentifierKind::ARG: return argCounter_;
+  case IdentifierKind::VAR: return varCounter_;
 
   default:
     throw std::runtime_error("Identifier kind cannot be categorized in SymbolTable::varCount");
@@ -75,12 +68,12 @@ void SymbolTable::clearSubroutineSymbolTable()
   varCounter_ = 0;
 }
 
-IdentifierKind SymbolTable::getKindOf(const std::string &identifierName) const
+const IdentifierKind &SymbolTable::getKindOf(const std::string &identifierName) const
 {
   return getIdentifierInfo_(identifierName).identifierKind;
 }
 
-const std::string SymbolTable::getTypeOf(const std::string &identifierName) const
+const std::string &SymbolTable::getTypeOf(const std::string &identifierName) const
 {
   return getIdentifierInfo_(identifierName).identifierType;
 }
@@ -90,8 +83,11 @@ int SymbolTable::getIndexOf(const std::string &identifierName) const
   return getIdentifierInfo_(identifierName).identifierIndex;
 }
 
-const IdentifierInfo SymbolTable::getIdentifierInfo_(const std::string &identifierName) const
+const IdentifierInfo &SymbolTable::getIdentifierInfo_(const std::string &identifierName) const
 {
+  const static auto UNDEFINED_INFO = 
+    IdentifierInfo{"", IdentifierKind::UNDEFINED, std::numeric_limits<size_t>::max()};
+
   auto subroutineSymbolIt = subroutineSymbolTable_.find(identifierName);
   if (subroutineSymbolIt != subroutineSymbolTable_.end())
     return subroutineSymbolIt->second;
@@ -100,5 +96,5 @@ const IdentifierInfo SymbolTable::getIdentifierInfo_(const std::string &identifi
   if (classSymbolIt != classSymbolTable_.end())
     return classSymbolIt->second;
   
-  return {"", IdentifierKind::UNDEFINED, std::numeric_limits<size_t>::max()};
+  return UNDEFINED_INFO;
 }

@@ -192,11 +192,11 @@ void removeComments(std::string &string, bool &isMultiLineComment)
   const auto multiLineCommentEndPosition = string.find(multiLineCommentEnd);
 
   // isMultiLineComment can be true from previous calls to this function. It is important to check
-  // this first because a line of multi-line comment can have no indication of it being a comment and
-  // can be only identified from the previous calls:
+  // this first because a line of multi-line comment can have no indication of it being a comment
+  // and can be only identified from the previous calls:
   /*  the line starts with /* which can be recognized.
-      this line cannot be recognized as a comment just by itself. We should know it from the previous
-      line that the lines in the middle are part of multi-line comments.
+      this line cannot be recognized as a comment just by itself. We should know it from the
+      previous line that the lines in the middle are part of multi-line comments.
   */
   if (multiLineCommentStartingPosition != string.npos)
     isMultiLineComment = true;
