@@ -9,12 +9,32 @@
  */
 class Math {
 
+    // two to the power of index.
+    static Array twoToThe; 
+    static int numberOfBits;
+    
     /** Initializes the library. */
     function void init() {
+      var int i;
+      
+      let i = 1;
+      let numberOfBits = 16;
+      
+      let twoToThe = Array.new(numberOfBits);
+      let twoToThe[0] = 1;
+      
+      while (i < numberOfBits) {
+        let twoToThe[i] = twoToThe[i - 1] + twoToThe[i - 1];
+        let i = i + 1;        
+      }
+      
+      return;
     }
 
     /** Returns the absolute value of x. */
     function int abs(int x) {
+      if (x < 0) { return -x; }
+      else { return x; }    
     }
 
     /** Returns the product of x and y. 
@@ -23,6 +43,24 @@ class Math {
      *  the Jack expressions x*y and multiply(x,y) return the same value.
      */
     function int multiply(int x, int y) {
+      var int sum;
+      var int shiftedX;
+      var int i;
+      
+      let shiftedX = x;
+      let i = 0;
+      
+      // Get the bits of y. If the bit is equal to one, add the shifttedX to the total sum.
+      while (i < numberOfBits) {
+        if (~(Math.bit(y, i) = 0)) {
+          let sum = sum + shiftedX;
+        }
+        
+        let shiftedX = shiftedX + shiftedX;
+        let i = i + 1;
+      }
+
+      return sum;
     }
 
     /** Returns the integer part of x/y.
@@ -31,17 +69,66 @@ class Math {
      *  the Jack expressions x/y and divide(x,y) return the same value.
      */
     function int divide(int x, int y) {
+      var int absX;
+      var int absY;
+      var int absAns;
+
+      let absX = Math.abs(x);
+      let absY = Math.abs(y);      
+      let absAns = Math.divideAbs(absX, absY);
+      
+      if ( ((x > 0) & (y > 0)) | ((x < 0) & (y < 0)) ) { return absAns; }
+      else { return -absAns; }
+    }
+    
+    function int divideAbs(int absX, int absY) {
+      var int q;
+    
+      if (absY > absX) { return 0; }
+      let q = Math.divideAbs(absX, absY + absY);
+
+      if ( (absX - (2 * q * absY)) < absY ) { return (q + q); }
+      else { return (q + q + 1); }    
     }
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
+      var int y;
+      var int i;
+      var int currentNumber;
+      var int currentNumberSquared;
+
+        let y = 0;
+        let i = 7;
+        
+        while (~(i = -1)) {
+            let currentNumber = y + twoToThe[i];
+            let currentNumberSquared = currentNumber * currentNumber;
+            if ( (currentNumberSquared > 0) & ((currentNumberSquared < x) | (currentNumberSquared = x)) ) { let y = currentNumber; }
+            let i = i - 1;
+        }
+        
+        return y;
     }
 
     /** Returns the greater number. */
     function int max(int a, int b) {
+      if (a > b) { return a; }
+      else { return b; }
     }
 
     /** Returns the smaller number. */
     function int min(int a, int b) {
+      if (a < b) { return a; }
+      else { return b; }    
     }
+    
+    /** Checks if the ith bit of the number is equal to zero. */
+    function int bit(int number, int bitIdx) {
+      // If the i'th bit of the number is zero, the result is false.
+      // Otherwise, the result is an integer number.\
+      
+      return twoToThe[bitIdx] & number;
+    }
+    
 }
