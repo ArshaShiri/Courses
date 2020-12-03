@@ -10,25 +10,85 @@
  */ 
 class Memory {
 
-    /** Initializes the class. */
-    function void init() {
-    }
+  static array ram;
+  static Array heap;
+  static int freeList;  
 
-    /** Returns the RAM value at the given address. */
-    function int peek(int address) {
-    }
+  /** Initializes the class. */
+  function void init() {
+    let ram = 0;
+    
+    // Heap base
+    let heap = 2048; 
+    
+    // Next
+    let heap[0] = 0; 
+    
+    // Length
+    let heap[1] = 14335;
+    
+    // At first, all of the heap is available.
+    let freeList = 2048;
+    
+    return;
+  }
 
-    /** Sets the RAM value at the given address to the given value. */
-    function void poke(int address, int value) {
-    }
+  /** Returns the RAM value at the given address. */
+  function int peek(int address) {
+    return ram[address];
+  }
 
-    /** Finds an available RAM block of the given size and returns
-     *  a reference to its base address. */
-    function int alloc(int size) {
-    }
+  /** Sets the RAM value at the given address to the given value. */
+  function void poke(int address, int value) {
+    let ram[address] = value;
+    return;
+  }
 
-    /** De-allocates the given object (cast as an array) by making
-     *  it available for future allocations. */
-    function void deAlloc(Array o) {
+  /** Finds an available RAM block of the given size and returns
+   *  a reference to its base address. */
+  function int alloc(int size) {
+    var int currentFreeList;
+    var int differenceToHeapBase;
+    var int currentSize;
+    
+    let currentFreeList = freeList;
+    
+    // It is assumed that we can always find new memory blocks and we do not have defragmentation problems.
+    while (true) {
+      let differenceToHeapBase = currentFreeList - heap;
+      let currentSize = heap[differenceToHeapBase + 1];
+      
+      if (currentSize > size + 2) {
+        // Reduce the size from the current size.
+        let heap[differenceToHeapBase + 1] = currentSize - size - 2;
+        
+        // Assign the size to the new block
+        let heap[differenceToHeapBase + currentSize - size - 1] = size;
+      
+        // Give the base address of memory block taken from the end of this block.
+        return (currentFreeList + currentSize - size);
+      }
+      
+      let currentFreeList = heap[currentFreeList];
     }    
+    
+    return -1;
+  }
+
+  /** De-allocates the given object (cast as an array) by making
+   *  it available for future allocations. */
+  function void deAlloc(Array o) {
+    var int currentFreeList;
+    var int currentSize;
+    
+    let currentFreeList = freeList;
+    
+    while (~(currentFreeList = 0)) {
+      let currentFreeList = heap[currentFreeList];
+    }
+    
+    let heap[currentFreeList] = o;
+    
+    return;
+  }    
 }
