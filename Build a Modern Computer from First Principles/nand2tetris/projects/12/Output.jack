@@ -18,18 +18,18 @@ class Output {
 
     // Character map for displaying characters
     static Array charMaps;
-    static Array screen;
     
     static int rowNum;
     static int colNum;
     static int fontHeight;
+    static int integerLength;
 
     /** Initializes the screen, and locates the cursor at the screen's top-left. */
     function void init() {
-      let screen = 16384;
       let rowNum = 0;
       let colNum = 0;
       let fontHeight = 11;
+      let integerLength = 5;
       
       do Output.initMap();
       return;    
@@ -197,6 +197,7 @@ class Output {
      *  and advances the cursor one column forward. */
     function void printChar(char c) {
       var Array map;
+      var Array screen;
       
       var int address;
       var int currentRowNum;
@@ -206,6 +207,7 @@ class Output {
 
       let map = Output.getMap(c);
       let currentRowNum = 0;
+      let screen = 16384;
 
       // Address of pixel x and y: (32 * y) + (x / 16)
       let address = (rowNum * 11 * 32) + (colNum / 2);
@@ -215,6 +217,8 @@ class Output {
       while (currentRowNum < fontHeight) {      
         let currentRow = map[currentRowNum];
         
+        // We can update the memory by writing 16bit words. Though, we are representing each font with an 8-bit wide
+        // rectangle. Therefore, we need 8 bit shifting when writing in odd columns.
         if (colNumIsOdd) {
           let screen[address] = screen[address] | (currentRow * 256);
         }
@@ -254,7 +258,7 @@ class Output {
     function void printInt(int i) {
       var String intStr;
       
-      let intStr = String.new(10);
+      let intStr = String.new(integerLength);
       
       do intStr.setInt(i);
       do Output.printString(intStr);

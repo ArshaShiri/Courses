@@ -7,9 +7,13 @@
  * A library for handling user input from the keyboard.
  */
 class Keyboard {
-
+    static int inputStringMaxLength;
+    
     /** Initializes the keyboard. */
     function void init() {
+      let inputStringMaxLength = 100;
+      
+      return;
     } 
 
     /**
@@ -33,6 +37,10 @@ class Keyboard {
      * F1 - F12 = 141 - 152
      */
     function char keyPressed() {
+      var int keyboardAddress; 
+      
+      let keyboardAddress = 24576;
+      return Memory.peek(keyboardAddress); 
     }
 
     /**								
@@ -41,6 +49,15 @@ class Keyboard {
      * of the pressed key.
      */
     function char readChar() {
+      var char key;
+      
+      let key = 0;
+      
+      while (key = 0) { let key = Keyboard.keyPressed(); }
+      while (~(Keyboard.keyPressed() = 0)) {}
+      do Output.printChar(key);
+      
+      return key;
     }
 
     /**								
@@ -49,6 +66,25 @@ class Keyboard {
      * and returns its value. Also handles user backspaces.
      */
     function String readLine(String message) {
+      var String inputString;
+      var char currentChar;
+      
+      let inputString = String.new(inputStringMaxLength);
+     
+      do Output.printString(message);
+      
+      let currentChar = Keyboard.readChar();
+      while (~(currentChar = String.newLine())) {
+        
+        if (currentChar = String.backSpace()) {          
+          if (inputString.length() > 0 ) { do inputString.eraseLastChar(); }
+        }
+        
+        else { do inputString.appendChar(currentChar); }
+        let currentChar = Keyboard.readChar();
+      }
+      
+      return inputString;
     }   
 
     /**								
@@ -58,5 +94,11 @@ class Keyboard {
      * entered text is detected). Also handles user backspaces. 
      */
     function int readInt(String message) {
+      var String inputString;
+      
+      let inputString = Keyboard.readLine(message);
+      
+      // We can use the functionality of String class to get the int value.
+      return inputString.intValue(); 
     }
 }
