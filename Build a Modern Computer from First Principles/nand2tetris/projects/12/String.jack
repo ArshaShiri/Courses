@@ -11,54 +11,159 @@
  * string-oriented operations.
  */
 class String {
+    field Array myString;
+    field int capacity;
+    field int size;
+    
+    static int zeroIntChar;
+    static int negativeChar;
 
     /** constructs a new empty string with a maximum length of maxLength
      *  and initial length of 0. */
     constructor String new(int maxLength) {
+      
+      let capacity = maxLength;
+      if (~(capacity = 0)) { let myString = Array.new(capacity); }
+      let size = 0;
+      let zeroIntChar = 48;
+      let negativeChar = 45;
+      
+      return this;
     }
 
     /** Disposes this string. */
     method void dispose() {
+      if (~(capacity = 0)) { do myString.dispose(); }
+      return;    
     }
 
     /** Returns the current length of this string. */
     method int length() {
+      return size;
     }
 
     /** Returns the character at the j-th location of this string. */
     method char charAt(int j) {
+      return myString[j];
     }
 
     /** Sets the character at the j-th location of this string to c. */
     method void setCharAt(int j, char c) {
+      let myString[j] = c;
+      
+      return;
     }
 
     /** Appends c to this string's end and returns this string. */
     method String appendChar(char c) {
+      if (size < capacity) {
+        let myString[size] = c;
+        let size = size + 1;
+      }
+   
+      return this;
     }
 
     /** Erases the last character from this string. */
     method void eraseLastChar() {
+      if (~ (size = 0)) {
+        let size = size - 1;
+      } 
+      
+      return;
     }
+    
+    function char intToChar(int inputInt) {
+      return inputInt + zeroIntChar;
+    }
+    
+    function int charToInt(char inputChar) {
+      // using zeroIntChar results in an error.
+      return inputChar - 48;
+    }
+
+    function boolean isDigit(char inputChar) {
+      return (inputChar > 47) & ((inputChar < 58));
+    }    
 
     /** Returns the integer value of this string, 
      *  until a non-digit character is detected. */
     method int intValue() {
+      var boolean isNegative;
+      var char currentChar;
+      var int intValue;
+      var int digitIndex;
+      
+      let intValue = 0;
+      
+      if (size = 0) { return intValue; }
+      
+      if (myString[0] = negativeChar) {
+        let digitIndex = 1;
+        let isNegative = true;
+      }
+      else {
+        let digitIndex = 0;
+        let isNegative = false;
+      }
+      
+      while ((digitIndex < size) & (String.isDigit(myString[digitIndex]))) {
+        
+        let intValue = (intValue * 10) + String.charToInt(myString[digitIndex]);
+        let digitIndex = digitIndex + 1;
+      }
+      
+      if (isNegative) { let intValue = -intValue; }
+      
+      return intValue;
     }
 
     /** Sets this string to hold a representation of the given value. */
     method void setInt(int val) {
+      // Reset the string
+      let size = 0;
+      
+      if (val < 0) {
+      
+        // add the negative sign 
+        do appendChar(negativeChar);
+        do doSetInt(-val);
+      }
+      else { do doSetInt(val); }
+      
+      return;
     }
+    
+    /** Sets this string to hold a representation of the given value recursively. */
+    method void doSetInt(int val) {
+      var int rightMostDigit;
+      var int nextDigits;
+      
+      let nextDigits = val / 10;
+      let rightMostDigit = val - (10 * nextDigits);
+      
+      
+      if (val < 10) { do appendChar(String.intToChar(rightMostDigit));  }
+      else {
+        do doSetInt(nextDigits);
+        do appendChar(String.intToChar(rightMostDigit));
+      }
+      
+      return;
+    } 
 
     /** Returns the new line character. */
     function char newLine() {
+      return 128;
     }
 
     /** Returns the backspace character. */
     function char backSpace() {
+      return 129;
     }
 
     /** Returns the double quote (") character. */
     function char doubleQuote() {
+      return 34;
     }
 }
