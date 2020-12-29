@@ -61,7 +61,8 @@ void display()
   // The shader can't do this globally. 
   // So we need to do so manually.  
   if (numused) {
-    glUniform1i(enablelighting,true);
+    glUniform1i(enablelighting, true);
+    glUniform1i(numusedcol, numused);
 
     // Transform light positions by the provided helper function.
     for (auto lightIdx = size_t{0}; lightIdx < numused; ++lightIdx) {
