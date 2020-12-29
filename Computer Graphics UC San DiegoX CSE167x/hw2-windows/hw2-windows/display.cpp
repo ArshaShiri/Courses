@@ -63,12 +63,23 @@ void display()
   if (numused) {
     glUniform1i(enablelighting,true);
 
-    // YOUR CODE FOR HW 2 HERE.  
-    // You need to pass the light positions and colors to the shader. 
-    // glUniform4fv() and similar functions will be useful. See FAQ for help with these functions.
-    // The lightransf[] array in variables.h and transformvec() might also be useful here.
-    // Remember that light positions must be transformed by modelview.  
+    // Transform light positions by the provided helper function.
+    for (auto lightIdx = size_t{0}; lightIdx < numused; ++lightIdx) {
+      GLfloat lighPositions[4];
 
+      for (auto posIds = size_t{0}; posIds < 4; ++posIds)
+        lighPositions[posIds] = lightposn[lightIdx * 4 + posIds];
+
+      GLfloat lighPositionsTransformed[4];
+
+      transformvec(lighPositions, lighPositionsTransformed);
+
+      for (auto posIds = size_t{0}; posIds < 4; ++posIds)
+        lightransf[lightIdx * 4 + posIds] = lighPositionsTransformed[posIds];
+    }
+
+    glUniform4fv(lightpos, numused, lightransf);
+    glUniform4fv(lightcol, numused, lightcolor);
   } else {
     glUniform1i(enablelighting,false); 
   }
@@ -78,21 +89,25 @@ void display()
   sc = Transform::scale(sx,sy,1.0); 
   tr = Transform::translate(tx,ty,0.0); 
 
-  // YOUR CODE FOR HW 2 HERE.  
-  // You need to use scale, translate and modelview to 
-  // set up the net transformation matrix for the objects.  
-  // Account for GLM issues, matrix order (!!), etc.  
-
+  transf = modelview * tr * sc;
 
   // The object draw functions will need to further modify the top of the stack,
 
   // so assign whatever transformation matrix you intend to work with to modelview
 
   // rather than use a uniform variable for that.
-  modelview = transf;
+  
   
   for (int i = 0 ; i < numobjects ; i++) {
     object* obj = &(objects[i]); // Grabs an object struct.
+
+    glUniform4fv(ambientcol, 1, obj->ambient);
+    glUniform4fv(diffusecol, 1, obj->diffuse);
+    glUniform4fv(specularcol, 1, obj->specular);
+    glUniform4fv(emissioncol, 1, obj->emission);
+    glUniform1f(shininesscol, obj->shininess);
+    modelview = transf;
+    modelview = modelview * obj->transform;
 
     // YOUR CODE FOR HW 2 HERE. 
     // Set up the object transformations 

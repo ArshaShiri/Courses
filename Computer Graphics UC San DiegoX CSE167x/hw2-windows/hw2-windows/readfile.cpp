@@ -99,11 +99,15 @@ void readfile(const char* filename)
                     } else {
                         validinput = readvals(s, 8, values); // Position/color for lts.
                         if (validinput) {
+                          auto lightPropertyIdx = size_t{0};
 
-                            // YOUR CODE FOR HW 2 HERE. 
-                            // Note that values[0...7] shows the read in values 
-                            // Make use of lightposn[] and lightcolor[] arrays in variables.h
-                            // Those arrays can then be used in display too.  
+                          // Adding light positions.
+                          for (; lightPropertyIdx < 4; ++lightPropertyIdx)
+                            lightposn[numused * 4 + lightPropertyIdx] = values[lightPropertyIdx];
+
+                          //Adding light colors
+                          for (; lightPropertyIdx < 8; ++lightPropertyIdx)
+                            lightcolor[numused * 4 + (lightPropertyIdx - 4)] = values[lightPropertyIdx];
 
                             ++numused; 
                         }
@@ -157,13 +161,18 @@ void readfile(const char* filename)
                 } else if (cmd == "camera") {
                     validinput = readvals(s,10,values); // 10 values eye cen up fov
                     if (validinput) {
+                      auto camerPropertiesIdx = size_t{0};
 
-                        // YOUR CODE FOR HW 2 HERE
-                        // Use all of values[0...9]
-                        // You may need to use the upvector fn in Transform.cpp
-                        // to set up correctly. 
-                        // Set eyeinit upinit center fovy in variables.h 
+                      for (; camerPropertiesIdx < 3; ++camerPropertiesIdx)
+                        eyeinit[camerPropertiesIdx] = values[camerPropertiesIdx];
 
+                      for (; camerPropertiesIdx < 6; ++camerPropertiesIdx)
+                        center[camerPropertiesIdx - 3] = values[camerPropertiesIdx];
+
+                      for (; camerPropertiesIdx < 9; ++camerPropertiesIdx)
+                        upinit[camerPropertiesIdx - 6] = values[camerPropertiesIdx];
+
+                      fovy = values[camerPropertiesIdx];
                     }
                 }
 
@@ -207,36 +216,19 @@ void readfile(const char* filename)
                 else if (cmd == "translate") {
                     validinput = readvals(s,3,values); 
                     if (validinput) {
-
-                        // YOUR CODE FOR HW 2 HERE.  
-                        // Think about how the transformation stack is affected
-                        // You might want to use helper functions on top of file. 
-                        // Also keep in mind what order your matrix is!
-
+                      rightmultiply(Transform::translate(values[0], values[1], values[2]), transfstack);
                     }
                 }
                 else if (cmd == "scale") {
                     validinput = readvals(s,3,values); 
                     if (validinput) {
-
-                        // YOUR CODE FOR HW 2 HERE.  
-                        // Think about how the transformation stack is affected
-                        // You might want to use helper functions on top of file.  
-                        // Also keep in mind what order your matrix is!
-
+                      rightmultiply(Transform::scale(values[0], values[1], values[2]), transfstack);
                     }
                 }
                 else if (cmd == "rotate") {
                     validinput = readvals(s,4,values); 
                     if (validinput) {
-
-                        // YOUR CODE FOR HW 2 HERE. 
-                        // values[0..2] are the axis, values[3] is the angle.  
-                        // You may want to normalize the axis (or in Transform::rotate)
-                        // See how the stack is affected, as above.  
-                        // Note that rotate returns a mat3. 
-                        // Also keep in mind what order your matrix is!
-
+                      rightmultiply(glm::mat4(Transform::rotate(values[3], vec3(values[0], values[1], values[2]))), transfstack);
                     }
                 }
 
