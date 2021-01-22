@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "GLMWrapper.h"
+#include "Camera.h"
 
 class Scene
 {
@@ -15,15 +15,6 @@ public:
                  float fovYDir);
 
 private:
-  struct Camera
-  {
-    GLM::Vec3D lookFrom;
-    GLM::Vec3D lookAt;
-    GLM::Vec3D upVector;
-
-    float fovYDir;
-  };
-
   // Private attributes
   int height_;
   int width_;

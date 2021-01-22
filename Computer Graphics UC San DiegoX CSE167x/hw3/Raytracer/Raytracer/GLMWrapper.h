@@ -6,7 +6,6 @@
 
 namespace GLM
 {
-using Vec3D = glm::vec3;
 
 class GLMWrapper
 {
