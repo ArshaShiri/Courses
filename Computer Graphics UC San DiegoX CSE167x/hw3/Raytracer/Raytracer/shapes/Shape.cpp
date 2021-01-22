@@ -1,6 +1,5 @@
 #include "Shape.h"
 
-Shape::(const MateriaProperties &matProperties) : matProperties_{matProperties}
+Shape(const MateriaProperties &matProperties) : matProperties_{matProperties}
 {}
-
 
