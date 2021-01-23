@@ -9,6 +9,8 @@ class Shape
 public:
   Shape(const MateriaProperties &matProperties);
 
+  
+
 private:
   MateriaProperties matProperties_;
 };

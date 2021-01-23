@@ -39,15 +39,6 @@ Vector3D Vector3D::normalize() const
           z() / currentLegnth};
 }
 
-Vector3D& Vector3D::operator=(const Vector3D &otherVec)
-{
-  coords_.at(0) = otherVec.x();
-  coords_.at(1) = otherVec.y();
-  coords_.at(2) = otherVec.z();
-
-  return *this;
-}
-
 const Vector3D operator+(const Vector3D &v1, const Vector3D &v2)
 {
   return {v1.x() + v2.x(),

@@ -4,8 +4,6 @@
 
 #include <array>
 
-#include "GLMWrapper.h"
-
 struct MateriaProperties
 {
   // rgb 
@@ -15,4 +13,11 @@ struct MateriaProperties
   std::array<float, 3> ambient;
 
   float shininess;
+};
+
+struct Point
+{
+  float x;
+  float y;
+  float z;
 };

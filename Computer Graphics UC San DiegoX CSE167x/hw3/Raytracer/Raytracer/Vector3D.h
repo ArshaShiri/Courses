@@ -20,7 +20,6 @@ public:
   float length() const;
   Vector3D normalize() const;
 
-  Vector3D& operator=(const Vector3D &otherVec);
   const Vector3D friend operator+(const Vector3D &v1, const Vector3D &v2);
   const Vector3D friend operator-(const Vector3D &v1, const Vector3D &v2);
 

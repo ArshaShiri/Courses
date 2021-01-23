@@ -5,7 +5,7 @@
 #include "Scene.h"
 #include "GLMWrapper.h"
 
-Scene::Scene() : height_{0}, width_{0}, camera_{}, cameraIsSet_{false}
+Scene::Scene() : height_{0}, width_{0}, cameraIsSet_{false}
 {}
 
 void Scene::setWindowSize(int height, int width)

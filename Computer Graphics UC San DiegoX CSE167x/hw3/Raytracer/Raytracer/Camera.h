@@ -8,6 +8,7 @@
 class Camera
 {
 public:
+  Camera() = default;
   Camera(const std::array<float, 3> &lookFrom,
          const std::array<float, 3> &lookAt,
          const std::array<float, 3> &upVector,
