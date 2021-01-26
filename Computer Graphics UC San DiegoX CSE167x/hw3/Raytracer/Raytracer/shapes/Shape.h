@@ -1,16 +1,19 @@
-/*Base class for supported shapes.*/
+/*Base class for supported primitives.*/
 
 #pragma once
 
+#include <optional>
+
 #include "../Common.h"
+#include "../Ray.h"
 
 class Shape
 {
 public:
-  Shape(const MateriaProperties &matProperties);
-
+  Shape(const MateriaPropertiesAndAmbient &matProperties);
   
-
+  virtual std::optional<Point3D> getIntersection(const Ray &ray) = 0;
+  
 private:
-  MateriaProperties matProperties_;
+  MateriaPropertiesAndAmbient matProperties_;
 };

@@ -5,9 +5,9 @@
 
 class Ray
 {
-  Ray(const Point &viewPoint, const Vector3D &direction);
+  Ray(const Point3D &viewPoint, const Vector3D &direction);
 
 private:
-  Point viewPoint_;
+  Point3D viewPoint_;
   Vector3D unitDirection_;
 };

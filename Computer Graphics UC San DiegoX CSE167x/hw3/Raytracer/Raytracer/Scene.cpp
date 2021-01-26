@@ -29,3 +29,13 @@ void Scene::setCamera(const std::array<float, 3> &lookFrom,
   camera_ = Camera{lookFrom, lookAt, upVector, fovYDir};
   cameraIsSet_ = true;
 }
+
+void Scene::addVertex(const Point3D &point3D)
+{
+  Vertices_.emplace_back(point3D);
+}
+
+size_t Scene::getNumberOfVertices()
+{
+  return Vertices_.size();
+}

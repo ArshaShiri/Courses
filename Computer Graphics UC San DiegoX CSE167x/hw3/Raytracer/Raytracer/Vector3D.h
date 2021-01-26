@@ -1,4 +1,4 @@
-/*A very simple vector class. Meant to be used for 4D(with uniform coordinates), 3D or 2D.*/
+/*A very simple vector class in 3D.*/
 
 #pragma once
 
