@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Common.h"
 
+#include "lights/Light.h"
 #include "shapes/Shape.h"
 
 class Scene
@@ -21,6 +22,10 @@ public:
                  const std::array<float, 3> &upVector,
                  float fovYDir);
   void addVertex(const Point3D &point3D);
+  void addTriangle(const MateriaPropertiesAndAmbient &matProperties,
+                   const std::array<int, 3> &cornerNodeIndices);
+  void addDirectionalLight(const Vector3D &direction, const Color &rgb);
+  void addPointLight(const Point3D &point, const Color &rgb);
 
   size_t getNumberOfVertices();
 
@@ -33,5 +38,6 @@ private:
   bool cameraIsSet_;
 
   std::vector<std::unique_ptr<Shape>> shapes_;
+  std::vector<std::unique_ptr<Light>> lights_;
   std::vector<Point3D> Vertices_;
 };

@@ -4,6 +4,7 @@
 #include <iterator>
 #include <sstream>
 
+#include "Color.h"
 #include "Parser.h"
 
 namespace
@@ -78,6 +79,10 @@ void ParserHelper::parse(
   case CommandType::Maxverts: setMaxNumberOfVertieces_(args); break;
   case CommandType::Vertex: addVertex_(args); break;
 
+  case CommandType::DirectionalLight: addDirectionalLight_(args); break;
+  case CommandType::PointLight: addPointLight_(args); break;
+  case CommandType::Triangle: addTriangle_(args); break;
+
   default:
     throw std::runtime_error("Unsupported command: " + commandName);
   }
@@ -105,6 +110,10 @@ CommandType ParserHelper::getCommandType_(const std::string &commandName) const
 
   if (commandName == "maxverts") return CommandType::Maxverts;
   if (commandName == "vertex") return CommandType::Vertex;
+
+  if (commandName == "directional") return CommandType::DirectionalLight;
+  if (commandName == "point") return CommandType::PointLight;
+  if (commandName == "tri") return CommandType::Triangle;
 
   return CommandType::Unknown;
 }
@@ -166,6 +175,47 @@ void ParserHelper::addVertex_(const std::vector<std::string> &args)
   scene_.addVertex(getThreeFloatArgumentsOfTheCommand_(args));
 }
 
+void ParserHelper::addDirectionalLight_(const std::vector<std::string> &args)
+{
+  // Command format:
+  // directional x y z r g b
+  const auto sizeOfCameraArgs = 6;
+  checkArgsSize(args, "directional light", sizeOfCameraArgs);
+
+  const auto direction = 
+    Vector3D{std::stof(args.at(0)), std::stof(args.at(1)), std::stof(args.at(2))};
+  const auto color =
+    Color{std::stof(args.at(3)), std::stof(args.at(4)), std::stof(args.at(5))};
+
+   scene_.addDirectionalLight(direction, color);
+}
+
+void ParserHelper::addPointLight_(const std::vector<std::string> &args)
+{
+  // Command format:
+  // point x y z r g b
+  const auto sizeOfCameraArgs = 6;
+  checkArgsSize(args, "point light", sizeOfCameraArgs);
+
+  const auto point =
+    Point3D{std::stof(args.at(0)), std::stof(args.at(1)), std::stof(args.at(2))};
+  const auto color =
+    Color{std::stof(args.at(3)), std::stof(args.at(4)), std::stof(args.at(5))};
+
+  scene_.addPointLight(point, color);
+}
+
+void ParserHelper::addTriangle_(const std::vector<std::string> &args)
+{
+  // Command format:
+  // tri v1 v2 v3
+  const auto sizeOfCameraArgs = 3;
+  checkArgsSize(args, "triangle", sizeOfCameraArgs);
+
+  scene_.addTriangle(currentMatProperties_, 
+                     {std::stoi(args.at(0)), std::stoi(args.at(1)), std::stoi(args.at(2))});
+}
+
 std::array<float, 3> ParserHelper::getThreeFloatArgumentsOfTheCommand_(const std::vector<std::string> &args)
 {
   // Command format:
@@ -173,7 +223,7 @@ std::array<float, 3> ParserHelper::getThreeFloatArgumentsOfTheCommand_(const std
   const auto expectedArgsSize = 3;
   checkArgsSize(args, "RGB", expectedArgsSize);
 
-  return {std::stof(args.at(0)), std::stof(args.at(1)), std::stof(args.at(1))};
+  return {std::stof(args.at(0)), std::stof(args.at(1)), std::stof(args.at(2))};
 }
 
 void ParserHelper::setShininess_(const std::vector<std::string> &args)

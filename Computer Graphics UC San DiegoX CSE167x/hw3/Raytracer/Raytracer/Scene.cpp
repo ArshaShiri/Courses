@@ -2,8 +2,9 @@
 #include <stdexcept>
 #include <string>
 
+#include "lights/LightFactory.h"
 #include "Scene.h"
-#include "GLMWrapper.h"
+#include "shapes/ShapeFactory.h"
 
 Scene::Scene() : height_{0}, width_{0}, cameraIsSet_{false}
 {}
@@ -38,4 +39,20 @@ void Scene::addVertex(const Point3D &point3D)
 size_t Scene::getNumberOfVertices()
 {
   return Vertices_.size();
+}
+
+void Scene::addTriangle(const MateriaPropertiesAndAmbient &matProperties,
+                        const std::array<int, 3> &cornerNodeIndices)
+{
+  shapes_.emplace_back(ShapeFactory::createTriangle(matProperties, Vertices_, cornerNodeIndices));
+}
+
+void Scene::addDirectionalLight(const Vector3D &direction, const Color &rgb)
+{
+  lights_.emplace_back(LightFactory::createDirectionalLight(direction, rgb));
+}
+
+void Scene::addPointLight(const Point3D &point, const Color &rgb)
+{
+  lights_.emplace_back(LightFactory::createPointLight(point, rgb));
 }

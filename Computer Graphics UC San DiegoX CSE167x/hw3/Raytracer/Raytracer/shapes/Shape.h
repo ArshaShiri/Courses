@@ -2,7 +2,9 @@
 
 #pragma once
 
+#include <array>
 #include <optional>
+#include <vector>
 
 #include "../Common.h"
 #include "../Ray.h"
@@ -10,10 +12,12 @@
 class Shape
 {
 public:
-  Shape(const MateriaPropertiesAndAmbient &matProperties);
+  Shape(const MateriaPropertiesAndAmbient &matProperties, 
+        const std::vector<Point3D> &Vertices);
   
   virtual std::optional<Point3D> getIntersection(const Ray &ray) = 0;
   
 private:
-  MateriaPropertiesAndAmbient matProperties_;
+  const MateriaPropertiesAndAmbient matProperties_;
+  const std::vector<Point3D> &Vertices_;
 };

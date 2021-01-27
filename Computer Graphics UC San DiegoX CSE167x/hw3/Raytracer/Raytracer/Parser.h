@@ -18,6 +18,9 @@ enum class CommandType
   Shininess,
   Maxverts,
   Vertex,
+  DirectionalLight,
+  PointLight,
+  Triangle,
   Unknown
 };
 
@@ -42,6 +45,10 @@ private:
   void setEmission_(const std::vector<std::string> &args);
   void addVertex_(const std::vector<std::string> &args);
   std::array<float, 3> getThreeFloatArgumentsOfTheCommand_(const std::vector<std::string> &args);
+
+  void addDirectionalLight_(const std::vector<std::string> &args);
+  void addPointLight_(const std::vector<std::string> &args);
+  void addTriangle_(const std::vector<std::string> &args);
 
   void setMaxNumberOfVertieces_(const std::vector<std::string> &args);
   void setShininess_(const std::vector<std::string> &args);

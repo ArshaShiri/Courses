@@ -19,6 +19,9 @@ struct MateriaPropertiesAndAmbient
 
 struct Point3D
 {
+  Point3D(float x, float y, float z) : x{x}, y{y}, z{z}
+  {}
+
   Point3D(const std::array<float, 3> &point) :  x{point.at(0)},
                                                 y{point.at(1)},
                                                 z{point.at(2)}
