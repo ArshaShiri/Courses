@@ -2,8 +2,8 @@
 
 int main()
 {
-  const auto parser = Parser("scene1.test");
-  const auto &scene = parser.getCreatedScene();
-
+  auto scene = Scene();
+  scene.createSceneFromInputFile("scene1.test");
+  
   return 0;
 }

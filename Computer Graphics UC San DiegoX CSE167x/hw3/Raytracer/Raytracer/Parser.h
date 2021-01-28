@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "scene.h"
+#include "Scene.h"
 
 enum class CommandType
 {
@@ -24,15 +24,19 @@ enum class CommandType
   Unknown
 };
 
-class ParserHelper
+class Parser
 {
 public:
-  ParserHelper();
-  void parse(const std::string &commandName, const std::vector<std::string> &args);
-  const Scene &getCreatedScene() const;
-
+  Parser(const std::string &fileName, Scene &scene);
+  
 private:
   // Private methods
+  void parseCommands_(std::ifstream &inputFile);
+  void parseCommand_(const std::string &command);
+  bool isLineComment_(const std::string &line) const;
+
+  void parse_(const std::string &commandName, const std::vector<std::string> &args);
+
   void initializeDefaultValuesForMaterialPropertiesAndAmbient_();
 
   CommandType getCommandType_(const std::string &commandName) const;
@@ -54,24 +58,8 @@ private:
   void setMaxNumberOfVertieces_(const std::vector<std::string> &args);
   void setShininess_(const std::vector<std::string> &args);
 
-  // private attributes
-  Scene scene_;
+  // Private attributes
+  Scene &scene_;
   MateriaPropertiesAndAmbient currentMatProperties_;
   size_t maxNumberOfVertieces_;
-};
-
-class Parser
-{
-public:
-  Parser(const std::string &fileName);
-  const Scene &getCreatedScene() const;
-  
-private:
-  // Private methods
-  void parseCommands_(std::ifstream &inputFile);
-  void parseCommand_(const std::string &command);
-  bool isLineComment_(const std::string &line) const;  
-
-  // Private attributes
-  ParserHelper parserHelper_;
 };
