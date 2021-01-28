@@ -29,6 +29,7 @@ class ParserHelper
 public:
   ParserHelper();
   void parse(const std::string &commandName, const std::vector<std::string> &args);
+  const Scene &getCreatedScene() const;
 
 private:
   // Private methods
@@ -63,6 +64,7 @@ class Parser
 {
 public:
   Parser(const std::string &fileName);
+  const Scene &getCreatedScene() const;
   
 private:
   // Private methods

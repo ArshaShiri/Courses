@@ -14,47 +14,6 @@ void checkArgsSize(const std::vector<std::string> &args,
                     const size_t expectedSize);
 } // End of namespace declaration
 
-Parser::Parser(const std::string &fileName)
-{
-  auto inputFile = std::ifstream(fileName);
-
-  if (!inputFile)
-    throw std::runtime_error("Could not open file " + fileName);
-
-  parseCommands_(inputFile);
-}
-
-void Parser::parseCommands_(std::ifstream &inputFile)
-{
-  auto currentLine = std::string{};
-
-  while (std::getline(inputFile, currentLine))
-  {
-    if (isLineComment_(currentLine) || currentLine.empty()) continue;
-    parseCommand_(currentLine);
-  }
-}
-
-void Parser::parseCommand_(const std::string &command)
-{
-  // This assumes that a line in the input file cannot start with a space.
-  const auto endOfCommandNameIdx = command.find_first_of(" ");
-  const auto commandName = command.substr(0, endOfCommandNameIdx);
-  const auto commandArgs = command.substr(endOfCommandNameIdx + 1, 
-                                          command.size() - endOfCommandNameIdx - 1);
-
-  auto iss = std::istringstream(commandArgs);
-  const auto commandArgsSeparated = std::vector<std::string>{std::istream_iterator<std::string>{iss},
-                                                             std::istream_iterator<std::string>{}};
-  parserHelper_.parse(commandName, commandArgsSeparated);
-}
-
-bool Parser::isLineComment_(const std::string &line) const
-{
-  const auto commentStart = "#";
-  return line.find(commentStart) != line.npos;
-}
-
 /* ParserHelper */
 
 ParserHelper::ParserHelper()
@@ -86,6 +45,11 @@ void ParserHelper::parse(
   default:
     throw std::runtime_error("Unsupported command: " + commandName);
   }
+}
+
+const Scene &ParserHelper::getCreatedScene() const
+{
+  return scene_;
 }
 
 void ParserHelper::initializeDefaultValuesForMaterialPropertiesAndAmbient_()
@@ -171,7 +135,7 @@ void ParserHelper::addVertex_(const std::vector<std::string> &args)
 {
   if (scene_.getNumberOfVertices() == maxNumberOfVertieces_)
     throw std::runtime_error("Max number of vertices is reached!");
-  
+
   scene_.addVertex(getThreeFloatArgumentsOfTheCommand_(args));
 }
 
@@ -182,12 +146,12 @@ void ParserHelper::addDirectionalLight_(const std::vector<std::string> &args)
   const auto sizeOfCameraArgs = 6;
   checkArgsSize(args, "directional light", sizeOfCameraArgs);
 
-  const auto direction = 
+  const auto direction =
     Vector3D{std::stof(args.at(0)), std::stof(args.at(1)), std::stof(args.at(2))};
   const auto color =
     Color{std::stof(args.at(3)), std::stof(args.at(4)), std::stof(args.at(5))};
 
-   scene_.addDirectionalLight(direction, color);
+  scene_.addDirectionalLight(direction, color);
 }
 
 void ParserHelper::addPointLight_(const std::vector<std::string> &args)
@@ -212,8 +176,8 @@ void ParserHelper::addTriangle_(const std::vector<std::string> &args)
   const auto sizeOfCameraArgs = 3;
   checkArgsSize(args, "triangle", sizeOfCameraArgs);
 
-  scene_.addTriangle(currentMatProperties_, 
-                     {std::stoi(args.at(0)), std::stoi(args.at(1)), std::stoi(args.at(2))});
+  scene_.addTriangle(currentMatProperties_,
+    {std::stoi(args.at(0)), std::stoi(args.at(1)), std::stoi(args.at(2))});
 }
 
 std::array<float, 3> ParserHelper::getThreeFloatArgumentsOfTheCommand_(const std::vector<std::string> &args)
@@ -243,7 +207,55 @@ void ParserHelper::setMaxNumberOfVertieces_(const std::vector<std::string> &args
   const auto expectedArgsSize = 1;
   checkArgsSize(args, "maxvertnorms ", expectedArgsSize);
 
-  maxNumberOfVertieces_ = std::stoi(args.at(1));
+  maxNumberOfVertieces_ = std::stoi(args.at(0));
+}
+
+/* Parser */
+
+Parser::Parser(const std::string &fileName)
+{
+  auto inputFile = std::ifstream(fileName);
+
+  if (!inputFile)
+    throw std::runtime_error("Could not open file " + fileName);
+
+  parseCommands_(inputFile);
+}
+
+const Scene &Parser::getCreatedScene() const
+{
+  return parserHelper_.getCreatedScene();
+}
+
+void Parser::parseCommands_(std::ifstream &inputFile)
+{
+  auto currentLine = std::string{};
+
+  while (std::getline(inputFile, currentLine))
+  {
+    if (isLineComment_(currentLine) || currentLine.empty()) continue;
+    parseCommand_(currentLine);
+  }
+}
+
+void Parser::parseCommand_(const std::string &command)
+{
+  // This assumes that a line in the input file cannot start with a space.
+  const auto endOfCommandNameIdx = command.find_first_of(" ");
+  const auto commandName = command.substr(0, endOfCommandNameIdx);
+  const auto commandArgs = command.substr(endOfCommandNameIdx + 1, 
+                                          command.size() - endOfCommandNameIdx - 1);
+
+  auto iss = std::istringstream(commandArgs);
+  const auto commandArgsSeparated = std::vector<std::string>{std::istream_iterator<std::string>{iss},
+                                                             std::istream_iterator<std::string>{}};
+  parserHelper_.parse(commandName, commandArgsSeparated);
+}
+
+bool Parser::isLineComment_(const std::string &line) const
+{
+  const auto commentStart = "#";
+  return line.find(commentStart) != line.npos;
 }
 
 namespace

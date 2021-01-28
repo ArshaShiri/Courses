@@ -2,6 +2,8 @@
 
 int main()
 {
-  Parser("scene1.test");
+  const auto parser = Parser("scene1.test");
+  const auto &scene = parser.getCreatedScene();
+
   return 0;
 }
