@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Common.h"
+#include "../Point3D.h"
 #include "Light.h"
 
 class PointLight : public Light

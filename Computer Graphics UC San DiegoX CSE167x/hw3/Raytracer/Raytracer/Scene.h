@@ -16,6 +16,7 @@ class Scene
 public:
   Scene();
   void createSceneFromInputFile(const std::string &fileName);
+  void render() const;
 
 private:
   friend class Parser;

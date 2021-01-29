@@ -16,6 +16,9 @@ public:
         const std::vector<Point3D> &Vertices);
   
   virtual std::optional<Point3D> getIntersection(const Ray &ray) = 0;
+
+protected:
+  const std::vector<Point3D> &getVertices() const;
   
 private:
   const MateriaPropertiesAndAmbient matProperties_;

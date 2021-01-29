@@ -63,3 +63,8 @@ void Scene::addPointLight_(const Point3D &point, const Color &rgb)
 {
   lights_.emplace_back(LightFactory::createPointLight(point, rgb));
 }
+
+void Scene::render() const
+{
+
+}
