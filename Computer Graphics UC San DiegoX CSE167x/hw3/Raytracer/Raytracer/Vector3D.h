@@ -22,6 +22,7 @@ public:
 
   const Vector3D friend operator+(const Vector3D &v1, const Vector3D &v2);
   const Vector3D friend operator-(const Vector3D &v1, const Vector3D &v2);
+  const Vector3D friend operator*(const Vector3D &v, const float &s);
 
 private:
   std::array<float, 3> coords_;

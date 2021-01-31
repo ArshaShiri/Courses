@@ -17,6 +17,8 @@ public:
   const Vector3D friend operator+(const Point3D &p1, const Point3D &p2);
   const Vector3D friend operator-(const Point3D &p1, const Point3D &p2);
 
+  const Point3D friend operator+(const Point3D &p1, const Vector3D &p2);
+
 private:
   std::array<float, 3> coords_;
 };

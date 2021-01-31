@@ -19,3 +19,10 @@ const Vector3D operator-(const Point3D &p1, const Point3D &p2)
           p1.y() - p2.y(),
           p1.z() - p2.z()};
 }
+
+const Point3D operator+(const Point3D &p, const Vector3D &v)
+{
+  return {p.x() + v.x(),
+          p.y() + v.y(),
+          p.z() + v.z()};
+}
