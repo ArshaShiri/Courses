@@ -7,6 +7,7 @@
 class Point3D
 {
 public:
+  Point3D() = default;
   Point3D(float x, float y, float z);
   Point3D(const std::array<float, 3> &coords);
 

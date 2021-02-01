@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Camera.h"
+#include "Color.h"
 #include "Common.h"
 
 #include "lights/Light.h"
@@ -16,7 +17,7 @@ class Scene
 public:
   Scene();
   void createSceneFromInputFile(const std::string &fileName);
-  void render() const;
+  void render();
 
 private:
   friend class Parser;
@@ -32,7 +33,9 @@ private:
   void addDirectionalLight_(const Vector3D &direction, const Color &rgb);
   void addPointLight_(const Point3D &point, const Color &rgb);
 
-  size_t getNumberOfVertices();
+  size_t getNumberOfVertices_();
+
+  Color getColorOfPixel_(int height, int width);
 
   // Private attributes
   int height_;
@@ -44,4 +47,5 @@ private:
   std::vector<std::unique_ptr<Shape>> shapes_;
   std::vector<std::unique_ptr<Light>> lights_;
   std::vector<Point3D> Vertices_;
+  std::vector<Color> colors_;
 };

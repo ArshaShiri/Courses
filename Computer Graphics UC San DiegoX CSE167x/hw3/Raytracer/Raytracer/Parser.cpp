@@ -162,7 +162,7 @@ void Parser::setEmission_(const std::vector<std::string> &args)
 
 void Parser::addVertex_(const std::vector<std::string> &args)
 {
-  if (scene_.getNumberOfVertices() == maxNumberOfVertieces_)
+  if (scene_.getNumberOfVertices_() == maxNumberOfVertieces_)
     throw std::runtime_error("Max number of vertices is reached!");
 
   scene_.addVertex_(getThreeFloatArgumentsOfTheCommand_(args));

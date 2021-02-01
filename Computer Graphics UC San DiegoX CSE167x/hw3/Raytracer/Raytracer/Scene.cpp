@@ -24,17 +24,18 @@ void Scene::setWindowSize_(int height, int width)
 
   height_ = height;
   width_ = width;
+  camera_.setHeightAndWidthOfImagePlane(height, width);
 }
 
 void Scene::setCamera_(const std::array<float, 3> &lookFrom,
-                      const std::array<float, 3> &lookAt,
-                      const std::array<float, 3> &upVector,
-                      float fovYDir)
+                       const std::array<float, 3> &lookAt,
+                       const std::array<float, 3> &upVector,
+                       float fovYDir)
 {
   if (cameraIsSet_)
     throw std::runtime_error("Camera is already set!");
 
-  camera_ = Camera{lookFrom, lookAt, upVector, fovYDir};
+  camera_.setCamerProperties(lookFrom, lookAt, upVector, fovYDir);
   cameraIsSet_ = true;
 }
 
@@ -43,7 +44,7 @@ void Scene::addVertex_(const Point3D &point3D)
   Vertices_.emplace_back(point3D);
 }
 
-size_t Scene::getNumberOfVertices()
+size_t Scene::getNumberOfVertices_()
 {
   return Vertices_.size();
 }
@@ -64,7 +65,18 @@ void Scene::addPointLight_(const Point3D &point, const Color &rgb)
   lights_.emplace_back(LightFactory::createPointLight(point, rgb));
 }
 
-void Scene::render() const
+void Scene::render()
 {
+  for (auto h = 0; h < height_; ++h)
+  {
+    for (auto w = 0; w < width_; ++w)
+    {
+      colors_.emplace_back(getColorOfPixel_(h, w));
+    }
+  }
+}
 
+Color Scene::getColorOfPixel_(int height, int width)
+{
+  return {};
 }
