@@ -12,14 +12,14 @@ The image plane is 1 unit away from the camera location in w direction (at -w).*
 class Camera
 {
 public:
-  Camera() = default;
+  Camera() = default; 
   void setCamerProperties(const std::array<float, 3> &lookFrom,
                           const std::array<float, 3> &lookAt,
                           const std::array<float, 3> &upVector,
                           float fovYDir);
-  void setHeightAndWidthOfImagePlane(int height, int width);
+  void setHeightAndWidthOfImagePlane(int width, int height);
 
-  Ray calculateRayThroughPixel(int height, int width);
+  Ray calculateRayThroughPixel(int piXelWidth, int piXelHeight) const;
 
 private:
   void calculateCameraCoordinatesSystem_();

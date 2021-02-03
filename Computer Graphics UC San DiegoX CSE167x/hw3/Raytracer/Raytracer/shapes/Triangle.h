@@ -16,8 +16,8 @@ public:
 private:
   // Private methods
   const Point3D &A_() { return getVertices().at(cornerNodeIndices_.at(0)); }
-  const Point3D &B_() { return getVertices().at(cornerNodeIndices_.at(0)); }
-  const Point3D &C_() { return getVertices().at(cornerNodeIndices_.at(0)); }
+  const Point3D &B_() { return getVertices().at(cornerNodeIndices_.at(1)); }
+  const Point3D &C_() { return getVertices().at(cornerNodeIndices_.at(2)); }
 
   bool isIntersectionPointInTriangle_(const Point3D &intersectionPoint);
 

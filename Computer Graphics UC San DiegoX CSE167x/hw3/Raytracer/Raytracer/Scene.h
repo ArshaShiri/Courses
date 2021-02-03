@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Color.h"
 #include "Common.h"
+#include "Ray.h"
 
 #include "lights/Light.h"
 #include "shapes/Shape.h"
@@ -22,7 +23,7 @@ public:
 private:
   friend class Parser;
 
-  void setWindowSize_(int height, int width);
+  void setWindowSize_(int width, int height);
   void setCamera_(const std::array<float, 3> &lookFrom,
                   const std::array<float, 3> &lookAt,
                   const std::array<float, 3> &upVector,
@@ -33,9 +34,10 @@ private:
   void addDirectionalLight_(const Vector3D &direction, const Color &rgb);
   void addPointLight_(const Point3D &point, const Color &rgb);
 
-  size_t getNumberOfVertices_();
+  size_t getNumberOfVertices_() const;
 
-  Color getColorOfPixel_(int height, int width);
+  Color getColorOfPixel_(int pixelWidth, int pixelHeight) const;
+  std::optional<Point3D> getIntersectionWithClosestShape_(const Ray &ray) const;
 
   // Private attributes
   int height_;

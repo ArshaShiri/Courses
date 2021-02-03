@@ -16,10 +16,10 @@ void Camera::setCamerProperties(const std::array<float, 3> &lookFrom,
   calculateCameraCoordinatesSystem_();
 }
 
-void Camera::setHeightAndWidthOfImagePlane(int height, int width)
+void Camera::setHeightAndWidthOfImagePlane(int width, int height)
 {
-  height_ = height; 
   width_ = width;
+  height_ = height; 
 }
 
 void Camera::calculateCameraCoordinatesSystem_()
@@ -29,7 +29,7 @@ void Camera::calculateCameraCoordinatesSystem_()
   v_ = w_.cross(v_);
 }
 
-Ray Camera::calculateRayThroughPixel(int piXelHeight, int piXelWidth)
+Ray Camera::calculateRayThroughPixel(int piXelWidth, int piXelHeight) const
 {
   // The image plane height goes from 0 to height_ (from top to bottom) and its width goes from 
   // 0 to width_ (from left to right). Since the image plane is defined with respect to camera's

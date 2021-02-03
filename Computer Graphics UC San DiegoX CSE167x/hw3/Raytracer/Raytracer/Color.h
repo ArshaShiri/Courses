@@ -12,6 +12,10 @@ public:
   Color(float r, float g, float b);
   Color(const std::array<float, 3> &rgb);
 
+  float getRed() const { return rgb_.at(0); }
+  float getGreen() const { return rgb_.at(1); }
+  float getBlue() const { return rgb_.at(2); }
+
 private:
   std::array<float, 3> rgb_;
 };

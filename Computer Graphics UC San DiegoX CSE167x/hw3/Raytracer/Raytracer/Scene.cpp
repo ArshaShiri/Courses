@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <string>
 
+#include "FreeImageWrapper.h"
 #include "Parser.h"
 #include "Scene.h"
 
@@ -16,15 +17,15 @@ void Scene::createSceneFromInputFile(const std::string &fileName)
   const auto parser = Parser(fileName, *this);
 }
 
-void Scene::setWindowSize_(int height, int width)
+void Scene::setWindowSize_(int width, int height)
 {
-  if ((height < 0) || (width < 0))
+  if ((width < 0) || (height < 0))
     throw std::runtime_error(
       "Invalid height: " + std::to_string(height) + "or width: " + std::to_string(width));
 
-  height_ = height;
   width_ = width;
-  camera_.setHeightAndWidthOfImagePlane(height, width);
+  height_ = height;
+  camera_.setHeightAndWidthOfImagePlane(width, height);
 }
 
 void Scene::setCamera_(const std::array<float, 3> &lookFrom,
@@ -44,7 +45,7 @@ void Scene::addVertex_(const Point3D &point3D)
   Vertices_.emplace_back(point3D);
 }
 
-size_t Scene::getNumberOfVertices_()
+size_t Scene::getNumberOfVertices_() const
 {
   return Vertices_.size();
 }
@@ -71,12 +72,31 @@ void Scene::render()
   {
     for (auto w = 0; w < width_; ++w)
     {
-      colors_.emplace_back(getColorOfPixel_(h, w));
+      colors_.emplace_back(getColorOfPixel_(w, h));
     }
   }
+
+  FreeImage::FreeImageWrapper::saveImage(width_, height_, colors_);
 }
 
-Color Scene::getColorOfPixel_(int height, int width)
+Color Scene::getColorOfPixel_(int pixelWidth, int pixelHeight) const
 {
-  return {};
+  const auto ray = camera_.calculateRayThroughPixel(pixelWidth, pixelHeight);
+  const auto intersection = getIntersectionWithClosestShape_(ray);
+
+  return intersection == std::nullopt ? Color{} : Color{1.0, 0.0, 0.0};
+}
+
+std::optional<Point3D> Scene::getIntersectionWithClosestShape_(const Ray &ray) const
+{
+  auto intersection = std::optional<Point3D>{};
+  for (const auto &shape : shapes_)
+  {
+    intersection = shape->getIntersection(ray);
+
+    if (intersection != std::nullopt)
+      break;
+  }
+
+  return intersection;
 }
