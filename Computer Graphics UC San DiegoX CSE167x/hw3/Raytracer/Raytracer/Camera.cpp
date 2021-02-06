@@ -25,8 +25,8 @@ void Camera::setHeightAndWidthOfImagePlane(int width, int height)
 void Camera::calculateCameraCoordinatesSystem_()
 {
   w_ = (lookFrom_ - lookAt_).normalize();
-  u_ = upVector_.cross(w_);
-  v_ = w_.cross(v_);
+  u_ = (upVector_.cross(w_)).normalize();
+  v_ = w_.cross(u_);
 }
 
 Ray Camera::calculateRayThroughPixel(int piXelWidth, int piXelHeight) const
@@ -44,20 +44,20 @@ Ray Camera::calculateRayThroughPixel(int piXelWidth, int piXelHeight) const
   // tan(fovy / 2) / (h / 2) can be precomputed.
 
   static auto tanHalfFovY = tan(fovY_ / 2.0f);
-  static auto tanHalfFovX = tanHalfFovY * width_ / height_;
+  static auto tanHalfFovX = tanHalfFovY * (float)width_ / (float)height_;
 
   static auto halfHeight = height_ / 2.0f;
   static auto halfWidth = width_ / 2.0f;
 
-  static auto betaonst = tanHalfFovY / halfHeight;
+  static auto betaConst = tanHalfFovY / halfHeight;
   static auto alphaConst = tanHalfFovX / halfWidth;
 
   // The ray goes through the middle of the pixel.
-  const auto midHeight = 0.5f * piXelHeight;
-  const auto midWidth = 0.5f * piXelWidth;
+  const auto midHeight = 0.5f + piXelHeight;
+  const auto midWidth = 0.5f + piXelWidth;
 
-  const auto beta = betaonst * (halfHeight - piXelHeight);
-  const auto alpha = alphaConst * (halfWidth - piXelHeight);
+  const auto beta = betaConst * (midHeight - halfHeight);
+  const auto alpha = alphaConst * (halfWidth - midWidth);
 
   const auto rayDirection = u_ * alpha + v_ * beta - w_;
   

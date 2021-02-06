@@ -68,9 +68,9 @@ void Scene::addPointLight_(const Point3D &point, const Color &rgb)
 
 void Scene::render()
 {
-  for (auto h = 0; h < height_; ++h)
+  for (auto w = 0; w < width_; ++w)
   {
-    for (auto w = 0; w < width_; ++w)
+    for (auto h = 0; h < height_; ++h)
     {
       colors_.emplace_back(getColorOfPixel_(w, h));
     }

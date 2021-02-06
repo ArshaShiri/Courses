@@ -5,7 +5,6 @@
 
 namespace FreeImage
 {
-
 std::vector<BYTE> getConvertedColors(int width, int height, const std::vector<Color> &colors)
 {
   const auto totalNumberOfPixels = width * height;
@@ -16,7 +15,7 @@ std::vector<BYTE> getConvertedColors(int width, int height, const std::vector<Co
 
   auto convertColor = [&convertedColors](float color) 
   {
-    const auto convertedColor = floor(color >= 1.0f ? 255 : color * 255);
+    const auto convertedColor = (BYTE)floor(color >= 1.0f ? 255 : color * 255);
     convertedColors.emplace_back(convertedColor);
   };
 
@@ -30,9 +29,37 @@ std::vector<BYTE> getConvertedColors(int width, int height, const std::vector<Co
   return convertedColors;
 }
 
+std::vector<BYTE> getTestColors(int width, int height)
+{
+  auto convertedColors = std::vector<BYTE>{};
+
+  for (auto w = 0; w < width; ++w)
+  {
+    for (auto h = 0; h < height; ++h)
+    {
+      if (h == 0)
+      {
+        convertedColors.push_back(255);
+        convertedColors.push_back(0);
+        convertedColors.push_back(0);
+      }
+      else
+      {
+        convertedColors.push_back(0);
+        convertedColors.push_back(0);
+        convertedColors.push_back(0);
+      }
+    }
+  }
+
+  return convertedColors;
+}
+
 void FreeImageWrapper::saveImage(int width, int height, const std::vector<Color> &colors)
 {
-  auto convertedColors = getConvertedColors(width, height, colors);
+  // auto convertedColors = getConvertedColors(width, height, colors);
+
+  auto convertedColors = getTestColors(width, height);
   const auto pImage = FreeImage_ConvertFromRawBits(
     convertedColors.data(), width, height, width * 3, 24, 0xFF0000, 0x00FF00, 0x0000FF, false);
 
