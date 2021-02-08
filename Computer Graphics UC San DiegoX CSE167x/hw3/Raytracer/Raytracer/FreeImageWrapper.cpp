@@ -68,7 +68,7 @@ void FreeImageWrapper::saveImage(int width, int height, const std::vector<Color>
 
   // auto convertedColors = getTestColors(width, height);
   const auto pImage = FreeImage_ConvertFromRawBits(
-    convertedColors.data(), width, height, width * 3, 24, 0xFF0000, 0x00FF00, 0x0000FF, false);
+    convertedColors.data(), width, height, width * 3, 24, 0xFF0000, 0x00FF00, 0x0000FF, true);
 
   FreeImage_Save(FIF_PNG, pImage, "dummy.png", 0);
 }
