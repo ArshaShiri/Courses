@@ -56,8 +56,8 @@ Ray Camera::calculateRayThroughPixel(int piXelWidth, int piXelHeight) const
   const auto midHeight = 0.5f + piXelHeight;
   const auto midWidth = 0.5f + piXelWidth;
 
-  const auto beta = betaConst * (midHeight - halfHeight);
-  const auto alpha = alphaConst * (halfWidth - midWidth);
+  const auto beta = betaConst * (halfHeight - midHeight);
+  const auto alpha = alphaConst * (midWidth - halfWidth);
 
   const auto rayDirection = u_ * alpha + v_ * beta - w_;
   
