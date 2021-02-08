@@ -11,19 +11,23 @@ std::vector<BYTE> getConvertedColors(int width, int height, const std::vector<Co
   const auto numberOfColors = 3;
 
   auto convertedColors = std::vector<BYTE>{};
-  convertedColors.reserve(numberOfColors * totalNumberOfPixels);
+  convertedColors.resize(numberOfColors * totalNumberOfPixels * numberOfColors);
 
-  auto convertColor = [&convertedColors](float color) 
+  auto getConvertedColor = [](float color)
   {
-    const auto convertedColor = (BYTE)floor(color >= 1.0f ? 255 : color * 255);
-    convertedColors.emplace_back(convertedColor);
+    return (BYTE)floor(color >= 1.0f ? 255 : color * 255);
   };
 
-  for (const auto &color : colors)
+  for (auto pixelIdx = size_t{0}; pixelIdx < totalNumberOfPixels; ++pixelIdx)
   {
-    convertColor(color.getBlue());
-    convertColor(color.getGreen());
-    convertColor(color.getRed());
+    const auto color = colors.at(pixelIdx);
+    const auto pixelHeight = static_cast<int>(pixelIdx / width);
+    const auto pixelWidth = pixelIdx - pixelHeight * width;
+    const auto colorIdx = (pixelHeight * width * 3) + (pixelWidth * 3);
+
+    convertedColors.at(colorIdx) = getConvertedColor(color.getBlue());
+    convertedColors.at(colorIdx + 1) = getConvertedColor(color.getGreen());
+    convertedColors.at(colorIdx + 2) = getConvertedColor(color.getRed());
   }
   
   return convertedColors;
@@ -32,22 +36,25 @@ std::vector<BYTE> getConvertedColors(int width, int height, const std::vector<Co
 std::vector<BYTE> getTestColors(int width, int height)
 {
   auto convertedColors = std::vector<BYTE>{};
+  convertedColors.resize(width * height * 3);
 
   for (auto w = 0; w < width; ++w)
   {
     for (auto h = 0; h < height; ++h)
     {
+      const auto colorIdx = (h * width * 3) + (w * 3);
+
       if (h == 0)
       {
-        convertedColors.push_back(255);
-        convertedColors.push_back(0);
-        convertedColors.push_back(0);
+        convertedColors.at(colorIdx) = 255;
+        convertedColors.at(colorIdx + 1) = 0;
+        convertedColors.at(colorIdx + 2) = 0;
       }
       else
       {
-        convertedColors.push_back(0);
-        convertedColors.push_back(0);
-        convertedColors.push_back(0);
+        convertedColors.at(colorIdx) = 0;
+        convertedColors.at(colorIdx + 1) = 0;
+        convertedColors.at(colorIdx + 2) = 0;
       }
     }
   }
@@ -57,9 +64,9 @@ std::vector<BYTE> getTestColors(int width, int height)
 
 void FreeImageWrapper::saveImage(int width, int height, const std::vector<Color> &colors)
 {
-  // auto convertedColors = getConvertedColors(width, height, colors);
+  auto convertedColors = getConvertedColors(width, height, colors);
 
-  auto convertedColors = getTestColors(width, height);
+  // auto convertedColors = getTestColors(width, height);
   const auto pImage = FreeImage_ConvertFromRawBits(
     convertedColors.data(), width, height, width * 3, 24, 0xFF0000, 0x00FF00, 0x0000FF, false);
 
