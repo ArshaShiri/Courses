@@ -8,6 +8,26 @@
 
 #include "lights/LightFactory.h"
 #include "shapes/ShapeFactory.h"
+#include "shapes/RayShapeIntersectorFactory.h"
+
+namespace
+{
+class ClosestIntersectedShapeFinder
+{
+public:
+  ClosestIntersectedShapeFinder(
+    const std::vector<std::unique_ptr<const Shape>> &shapes, const Ray &ray);
+
+  bool isAnyOfTheShapesIntersectingWithRay() const;
+  const Shape *getClosestShape() const;
+  const RayShapeIntersector *getClosestShapeIntersector() const;
+
+private:
+  bool isAnyOfTheShapesIntersectingWithRay_;
+  std::unique_ptr<RayShapeIntersector> pClosestShapeIntersector_;
+  const Shape *pClosestShape_;
+};
+} // End of namespace declaration
 
 Scene::Scene() : height_{0}, width_{0}, cameraIsSet_{false}
 {}
@@ -81,22 +101,57 @@ void Scene::render()
 
 Color Scene::getColorOfPixel_(int pixelWidth, int pixelHeight) const
 {
+  auto color = Color{};
   const auto ray = camera_.calculateRayThroughPixel(pixelWidth, pixelHeight);
-  const auto intersection = getIntersectionWithClosestShape_(ray);
+  const auto closestIntersectedShapeFinder = ClosestIntersectedShapeFinder(shapes_, ray);
 
-  return intersection == std::nullopt ? Color{} : Color{1.0, 0.0, 0.0};
-}
-
-std::optional<Point3D> Scene::getIntersectionWithClosestShape_(const Ray &ray) const
-{
-  auto intersection = std::optional<Point3D>{};
-  for (const auto &shape : shapes_)
+  if (closestIntersectedShapeFinder.isAnyOfTheShapesIntersectingWithRay())
   {
-    intersection = shape->getIntersection(ray);
-
-    if (intersection != std::nullopt)
-      break;
+    const auto pShape = closestIntersectedShapeFinder.getClosestShape();
+    color = pShape->getDiffuse();
   }
 
-  return intersection;
+  return color;
 }
+
+namespace
+{
+ClosestIntersectedShapeFinder::ClosestIntersectedShapeFinder(
+  const std::vector<std::unique_ptr<const Shape>> &shapes,
+  const Ray &ray) : isAnyOfTheShapesIntersectingWithRay_{false}
+{
+  for (const auto &pShape : shapes)
+  {
+    pClosestShapeIntersector_ = RayShapeIntersectorFactory::createIntersector(*pShape);
+    pClosestShapeIntersector_->calculateIntersectionPointWithRay(ray);
+
+    if (pClosestShapeIntersector_->doesIntersectionPointExist())
+    {
+      pClosestShape_ = pShape.get();
+      isAnyOfTheShapesIntersectingWithRay_ = true;
+      return;
+    }
+  }
+}
+
+bool ClosestIntersectedShapeFinder::isAnyOfTheShapesIntersectingWithRay() const
+{
+  return isAnyOfTheShapesIntersectingWithRay_;
+}
+
+const Shape *ClosestIntersectedShapeFinder::getClosestShape() const
+{
+  if (!isAnyOfTheShapesIntersectingWithRay())
+    throw std::runtime_error("Intersection does not exist!");
+
+  return pClosestShape_;
+}
+
+const RayShapeIntersector *ClosestIntersectedShapeFinder::getClosestShapeIntersector() const
+{
+  if (!isAnyOfTheShapesIntersectingWithRay())
+    throw std::runtime_error("Intersection does not exist!");
+
+  return pClosestShapeIntersector_.get();
+}
+} // End of namespace definition

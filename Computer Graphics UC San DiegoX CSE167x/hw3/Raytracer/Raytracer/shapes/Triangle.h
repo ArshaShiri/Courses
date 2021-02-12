@@ -1,4 +1,4 @@
-/*Represents triangle ABC is a primitive that can support intersection with a ray.*/
+/*Represents triangle ABC.*/
 
 #pragma once
 
@@ -11,17 +11,13 @@ public:
            const std::vector<Point3D> &vertices,
            const std::array<int, 3> &cornerNodeIndices);
 
-  std::optional<Point3D> getIntersection(const Ray &ray) override final;
+  const Point3D &A() const;
+  const Point3D &B() const;
+  const Point3D &C() const;
+  bool isPointInTriangle(const Point3D &point) const;
+  const Vector3D &getUnitNormal() const;
 
 private:
-  // Private methods
-  const Point3D &A_() { return getVertices().at(cornerNodeIndices_.at(0)); }
-  const Point3D &B_() { return getVertices().at(cornerNodeIndices_.at(1)); }
-  const Point3D &C_() { return getVertices().at(cornerNodeIndices_.at(2)); }
-
-  bool isIntersectionPointInTriangle_(const Point3D &intersectionPoint);
-
-  // Private attributes
   const std::array<int, 3> cornerNodeIndices_;
   Vector3D unitNormal_;
 };

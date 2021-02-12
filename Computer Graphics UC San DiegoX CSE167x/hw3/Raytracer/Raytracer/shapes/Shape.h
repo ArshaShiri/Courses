@@ -3,25 +3,40 @@
 #pragma once
 
 #include <array>
-#include <optional>
 #include <vector>
 
 #include "../Common.h"
 #include "../Ray.h"
 
+enum class ShapeType
+{
+  Triangle,
+  Unknown
+};
+
 class Shape
 {
 public:
   Shape(const MateriaPropertiesAndAmbient &matProperties, 
-        const std::vector<Point3D> &Vertices);
+        const std::vector<Point3D> &Vertices,
+        ShapeType type = ShapeType::Unknown);
+
+  ShapeType getType() const;
+
+  const Color &getDiffuse() const;
+  const Color &getSpecular() const;
+  const Color &getEmission() const;
+  const Color &getAmbient() const;
+
+  float  getShininess() const;
   
-  virtual std::optional<Point3D> getIntersection(const Ray &ray) = 0;
   virtual ~Shape() = default;
 
 protected:
-  const std::vector<Point3D> &getVertices() const;
+  const std::vector<Point3D> &getVertices_() const;
   
 private:
-  const MateriaPropertiesAndAmbient matProperties_;
+  const MateriaPropertiesAndAmbient matPropertiesAndAmbient_;
   const std::vector<Point3D> &Vertices_;
+  ShapeType type_;
 };

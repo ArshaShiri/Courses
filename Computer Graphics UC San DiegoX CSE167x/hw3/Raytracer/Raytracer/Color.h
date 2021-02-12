@@ -8,7 +8,7 @@ it depends on the convention.*/
 class Color
 {
 public:
-  Color() = default;
+  Color();
   Color(float r, float g, float b);
   Color(const std::array<float, 3> &rgb);
 

@@ -11,6 +11,7 @@
 #include "Ray.h"
 
 #include "lights/Light.h"
+#include "shapes/RayShapeIntersector.h"
 #include "shapes/Shape.h"
 
 class Scene
@@ -37,7 +38,6 @@ private:
   size_t getNumberOfVertices_() const;
 
   Color getColorOfPixel_(int pixelWidth, int pixelHeight) const;
-  std::optional<Point3D> getIntersectionWithClosestShape_(const Ray &ray) const;
 
   // Private attributes
   int height_;
@@ -46,8 +46,8 @@ private:
   Camera camera_;
   bool cameraIsSet_;
 
-  std::vector<std::unique_ptr<Shape>> shapes_;
-  std::vector<std::unique_ptr<Light>> lights_;
+  std::vector<std::unique_ptr<const Shape>> shapes_;
+  std::vector<std::unique_ptr<const Light>> lights_;
   std::vector<Point3D> Vertices_;
   std::vector<Color> colors_;
 };
