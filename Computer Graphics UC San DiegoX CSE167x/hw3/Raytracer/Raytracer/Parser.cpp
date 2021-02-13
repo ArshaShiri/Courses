@@ -75,6 +75,7 @@ void Parser::parse_(
   case CommandType::DirectionalLight: addDirectionalLight_(args); break;
   case CommandType::PointLight: addPointLight_(args); break;
   case CommandType::Triangle: addTriangle_(args); break;
+  case CommandType::Sphere: addSphere_(args); break;
 
   default:
     throw std::runtime_error("Unsupported command: " + commandName);
@@ -107,6 +108,7 @@ CommandType Parser::getCommandType_(const std::string &commandName) const
   if (commandName == "directional") return CommandType::DirectionalLight;
   if (commandName == "point") return CommandType::PointLight;
   if (commandName == "tri") return CommandType::Triangle;
+  if (commandName == "sphere") return CommandType::Sphere;
 
   return CommandType::Unknown;
 }
@@ -206,7 +208,19 @@ void Parser::addTriangle_(const std::vector<std::string> &args)
   checkArgsSize(args, "triangle", sizeOfCameraArgs);
 
   scene_.addTriangle_(currentMatProperties_,
-    {std::stoi(args.at(0)), std::stoi(args.at(1)), std::stoi(args.at(2))});
+                      {std::stoi(args.at(0)), std::stoi(args.at(1)), std::stoi(args.at(2))});
+}
+
+void Parser::addSphere_(const std::vector<std::string> &args)
+{
+  // Command format: 
+  // sphere x y z radius
+  const auto sizeOfCameraArgs = 4;
+  checkArgsSize(args, "sphere", sizeOfCameraArgs);
+
+  scene_.addSphere_(currentMatProperties_,
+                    Point3D{std::stof(args.at(0)), std::stof(args.at(1)), std::stof(args.at(2))},
+                    std::stof(args.at(3)));
 }
 
 std::array<float, 3> Parser::getThreeFloatArgumentsOfTheCommand_(const std::vector<std::string> &args)

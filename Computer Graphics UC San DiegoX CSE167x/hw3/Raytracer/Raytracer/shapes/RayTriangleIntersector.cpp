@@ -1,7 +1,8 @@
 #include "RayTriangleIntersector.h"
 
-
-RayTriangleIntersector::RayTriangleIntersector(const Triangle &triangle) : triangle_{triangle}
+RayTriangleIntersector::RayTriangleIntersector(const Triangle &triangle) :
+  RayShapeIntersector{},
+  triangle_{triangle}
 {}
 
 void RayTriangleIntersector::calculateIntersectionPointWithRay(const Ray &ray)
@@ -33,5 +34,8 @@ void RayTriangleIntersector::calculateIntersectionPointWithRay(const Ray &ray)
   const auto intersectionPoint = p0 + p1 * t;
 
   if (triangle_.isPointInTriangle(intersectionPoint))
+  {
     setIntersectionPoint_(intersectionPoint);
+    setRayParameter_(t);
+  }
 }

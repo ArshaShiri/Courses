@@ -21,6 +21,7 @@ enum class CommandType
   DirectionalLight,
   PointLight,
   Triangle,
+  Sphere,
   Unknown
 };
 
@@ -54,6 +55,7 @@ private:
   void addDirectionalLight_(const std::vector<std::string> &args);
   void addPointLight_(const std::vector<std::string> &args);
   void addTriangle_(const std::vector<std::string> &args);
+  void addSphere_(const std::vector<std::string> &args);
 
   void setMaxNumberOfVertieces_(const std::vector<std::string> &args);
   void setShininess_(const std::vector<std::string> &args);

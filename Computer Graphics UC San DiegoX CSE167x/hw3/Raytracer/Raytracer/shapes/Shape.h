@@ -11,6 +11,7 @@
 enum class ShapeType
 {
   Triangle,
+  Sphere,
   Unknown
 };
 
@@ -18,7 +19,6 @@ class Shape
 {
 public:
   Shape(const MateriaPropertiesAndAmbient &matProperties, 
-        const std::vector<Point3D> &Vertices,
         ShapeType type = ShapeType::Unknown);
 
   ShapeType getType() const;
@@ -31,12 +31,8 @@ public:
   float  getShininess() const;
   
   virtual ~Shape() = default;
-
-protected:
-  const std::vector<Point3D> &getVertices_() const;
   
 private:
-  const MateriaPropertiesAndAmbient matPropertiesAndAmbient_;
-  const std::vector<Point3D> &Vertices_;
+  const MateriaPropertiesAndAmbient matPropertiesAndAmbient_;  
   ShapeType type_;
 };

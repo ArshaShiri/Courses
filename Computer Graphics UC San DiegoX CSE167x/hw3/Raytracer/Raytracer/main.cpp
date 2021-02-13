@@ -3,8 +3,8 @@
 int main()
 {
   auto scene = Scene{};
-  scene.createSceneFromInputFile("scene1.test");
-  scene.render();
+  scene.createSceneFromInputFile("scene2.test");
+  scene.renderAndSave();
 
   return 0;
 }

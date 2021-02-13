@@ -19,7 +19,7 @@ class Scene
 public:
   Scene();
   void createSceneFromInputFile(const std::string &fileName);
-  void render();
+  void renderAndSave();
 
 private:
   friend class Parser;
@@ -32,6 +32,9 @@ private:
   void addVertex_(const Point3D &point3D);
   void addTriangle_(const MateriaPropertiesAndAmbient &matProperties,
                     const std::array<int, 3> &cornerNodeIndices);
+  void addSphere_(const MateriaPropertiesAndAmbient &matProperties,
+                  const Point3D center,
+                  float radius);
   void addDirectionalLight_(const Vector3D &direction, const Color &rgb);
   void addPointLight_(const Point3D &point, const Color &rgb);
 

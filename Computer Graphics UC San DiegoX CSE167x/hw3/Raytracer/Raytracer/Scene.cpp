@@ -23,9 +23,12 @@ public:
   const RayShapeIntersector *getClosestShapeIntersector() const;
 
 private:
+  void updateClosestShapeIfNecessary_(const Shape *pShape);
+
   bool isAnyOfTheShapesIntersectingWithRay_;
   std::unique_ptr<RayShapeIntersector> pClosestShapeIntersector_;
   const Shape *pClosestShape_;
+  float closetIntersectionPointRayParameter_ = std::numeric_limits <float>::max();
 };
 } // End of namespace declaration
 
@@ -71,9 +74,16 @@ size_t Scene::getNumberOfVertices_() const
 }
 
 void Scene::addTriangle_(const MateriaPropertiesAndAmbient &matProperties,
-                        const std::array<int, 3> &cornerNodeIndices)
+                         const std::array<int, 3> &cornerNodeIndices)
 {
   shapes_.emplace_back(ShapeFactory::createTriangle(matProperties, Vertices_, cornerNodeIndices));
+}
+
+void Scene::addSphere_(const MateriaPropertiesAndAmbient &matProperties,
+                       const Point3D center,
+                       float radius)
+{
+  shapes_.emplace_back(ShapeFactory::createSphere(matProperties, center, radius));
 }
 
 void Scene::addDirectionalLight_(const Vector3D &direction, const Color &rgb)
@@ -86,14 +96,12 @@ void Scene::addPointLight_(const Point3D &point, const Color &rgb)
   lights_.emplace_back(LightFactory::createPointLight(point, rgb));
 }
 
-void Scene::render()
+void Scene::renderAndSave()
 {
   for (auto h = 0; h < height_; ++h)
   {
     for (auto w = 0; w < width_; ++w)
-    {
       colors_.emplace_back(getColorOfPixel_(w, h));
-    }
   }
 
   FreeImage::FreeImageWrapper::saveImage(width_, height_, colors_);
@@ -108,7 +116,7 @@ Color Scene::getColorOfPixel_(int pixelWidth, int pixelHeight) const
   if (closestIntersectedShapeFinder.isAnyOfTheShapesIntersectingWithRay())
   {
     const auto pShape = closestIntersectedShapeFinder.getClosestShape();
-    color = pShape->getDiffuse();
+    color = pShape->getAmbient();
   }
 
   return color;
@@ -126,11 +134,19 @@ ClosestIntersectedShapeFinder::ClosestIntersectedShapeFinder(
     pClosestShapeIntersector_->calculateIntersectionPointWithRay(ray);
 
     if (pClosestShapeIntersector_->doesIntersectionPointExist())
-    {
-      pClosestShape_ = pShape.get();
-      isAnyOfTheShapesIntersectingWithRay_ = true;
-      return;
-    }
+      updateClosestShapeIfNecessary_(pShape.get());
+  }
+}
+
+void ClosestIntersectedShapeFinder::updateClosestShapeIfNecessary_(const Shape *pShape)
+{
+  const auto intersectionPointRayParameter = pClosestShapeIntersector_->getRayParameter();
+
+  if (intersectionPointRayParameter < closetIntersectionPointRayParameter_)
+  {
+    closetIntersectionPointRayParameter_ = intersectionPointRayParameter;
+    pClosestShape_ = pShape;
+    isAnyOfTheShapesIntersectingWithRay_ = true;
   }
 }
 

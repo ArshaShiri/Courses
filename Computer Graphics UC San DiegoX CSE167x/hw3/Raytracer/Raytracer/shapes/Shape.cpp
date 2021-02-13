@@ -1,16 +1,9 @@
 #include "Shape.h"
 
 Shape::Shape(const MateriaPropertiesAndAmbient &matProperties,
-             const std::vector<Point3D> &Vertices,
              ShapeType type) : matPropertiesAndAmbient_{matProperties},
-                               Vertices_{Vertices},
                                type_{type}
 {}
-
-const std::vector<Point3D> &Shape::getVertices_() const
-{
-  return Vertices_;
-}
 
 ShapeType Shape::getType() const
 {

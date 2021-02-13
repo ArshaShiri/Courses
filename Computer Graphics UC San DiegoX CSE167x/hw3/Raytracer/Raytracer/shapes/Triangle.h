@@ -19,6 +19,7 @@ public:
 
 private:
   const std::array<int, 3> cornerNodeIndices_;
+  const std::vector<Point3D> &vertices_;
   Vector3D unitNormal_;
 };
 
