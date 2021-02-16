@@ -7,6 +7,7 @@
 
 #include "../Common.h"
 #include "../Ray.h"
+#include "../TransformationMatrix.h"
 
 enum class ShapeType
 {

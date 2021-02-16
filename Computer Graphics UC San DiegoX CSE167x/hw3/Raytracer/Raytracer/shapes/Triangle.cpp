@@ -3,11 +3,9 @@
 #include "../Common.h"
 
 Triangle::Triangle(const MateriaPropertiesAndAmbient &matProperties,
-                   const std::vector<Point3D> &vertices,
-                   const std::array<int, 3> &cornerNodeIndices) :
+                   const std::array<Point3D, 3> &vertices) :
   Shape{matProperties, ShapeType::Triangle},
-  vertices_{vertices},
-  cornerNodeIndices_{cornerNodeIndices}
+  vertices_{vertices}
 {
   const auto normal = (C() - A()).cross(B() - A());
   unitNormal_ = normal.normalize();
@@ -50,15 +48,15 @@ const Vector3D &Triangle::getUnitNormal() const
 
 const Point3D &Triangle::A() const
 {
-  return vertices_.at(cornerNodeIndices_.at(0));
+  return vertices_.at(0);
 }
 
 const Point3D &Triangle::B() const
 {
-  return vertices_.at(cornerNodeIndices_.at(1));
+  return vertices_.at(1);
 }
 
 const Point3D &Triangle::C() const
 {
-  return vertices_.at(cornerNodeIndices_.at(2));
+  return vertices_.at(2);
 }

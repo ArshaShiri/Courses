@@ -20,3 +20,8 @@ const TransformationMatrix &TransformationStack::top() const
 {
   return transformationStack_.top();
 }
+
+TransformationMatrix &TransformationStack::top()
+{
+  return transformationStack_.top();
+}

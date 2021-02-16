@@ -15,6 +15,7 @@ public:
   void pop();
 
   const TransformationMatrix &top() const;
+  TransformationMatrix &top();
 
 private:
   std::stack<TransformationMatrix> transformationStack_;

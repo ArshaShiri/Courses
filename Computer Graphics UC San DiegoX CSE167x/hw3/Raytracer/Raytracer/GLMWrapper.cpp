@@ -63,6 +63,19 @@ TransformationMatrix GLMWrapper::getRotated(
 
   return rightMultiply(convertToMat4(matrix), rotationMatrix);
 }
+
+Point3D GLMWrapper::TransformPoint(const TransformationMatrix &matrix, const Point3D &point)
+{
+  const auto convertedMat = convertToMat4(matrix);
+  const auto convertedVec4 = glm::vec4{point.x(), point.y(), point.z(), 1.0f};
+  const auto transformedPoint = convertedMat * convertedVec4;
+
+  const auto newX = transformedPoint.x / transformedPoint.w;
+  const auto newY = transformedPoint.y / transformedPoint.w;
+  const auto newZ = transformedPoint.z / transformedPoint.w;
+
+  return {newX, newY, newZ};
+}
 } // End of namespace GLMWrapper
 
 namespace

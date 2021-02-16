@@ -4,10 +4,9 @@
 
 std::unique_ptr<Triangle> ShapeFactory::createTriangle(
   const MateriaPropertiesAndAmbient &matProperties,
-  const std::vector<Point3D> &vertices,
-  const std::array<int, 3> &cornerNodeIndices)
+  const std::array<Point3D, 3> &vertices)
 {
-  return std::make_unique<Triangle>(matProperties, vertices, cornerNodeIndices);
+  return std::make_unique<Triangle>(matProperties, vertices);
 }
 
 std::unique_ptr<Sphere> ShapeFactory::createSphere(
