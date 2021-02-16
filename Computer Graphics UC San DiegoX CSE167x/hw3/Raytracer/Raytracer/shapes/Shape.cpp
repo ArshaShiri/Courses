@@ -1,9 +1,16 @@
 #include "Shape.h"
 
 Shape::Shape(const MateriaPropertiesAndAmbient &matProperties,
+             const TransformationMatrix &transformationMatrix,
              ShapeType type) : matPropertiesAndAmbient_{matProperties},
+                               transformationMatrix_{transformationMatrix},
                                type_{type}
 {}
+
+const TransformationMatrix &Shape::getTransformationMatrix() const
+{
+  return transformationMatrix_;
+}
 
 ShapeType Shape::getType() const
 {

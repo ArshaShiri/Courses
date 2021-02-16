@@ -8,6 +8,7 @@ class Triangle : public Shape
 {
 public:
   Triangle(const MateriaPropertiesAndAmbient &matProperties,
+           const TransformationMatrix &transformationMatrix,
            const std::array<Point3D, 3> &vertices);
 
   const Point3D &A() const;
@@ -17,7 +18,10 @@ public:
   const Vector3D &getUnitNormal() const;
 
 private:
-  const std::array<Point3D, 3> vertices_;
+  void initializeVertices_(
+    const std::array<Point3D, 3> &vertices);
+
+  std::array<Point3D, 3> vertices_;
   Vector3D unitNormal_;
 };
 

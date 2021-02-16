@@ -4,7 +4,7 @@
 
 RaySphereIntersector::RaySphereIntersector(const Sphere &sphere) : 
   RayShapeIntersector{}, 
-  sphere_ { sphere }
+  sphere_ {sphere}
 {}
 
 void RaySphereIntersector::calculateIntersectionPointWithRay(const Ray &ray)

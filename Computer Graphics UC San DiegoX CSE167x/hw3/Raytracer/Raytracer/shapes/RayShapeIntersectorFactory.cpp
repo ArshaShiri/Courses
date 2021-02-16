@@ -10,9 +10,9 @@ std::unique_ptr<RayShapeIntersector> RayShapeIntersectorFactory::createIntersect
   switch (shape.getType())
   {
   case ShapeType::Triangle:
-    return std::make_unique<RayTriangleIntersector>(dynamic_cast<const Triangle&>(shape));
+    return std::make_unique<RayTriangleIntersector>(static_cast<const Triangle&>(shape));
   case ShapeType::Sphere:
-    return std::make_unique<RaySphereIntersector>(dynamic_cast<const Sphere&>(shape));
+    return std::make_unique<RaySphereIntersector>(static_cast<const Sphere&>(shape));
 
   default:
     throw std::runtime_error("Shape is unknown!");

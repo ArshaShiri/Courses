@@ -1,9 +1,10 @@
 #include "Sphere.h"
 
 Sphere::Sphere(const MateriaPropertiesAndAmbient &matProperties,
+               const TransformationMatrix &transformationMatrix,
                const Point3D &center,
                const float radius) : 
-  Shape{matProperties, ShapeType::Sphere},
+  Shape{matProperties, transformationMatrix, ShapeType::Sphere},
   center_{center},
   radius_{radius}
 {}

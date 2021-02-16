@@ -19,8 +19,17 @@ enum class ShapeType
 class Shape
 {
 public:
-  Shape(const MateriaPropertiesAndAmbient &matProperties, 
+  // We need the transformationMatrix for defining the shape. For a simple shape like 
+  // triangle, the triangle can be directly initialized by its vertices transformed.
+  // For other shapes that are defined by their equation (e.g. sphere), the transformationMatrix
+  // cannot be used on the shape because it will change its equation.
+  // Instead, we use this transformation to transform the ray and intersect and transform back the 
+  // intersection point.
+  Shape(const MateriaPropertiesAndAmbient &matProperties,
+        const TransformationMatrix &transformationMatrix,
         ShapeType type = ShapeType::Unknown);
+
+  const TransformationMatrix &getTransformationMatrix() const;
 
   ShapeType getType() const;
 
@@ -34,6 +43,7 @@ public:
   virtual ~Shape() = default;
   
 private:
-  const MateriaPropertiesAndAmbient matPropertiesAndAmbient_;  
+  const MateriaPropertiesAndAmbient matPropertiesAndAmbient_;
+  const TransformationMatrix transformationMatrix_;
   ShapeType type_;
 };

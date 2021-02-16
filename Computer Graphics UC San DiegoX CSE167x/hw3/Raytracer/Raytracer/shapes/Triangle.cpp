@@ -1,12 +1,14 @@
 #include "Triangle.h"
 
 #include "../Common.h"
+#include "../GLMWrapper.h"
 
 Triangle::Triangle(const MateriaPropertiesAndAmbient &matProperties,
+                   const TransformationMatrix &transformationMatrix,
                    const std::array<Point3D, 3> &vertices) :
-  Shape{matProperties, ShapeType::Triangle},
-  vertices_{vertices}
+  Shape{matProperties, transformationMatrix, ShapeType::Triangle}
 {
+  initializeVertices_(vertices);
   const auto normal = (C() - A()).cross(B() - A());
   unitNormal_ = normal.normalize();
 }
@@ -59,4 +61,17 @@ const Point3D &Triangle::B() const
 const Point3D &Triangle::C() const
 {
   return vertices_.at(2);
+}
+
+void Triangle::initializeVertices_(
+  const std::array<Point3D, 3> &vertices)
+{
+  const auto &transformationMatrix = getTransformationMatrix();
+
+  vertices_.at(0) = GLMWrapper::GLMWrapper::TransformPoint(transformationMatrix,
+                                                           vertices.at(0));
+  vertices_.at(1) = GLMWrapper::GLMWrapper::TransformPoint(transformationMatrix,
+                                                           vertices.at(1));
+  vertices_.at(2) = GLMWrapper::GLMWrapper::TransformPoint(transformationMatrix,
+                                                           vertices.at(2));
 }
