@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <string>
 
+#include "GLMWrapper.h"
 #include "FreeImageWrapper.h"
 #include "Parser.h"
 #include "Scene.h"
@@ -65,18 +66,18 @@ void Scene::setCamera_(const std::array<float, 3> &lookFrom,
 
 void Scene::addVertex_(const Point3D &point3D)
 {
-  Vertices_.emplace_back(point3D);
+  vertices_.emplace_back(point3D);
 }
 
 size_t Scene::getNumberOfVertices_() const
 {
-  return Vertices_.size();
+  return vertices_.size();
 }
 
 void Scene::addTriangle_(const MateriaPropertiesAndAmbient &matProperties,
                          const std::array<int, 3> &cornerNodeIndices)
 {
-  shapes_.emplace_back(ShapeFactory::createTriangle(matProperties, Vertices_, cornerNodeIndices));
+  shapes_.emplace_back(ShapeFactory::createTriangle(matProperties, vertices_, cornerNodeIndices));
 }
 
 void Scene::addSphere_(const MateriaPropertiesAndAmbient &matProperties,
@@ -120,6 +121,37 @@ Color Scene::getColorOfPixel_(int pixelWidth, int pixelHeight) const
   }
 
   return color;
+}
+
+void Scene::addScale_(float sx, float sy, float sz)
+{
+  const auto &top = transformationStack_.top();
+  const auto scaledTop = GLMWrapper::GLMWrapper::getScaled(top, sx, sy, sz);
+  transformationStack_.push(scaledTop);
+}
+
+void Scene::addTranslation_(float tx, float ty, float tz)
+{
+  const auto &top = transformationStack_.top();
+  const auto translatedTop = GLMWrapper::GLMWrapper::getTranslated(top, tx, ty, tz);
+  transformationStack_.push(translatedTop);
+}
+
+void Scene::addRotation_(const Vector3D &axis, float degrees)
+{
+  const auto &top = transformationStack_.top();
+  const auto rotatedTop = GLMWrapper::GLMWrapper::getRotated(top, axis, degrees);
+  transformationStack_.push(rotatedTop);
+}
+
+void Scene::popTransformation_()
+{
+  transformationStack_.pop();
+}
+
+void Scene::pushTransformation_()
+{
+  transformationStack_.push(transformationStack_.top());
 }
 
 namespace

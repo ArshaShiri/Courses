@@ -9,6 +9,7 @@
 #include "Color.h"
 #include "Common.h"
 #include "Ray.h"
+#include "TransformationStack.h"
 
 #include "lights/Light.h"
 #include "shapes/RayShapeIntersector.h"
@@ -37,9 +38,14 @@ private:
                   float radius);
   void addDirectionalLight_(const Vector3D &direction, const Color &rgb);
   void addPointLight_(const Point3D &point, const Color &rgb);
+  
+  void addScale_(float sx, float sy, float sz);
+  void addTranslation_(float tx, float ty, float tz);
+  void addRotation_(const Vector3D &axis, float degrees);
+  void popTransformation_();
+  void pushTransformation_();
 
   size_t getNumberOfVertices_() const;
-
   Color getColorOfPixel_(int pixelWidth, int pixelHeight) const;
 
   // Private attributes
@@ -51,6 +57,7 @@ private:
 
   std::vector<std::unique_ptr<const Shape>> shapes_;
   std::vector<std::unique_ptr<const Light>> lights_;
-  std::vector<Point3D> Vertices_;
+  TransformationStack transformationStack_;
+  std::vector<Point3D> vertices_;
   std::vector<Color> colors_;
 };

@@ -40,8 +40,11 @@ void Parser::parseCommand_(const std::string &command)
   // This assumes that a line in the input file cannot start with a space.
   const auto endOfCommandNameIdx = command.find_first_of(" ");
   const auto commandName = command.substr(0, endOfCommandNameIdx);
-  const auto commandArgs = command.substr(endOfCommandNameIdx + 1, 
-                                          command.size() - endOfCommandNameIdx - 1);
+  auto commandArgs = std::string{};
+
+  if (endOfCommandNameIdx != command.npos)
+    commandArgs = command.substr(endOfCommandNameIdx + 1, 
+                                 command.size() - endOfCommandNameIdx - 1);
 
   auto iss = std::istringstream(commandArgs);
   const auto commandArgsSeparated = std::vector<std::string>{std::istream_iterator<std::string>{iss},
@@ -77,6 +80,12 @@ void Parser::parse_(
   case CommandType::Triangle: addTriangle_(args); break;
   case CommandType::Sphere: addSphere_(args); break;
 
+  case CommandType::Translate: addTranslation_(args); break;
+  case CommandType::Rotate: addRotation_(args); break;
+  case CommandType::Scale: addScale_(args); break;
+  case CommandType::PushTransform: pushTransformation_(args); break;
+  case CommandType::PopTransform: popTransformation_(args); break;
+
   default:
     throw std::runtime_error("Unsupported command: " + commandName);
   }
@@ -109,6 +118,12 @@ CommandType Parser::getCommandType_(const std::string &commandName) const
   if (commandName == "point") return CommandType::PointLight;
   if (commandName == "tri") return CommandType::Triangle;
   if (commandName == "sphere") return CommandType::Sphere;
+
+  if (commandName == "translate") return CommandType::Translate;
+  if (commandName == "rotate") return CommandType::Rotate;
+  if (commandName == "scale") return CommandType::Scale;
+  if (commandName == "pushTransform") return CommandType::PushTransform;
+  if (commandName == "popTransform") return CommandType::PopTransform;
 
   return CommandType::Unknown;
 }
@@ -251,6 +266,52 @@ void Parser::setMaxNumberOfVertieces_(const std::vector<std::string> &args)
   checkArgsSize(args, "maxvertnorms ", expectedArgsSize);
 
   maxNumberOfVertieces_ = std::stoi(args.at(0));
+}
+
+void Parser::addTranslation_(const std::vector<std::string> &args)
+{
+  // Command format:
+  // translate x y z
+  const auto expectedArgsSize = 3;
+  checkArgsSize(args, "translation ", expectedArgsSize);
+  scene_.addTranslation_(std::stof(args.at(0)), std::stof(args.at(1)), std::stof(args.at(2)));
+}
+
+void Parser::addRotation_(const std::vector<std::string> &args)
+{
+  // Command format:
+  // rotate x y z angle
+  const auto expectedArgsSize = 4;
+  checkArgsSize(args, "rotation ", expectedArgsSize);
+  const auto axist = Vector3D{std::stof(args.at(0)), std::stof(args.at(1)), std::stof(args.at(2))};
+  scene_.addRotation_(axist, std::stof(args.at(3)));
+}
+
+void Parser::addScale_(const std::vector<std::string> &args)
+{
+  // Command format:
+  // scale x y z
+  const auto expectedArgsSize = 3;
+  checkArgsSize(args, "scale ", expectedArgsSize);
+  scene_.addScale_(std::stof(args.at(0)), std::stof(args.at(1)), std::stof(args.at(2)));
+}
+
+void Parser::pushTransformation_(const std::vector<std::string> &args)
+{
+  // Command format:
+  // pushTransform 
+  const auto expectedArgsSize = 0;
+  checkArgsSize(args, "pushTransformation ", expectedArgsSize);
+  scene_.pushTransformation_();
+}
+
+void Parser::popTransformation_(const std::vector<std::string> &args)
+{
+  // Command format:
+  // popTransform 
+  const auto expectedArgsSize = 0;
+  checkArgsSize(args, "popTransformation ", expectedArgsSize);
+  scene_.popTransformation_();
 }
 
 namespace

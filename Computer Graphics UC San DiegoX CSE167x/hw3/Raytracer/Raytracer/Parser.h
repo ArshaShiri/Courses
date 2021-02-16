@@ -22,6 +22,11 @@ enum class CommandType
   PointLight,
   Triangle,
   Sphere,
+  Translate,
+  Rotate,
+  Scale,
+  PushTransform,
+  PopTransform,
   Unknown
 };
 
@@ -56,6 +61,12 @@ private:
   void addPointLight_(const std::vector<std::string> &args);
   void addTriangle_(const std::vector<std::string> &args);
   void addSphere_(const std::vector<std::string> &args);
+
+  void addTranslation_(const std::vector<std::string> &args);
+  void addRotation_(const std::vector<std::string> &args);
+  void addScale_(const std::vector<std::string> &args);
+  void pushTransformation_(const std::vector<std::string> &args);
+  void popTransformation_(const std::vector<std::string> &args);
 
   void setMaxNumberOfVertieces_(const std::vector<std::string> &args);
   void setShininess_(const std::vector<std::string> &args);
