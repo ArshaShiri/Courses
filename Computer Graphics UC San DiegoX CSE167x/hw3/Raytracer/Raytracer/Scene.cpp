@@ -29,7 +29,7 @@ private:
   bool isAnyOfTheShapesIntersectingWithRay_;
   std::unique_ptr<RayShapeIntersector> pClosestShapeIntersector_;
   const Shape *pClosestShape_;
-  float closetIntersectionPointRayParameter_ = std::numeric_limits <float>::max();
+  float closestIntersectionPointDistance_ = std::numeric_limits <float>::max();
 };
 } // End of namespace declaration
 
@@ -79,29 +79,26 @@ void Scene::addTriangle_(const MateriaPropertiesAndAmbient &matProperties,
 {
   auto getTriangleVertices = 
     [this](const std::array<int, 3> &cornerNodeIndices)
-    {
-      const auto &transformationMatrix = transformationStack_.top();
-      
-      auto p1 = GLMWrapper::GLMWrapper::TransformPoint(transformationMatrix,
-                                                       vertices_.at(cornerNodeIndices.at(0)));
-      auto p2 = GLMWrapper::GLMWrapper::TransformPoint(transformationMatrix, 
-                                                       vertices_.at(cornerNodeIndices.at(1)));
-      auto p3 = GLMWrapper::GLMWrapper::TransformPoint(transformationMatrix, 
-                                                       vertices_.at(cornerNodeIndices.at(2)));
+    {     
+      auto p1 = vertices_.at(cornerNodeIndices.at(0));
+      auto p2 = vertices_.at(cornerNodeIndices.at(1));
+      auto p3 = vertices_.at(cornerNodeIndices.at(2));
 
       return std::array<Point3D, 3>{p1, p2, p3};
     };
 
 
-  shapes_.emplace_back(ShapeFactory::createTriangle(matProperties, 
-                                                    getTriangleVertices(cornerNodeIndices)));
+  shapes_.emplace_back(ShapeFactory::createTriangle(
+    matProperties, transformationStack_.top(), getTriangleVertices(cornerNodeIndices)));
 }
 
 void Scene::addSphere_(const MateriaPropertiesAndAmbient &matProperties,
                        const Point3D center,
                        float radius)
 {
-  shapes_.emplace_back(ShapeFactory::createSphere(matProperties, center, radius));
+  auto pSphere = ShapeFactory::createSphere(
+    matProperties, transformationStack_.top(), center, radius);
+  shapes_.emplace_back(std::move(pSphere));
 }
 
 void Scene::addDirectionalLight_(const Vector3D &direction, const Color &rgb)
@@ -186,11 +183,12 @@ ClosestIntersectedShapeFinder::ClosestIntersectedShapeFinder(
 
 void ClosestIntersectedShapeFinder::updateClosestShapeIfNecessary_(const Shape *pShape)
 {
-  const auto intersectionPointRayParameter = pClosestShapeIntersector_->getRayParameter();
+  const auto distance = 
+    pClosestShapeIntersector_->getIntersectionPointDistanceToOrigin();
 
-  if (intersectionPointRayParameter < closetIntersectionPointRayParameter_)
+  if (distance < closestIntersectionPointDistance_)
   {
-    closetIntersectionPointRayParameter_ = intersectionPointRayParameter;
+    closestIntersectionPointDistance_ = distance;
     pClosestShape_ = pShape;
     isAnyOfTheShapesIntersectingWithRay_ = true;
   }

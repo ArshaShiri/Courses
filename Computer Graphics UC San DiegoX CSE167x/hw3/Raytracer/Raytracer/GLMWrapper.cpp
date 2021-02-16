@@ -76,6 +76,29 @@ Point3D GLMWrapper::TransformPoint(const TransformationMatrix &matrix, const Poi
 
   return {newX, newY, newZ};
 }
+
+Vector3D GLMWrapper::TransformVector(const TransformationMatrix &matrix, const Vector3D &vector)
+{
+  const auto convertedMat = convertToMat4(matrix);
+  const auto convertedVec4 = glm::vec4{vector.x(), vector.y(), vector.z(), 0.0f};
+  const auto transformedPoint = convertedMat * convertedVec4;
+
+  return {transformedPoint.x, transformedPoint.y, transformedPoint.z};
+}
+
+TransformationMatrix GLMWrapper::getInversed(const TransformationMatrix &matrix)
+{
+  const auto convertedMat = convertToMat4(matrix);
+  return convertToTransformationMatrix(glm::inverse(convertedMat));
+}
+
+Ray GLMWrapper::getTransformedRay(const Ray &ray, const TransformationMatrix &matrix)
+{
+  const auto transformedViewPoint = TransformPoint(matrix, ray.getViewPoint());
+  const auto transformedDirection = TransformVector(matrix, ray.getUnitDirection());
+
+  return {transformedViewPoint, transformedDirection};
+}
 } // End of namespace GLMWrapper
 
 namespace

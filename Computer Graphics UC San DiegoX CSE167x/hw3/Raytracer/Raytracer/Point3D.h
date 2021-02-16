@@ -14,6 +14,7 @@ public:
   float x() const { return coords_.at(0); }
   float y() const { return coords_.at(1); }
   float z() const { return coords_.at(2); }
+  float distance(const Point3D &other) const;
 
   const Vector3D friend operator+(const Point3D &p1, const Point3D &p2);
   const Vector3D friend operator-(const Point3D &p1, const Point3D &p2);

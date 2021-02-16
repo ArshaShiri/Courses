@@ -36,6 +36,6 @@ void RayTriangleIntersector::calculateIntersectionPointWithRay(const Ray &ray)
   if (triangle_.isPointInTriangle(intersectionPoint))
   {
     setIntersectionPoint_(intersectionPoint);
-    setRayParameter_(t);
+    setIntersectionPointDistanceToOrigin_(intersectionPoint.distance(p0));
   }
 }

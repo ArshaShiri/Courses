@@ -13,13 +13,13 @@ public:
 
   bool doesIntersectionPointExist() const;
   const Point3D &getIntersectionPoint() const;
-  float getRayParameter() const;
+  float getIntersectionPointDistanceToOrigin() const;
 
   virtual ~RayShapeIntersector() = default;
 
 protected:
   void setIntersectionPoint_(const Point3D &point);
-  void setRayParameter_(float t);
+  void setIntersectionPointDistanceToOrigin_(float t);
 
 private:
   std::optional<Point3D> intersectionPoint_;

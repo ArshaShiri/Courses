@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Point3D.h"
+#include "Ray.h"
 #include "TransformationMatrix.h"
 #include "Vector3D.h"
 
@@ -20,6 +21,10 @@ public:
   static TransformationMatrix getRotated(
     const TransformationMatrix &matrix, const Vector3D &axis, float degrees);
 
+  static TransformationMatrix getInversed(const TransformationMatrix &matrix);
+
   static Point3D TransformPoint(const TransformationMatrix &matrix, const Point3D &point);
+  static Vector3D TransformVector(const TransformationMatrix &matrix, const Vector3D &vector);
+  static Ray getTransformedRay(const Ray &ray, const TransformationMatrix &matrix);
 };
 } // End of namespace GLMWrapper
