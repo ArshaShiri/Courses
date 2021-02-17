@@ -255,7 +255,7 @@ void Parser::setShininess_(const std::vector<std::string> &args)
   const auto expectedArgsSize = 1;
   checkArgsSize(args, "Shininess", expectedArgsSize);
 
-  currentMatProperties_.shininess = std::stof(args.at(1));
+  currentMatProperties_.shininess = std::stof(args.at(0));
 }
 
 void Parser::setMaxNumberOfVertieces_(const std::vector<std::string> &args)

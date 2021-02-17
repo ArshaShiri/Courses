@@ -38,6 +38,7 @@ Scene::Scene() : height_{0}, width_{0}, cameraIsSet_{false}
 
 void Scene::createSceneFromInputFile(const std::string &fileName)
 {
+  saver_ = Scene::SceneSaver{fileName};
   const auto parser = Parser(fileName, *this);
 }
 
@@ -111,15 +112,18 @@ void Scene::addPointLight_(const Point3D &point, const Color &rgb)
   lights_.emplace_back(LightFactory::createPointLight(point, rgb));
 }
 
-void Scene::renderAndSave()
+void Scene::render()
 {
   for (auto h = 0; h < height_; ++h)
   {
     for (auto w = 0; w < width_; ++w)
       colors_.emplace_back(getColorOfPixel_(w, h));
   }
+}
 
-  FreeImage::FreeImageWrapper::saveImage(width_, height_, colors_);
+void Scene::save() const
+{
+  saver_.save(width_, height_, colors_);
 }
 
 Color Scene::getColorOfPixel_(int pixelWidth, int pixelHeight) const
@@ -131,7 +135,7 @@ Color Scene::getColorOfPixel_(int pixelWidth, int pixelHeight) const
   if (closestIntersectedShapeFinder.isAnyOfTheShapesIntersectingWithRay())
   {
     const auto pShape = closestIntersectedShapeFinder.getClosestShape();
-    color = pShape->getAmbient();
+    color = pShape->getAmbient() + pShape->getEmission();
   }
 
   return color;
@@ -163,6 +167,26 @@ void Scene::popTransformation_()
 void Scene::pushTransformation_()
 {
   transformationStack_.push(transformationStack_.top());
+}
+
+Scene::SceneSaver::SceneSaver(const std::string &inputFileName)
+{
+  const auto extensionLocation = inputFileName.find('.');
+
+  if (extensionLocation == inputFileName.npos)
+    outputName_ = inputFileName;
+  else
+    outputName_ = inputFileName.substr(0, extensionLocation);
+}
+
+void Scene::SceneSaver::setOutputName(const std::string &outputName)
+{
+  outputName_ = outputName;
+}
+
+void Scene::SceneSaver::save(int width, int height, const std::vector<Color> &colors) const
+{
+  FreeImage::FreeImageWrapper::saveImage(outputName_, width, height, colors);
 }
 
 namespace

@@ -62,7 +62,7 @@ std::vector<BYTE> getTestColors(int width, int height)
   return convertedColors;
 }
 
-void FreeImageWrapper::saveImage(int width, int height, const std::vector<Color> &colors)
+void FreeImageWrapper::saveImage(const std::string &fileName, int width, int height, const std::vector<Color> &colors)
 {
   auto convertedColors = getConvertedColors(width, height, colors);
 
@@ -70,6 +70,7 @@ void FreeImageWrapper::saveImage(int width, int height, const std::vector<Color>
   const auto pImage = FreeImage_ConvertFromRawBits(
     convertedColors.data(), width, height, width * 3, 24, 0xFF0000, 0x00FF00, 0x0000FF, true);
 
-  FreeImage_Save(FIF_PNG, pImage, "dummy.png", 0);
+  const auto outputFile = fileName + ".png";
+  FreeImage_Save(FIF_PNG, pImage, outputFile.c_str(), 0);
 }
 }

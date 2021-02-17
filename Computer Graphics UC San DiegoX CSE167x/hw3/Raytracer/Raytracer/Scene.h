@@ -20,9 +20,23 @@ class Scene
 public:
   Scene();
   void createSceneFromInputFile(const std::string &fileName);
-  void renderAndSave();
+  void render();
+  void save() const;
 
 private:
+  class SceneSaver
+  {
+  public:
+    SceneSaver() = default;
+    SceneSaver(const std::string &inputFileName);
+
+    void setOutputName(const std::string &outputName);
+    void save(int width, int height, const std::vector<Color> &colors) const;
+
+  private:
+    std::string outputName_;
+  };
+
   friend class Parser;
 
   void setWindowSize_(int width, int height);
@@ -60,4 +74,6 @@ private:
   TransformationStack transformationStack_;
   std::vector<Point3D> vertices_;
   std::vector<Color> colors_;
+
+  SceneSaver saver_;
 };
