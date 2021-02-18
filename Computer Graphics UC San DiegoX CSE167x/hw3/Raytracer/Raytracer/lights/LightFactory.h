@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "../Common.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
 
@@ -12,6 +13,7 @@ public:
                                                                   const Color &rgb);
 
   static std::unique_ptr<PointLight> createPointLight(const Point3D &point,
-                                                      const Color &rgb);
+                                                      const Color &rgb,
+                                                      const Attenuation &attenuation);
 };
 

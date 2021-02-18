@@ -23,6 +23,11 @@ float RayShapeIntersector::getIntersectionPointDistanceToOrigin() const
   return rayParameterAtIntersection_;
 }
 
+const Vector3D &RayShapeIntersector::getUnitNormalOfShapeAtIntersectionPoint() const
+{
+  return unitNormal_;
+}
+
 void RayShapeIntersector::setIntersectionPoint_(const Point3D &point)
 {
   intersectionPoint_ = point;
@@ -31,4 +36,9 @@ void RayShapeIntersector::setIntersectionPoint_(const Point3D &point)
 void RayShapeIntersector::setIntersectionPointDistanceToOrigin_(float t)
 {
   rayParameterAtIntersection_ = t;
+}
+
+void RayShapeIntersector::setUnitNormalOfShape_(const Vector3D &unitNormal)
+{
+  unitNormal_ = unitNormal;
 }

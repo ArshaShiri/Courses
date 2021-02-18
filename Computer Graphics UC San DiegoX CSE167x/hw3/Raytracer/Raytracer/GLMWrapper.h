@@ -25,6 +25,7 @@ public:
 
   static Point3D TransformPoint(const TransformationMatrix &matrix, const Point3D &point);
   static Vector3D TransformVector(const TransformationMatrix &matrix, const Vector3D &vector);
+  static Vector3D TransformNormalVector(const TransformationMatrix &matrix, const Vector3D &vector);
   static Ray getTransformedRay(const Ray &ray, const TransformationMatrix &matrix);
 };
 } // End of namespace GLMWrapper

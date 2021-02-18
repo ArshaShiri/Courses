@@ -39,6 +39,13 @@ Vector3D Vector3D::normalize() const
           z() / currentLegnth};
 }
 
+Vector3D Vector3D::operator-() const
+{
+  const auto newVector = Vector3D{-coords_.at(0), -coords_.at(1), -coords_.at(2)};
+
+  return newVector;
+}
+
 const Vector3D operator+(const Vector3D &v1, const Vector3D &v2)
 {
   return {v1.x() + v2.x(),

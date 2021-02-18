@@ -41,3 +41,8 @@ float  Shape::getShininess() const
 {
   return matPropertiesAndAmbient_.shininess;
 }
+
+const MateriaPropertiesAndAmbient &Shape::getMateriaPropertiesAndAmbient() const
+{
+  return matPropertiesAndAmbient_;
+}

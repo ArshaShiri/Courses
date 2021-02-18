@@ -10,6 +10,8 @@ RaySphereIntersector::RaySphereIntersector(const Sphere &sphere) :
 
 void RaySphereIntersector::calculateIntersectionPointWithRay(const Ray &ray)
 {
+  // We first transfer the ray via the inverse transformation assigned to the sphere.
+  // We continue the calculation with the transformed ray.
   const auto &transformationMat = sphere_.getTransformationMatrix();
   const auto inverseTransform = GLMWrapper::GLMWrapper::getInversed(transformationMat);
   const auto transformedRay = GLMWrapper::GLMWrapper::getTransformedRay(ray, inverseTransform);
@@ -52,15 +54,28 @@ void RaySphereIntersector::calculateIntersectionPointWithRay(const Ray &ray)
   const auto r1 = (-b + sqrtDiscriminant) / aDoubled;
   const auto r2 = (-b - sqrtDiscriminant) / aDoubled;
 
+  // Intersection is outside of the ray (in negative direction)
+  if (r1 < 0.0f && r2 < 0.0f)
+    return;
+
   // Equal roots 
   if (abs(r1 - r2) < GEOMETRY_TOLERANCE)
     return;
 
   const auto minRoot = std::min(r1, r2);
-  const auto closestRoot = minRoot > 0.f ? minRoot : std::max(r1, r2);
+  const auto smallestPositiveRoot = minRoot > 0.f ? minRoot : std::max(r1, r2);
 
+  // The actual intersection point is calculated by transforming the intersection point of the 
+  // transformed ray.
+  const auto transformedIntersectionPoint = p0 + p1 * smallestPositiveRoot;
   const auto actualIntersectionPoint = 
-    GLMWrapper::GLMWrapper::TransformPoint(transformationMat, p0 + p1 * closestRoot);
+    GLMWrapper::GLMWrapper::TransformPoint(transformationMat, transformedIntersectionPoint);
+  
+  const auto transformedNormal = transformedIntersectionPoint - center;
+  const auto actualNormal = 
+    GLMWrapper::GLMWrapper::TransformVector(inverseTransform.getTransposed(), transformedNormal);
+
+  setUnitNormalOfShape_(actualNormal.normalize());
   setIntersectionPoint_(actualIntersectionPoint);
   setIntersectionPointDistanceToOrigin_(actualIntersectionPoint.distance(ray.getViewPoint()));
 }

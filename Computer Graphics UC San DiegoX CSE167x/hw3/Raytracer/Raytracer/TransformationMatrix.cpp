@@ -18,3 +18,11 @@ const std::array<float, 4> &TransformationMatrix::operator[](const size_t idx) c
 {
   return data_.at(idx);
 }
+
+TransformationMatrix TransformationMatrix::getTransposed() const
+{
+  return TransformationMatrix{{data_[0][0], data_[1][0], data_[2][0], data_[3][0]},
+                              {data_[0][1], data_[1][1], data_[2][1], data_[3][1]},
+                              {data_[0][2], data_[1][2], data_[2][2], data_[3][2]},
+                              {data_[0][3], data_[1][3], data_[2][3], data_[3][3]}};
+}

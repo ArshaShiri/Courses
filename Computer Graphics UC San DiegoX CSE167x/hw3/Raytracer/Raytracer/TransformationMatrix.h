@@ -11,6 +11,7 @@ public:
                        const std::array<float, 4> &col2,
                        const std::array<float, 4> &col3,
                        const std::array<float, 4> &col4);
+  TransformationMatrix getTransposed() const;
 
   const std::array<float, 4> &operator[](const size_t idx) const;
 

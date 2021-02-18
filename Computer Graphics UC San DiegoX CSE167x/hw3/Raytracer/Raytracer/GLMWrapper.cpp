@@ -77,8 +77,19 @@ Point3D GLMWrapper::TransformPoint(const TransformationMatrix &matrix, const Poi
   return {newX, newY, newZ};
 }
 
+Vector3D GLMWrapper::TransformNormalVector(const TransformationMatrix &matrix, const Vector3D &vector)
+{
+  // The translation parts of the transformation matrix do not affect the vector.
+  const auto convertedMat = convertToMat4(matrix);
+  const auto convertedVec4 = glm::vec4{vector.x(), vector.y(), vector.z(), 1.0f};
+  const auto transformedPoint = convertedMat * convertedVec4;
+
+  return {transformedPoint.x, transformedPoint.y, transformedPoint.z};
+}
+
 Vector3D GLMWrapper::TransformVector(const TransformationMatrix &matrix, const Vector3D &vector)
 {
+  // The translation parts of the transformation matrix do not affect the vector.
   const auto convertedMat = convertToMat4(matrix);
   const auto convertedVec4 = glm::vec4{vector.x(), vector.y(), vector.z(), 0.0f};
   const auto transformedPoint = convertedMat * convertedVec4;

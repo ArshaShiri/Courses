@@ -21,6 +21,7 @@ Parser::Parser(const std::string &fileName, Scene &scene) : scene_{scene}
   if (!inputFile)
     throw std::runtime_error("Could not open file " + fileName);
 
+  initializeDefaultValues_();
   parseCommands_(inputFile);
 }
 
@@ -85,19 +86,24 @@ void Parser::parse_(
   case CommandType::Scale: addScale_(args); break;
   case CommandType::PushTransform: pushTransformation_(args); break;
   case CommandType::PopTransform: popTransformation_(args); break;
+  case CommandType::SetOutput: setOutput_(args); break;
 
   default:
     throw std::runtime_error("Unsupported command: " + commandName);
   }
 }
 
-void Parser::initializeDefaultValuesForMaterialPropertiesAndAmbient_()
+void Parser::initializeDefaultValues_()
 {
   currentMatProperties_.ambient = std::array<float, 3>{0.2f, 0.2f, 0.2f};
   currentMatProperties_.diffuse = std::array<float, 3>{0.0f, 0.0f, 0.0f};
   currentMatProperties_.specular = std::array<float, 3>{0.0f, 0.0f, 0.0f};
   currentMatProperties_.emission = std::array<float, 3>{0.0f, 0.0f, 0.0f};
   currentMatProperties_.shininess = 0.0f;
+
+  attenuation_.constant = 1.0f;
+  attenuation_.linear = 0.0f;
+  attenuation_.quadratic = 0.0f;
 }
 
 CommandType Parser::getCommandType_(const std::string &commandName) const
@@ -124,6 +130,7 @@ CommandType Parser::getCommandType_(const std::string &commandName) const
   if (commandName == "scale") return CommandType::Scale;
   if (commandName == "pushTransform") return CommandType::PushTransform;
   if (commandName == "popTransform") return CommandType::PopTransform;
+  if (commandName == "output") return CommandType::SetOutput;
 
   return CommandType::Unknown;
 }
@@ -212,7 +219,7 @@ void Parser::addPointLight_(const std::vector<std::string> &args)
   const auto color =
     Color{std::stof(args.at(3)), std::stof(args.at(4)), std::stof(args.at(5))};
 
-  scene_.addPointLight_(point, color);
+  scene_.addPointLight_(point, color, attenuation_);
 }
 
 void Parser::addTriangle_(const std::vector<std::string> &args)
@@ -312,6 +319,13 @@ void Parser::popTransformation_(const std::vector<std::string> &args)
   const auto expectedArgsSize = 0;
   checkArgsSize(args, "popTransformation ", expectedArgsSize);
   scene_.popTransformation_();
+}
+
+void Parser::setOutput_(const std::vector<std::string> &args)
+{
+  const auto expectedArgsSize = 1;
+  checkArgsSize(args, "setOutput ", expectedArgsSize);
+  scene_.setOutputName(args.at(0));
 }
 
 namespace

@@ -9,8 +9,6 @@ Triangle::Triangle(const MateriaPropertiesAndAmbient &matProperties,
   Shape{matProperties, transformationMatrix, ShapeType::Triangle}
 {
   initializeVertices_(vertices);
-  const auto normal = (C() - A()).cross(B() - A());
-  unitNormal_ = normal.normalize();
 }
 
 bool Triangle::isPointInTriangle(const Point3D &point) const
@@ -41,11 +39,6 @@ bool Triangle::isPointInTriangle(const Point3D &point) const
   return isAlphaBetweenZeroAndOne &&
          isBetaBetweenZeroAndOne  &&
          isGammaaBetweenZeroAndOne;
-}
-
-const Vector3D &Triangle::getUnitNormal() const
-{
-  return unitNormal_;
 }
 
 const Point3D &Triangle::A() const

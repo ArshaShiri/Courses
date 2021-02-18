@@ -37,6 +37,7 @@ public:
   const Color &getSpecular() const;
   const Color &getEmission() const;
   const Color &getAmbient() const;
+  const MateriaPropertiesAndAmbient &getMateriaPropertiesAndAmbient() const;
 
   float  getShininess() const;
   

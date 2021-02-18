@@ -27,6 +27,7 @@ enum class CommandType
   Scale,
   PushTransform,
   PopTransform,
+  SetOutput,
   Unknown
 };
 
@@ -43,7 +44,7 @@ private:
 
   void parse_(const std::string &commandName, const std::vector<std::string> &args);
 
-  void initializeDefaultValuesForMaterialPropertiesAndAmbient_();
+  void initializeDefaultValues_();
 
   CommandType getCommandType_(const std::string &commandName) const;
 
@@ -67,6 +68,7 @@ private:
   void addScale_(const std::vector<std::string> &args);
   void pushTransformation_(const std::vector<std::string> &args);
   void popTransformation_(const std::vector<std::string> &args);
+  void setOutput_(const std::vector<std::string> &args);
 
   void setMaxNumberOfVertieces_(const std::vector<std::string> &args);
   void setShininess_(const std::vector<std::string> &args);
@@ -74,5 +76,6 @@ private:
   // Private attributes
   Scene &scene_;
   MateriaPropertiesAndAmbient currentMatProperties_;
+  Attenuation attenuation_;
   size_t maxNumberOfVertieces_;
 };

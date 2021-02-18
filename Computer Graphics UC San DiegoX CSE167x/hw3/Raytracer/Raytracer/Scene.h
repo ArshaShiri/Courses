@@ -51,13 +51,14 @@ private:
                   const Point3D center,
                   float radius);
   void addDirectionalLight_(const Vector3D &direction, const Color &rgb);
-  void addPointLight_(const Point3D &point, const Color &rgb);
+  void addPointLight_(const Point3D &point, const Color &rgb, const Attenuation &attenuation);
   
   void addScale_(float sx, float sy, float sz);
   void addTranslation_(float tx, float ty, float tz);
   void addRotation_(const Vector3D &axis, float degrees);
   void popTransformation_();
   void pushTransformation_();
+  void setOutputName(const std::string &outputName);
 
   size_t getNumberOfVertices_() const;
   Color getColorOfPixel_(int pixelWidth, int pixelHeight) const;

@@ -16,7 +16,13 @@ public:
   float getGreen() const { return rgb_.at(1); }
   float getBlue() const { return rgb_.at(2); }
 
+  Color &operator+=(const Color &other);
+  Color &operator/=(float factor);
+
   friend const Color operator+(const Color &color1, const Color &color2);
+  friend const Color operator*(const Color &color1, const Color &color2);
+  friend const Color operator*(const Color &color, float factor);
+  friend const Color operator*(float factor, const Color &color);
 
 private:
   std::array<float, 3> rgb_;

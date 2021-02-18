@@ -24,12 +24,22 @@ public:
   const RayShapeIntersector *getClosestShapeIntersector() const;
 
 private:
-  void updateClosestShapeIfNecessary_(const Shape *pShape);
-
   bool isAnyOfTheShapesIntersectingWithRay_;
   std::unique_ptr<RayShapeIntersector> pClosestShapeIntersector_;
   const Shape *pClosestShape_;
   float closestIntersectionPointDistance_ = std::numeric_limits <float>::max();
+};
+
+class LightCalculator
+{
+public:
+  LightCalculator(const Light *pLight, 
+                  const RayShapeIntersector *pRayShapeIntersector);
+
+  const Ray &getShadowRay() const;
+private:
+  const Light *pLight_;
+  Ray shadowRay_;
 };
 } // End of namespace declaration
 
@@ -107,9 +117,9 @@ void Scene::addDirectionalLight_(const Vector3D &direction, const Color &rgb)
   lights_.emplace_back(LightFactory::createDirectionalLight(direction, rgb));
 }
 
-void Scene::addPointLight_(const Point3D &point, const Color &rgb)
+void Scene::addPointLight_(const Point3D &point, const Color &rgb, const Attenuation &attenuation)
 {
-  lights_.emplace_back(LightFactory::createPointLight(point, rgb));
+  lights_.emplace_back(LightFactory::createPointLight(point, rgb, attenuation));
 }
 
 void Scene::render()
@@ -135,7 +145,42 @@ Color Scene::getColorOfPixel_(int pixelWidth, int pixelHeight) const
   if (closestIntersectedShapeFinder.isAnyOfTheShapesIntersectingWithRay())
   {
     const auto pShape = closestIntersectedShapeFinder.getClosestShape();
+    const auto pClosestShapeIntersector = closestIntersectedShapeFinder.getClosestShapeIntersector();
     color = pShape->getAmbient() + pShape->getEmission();
+    
+     // All the light contributions:
+    for (const auto &pLight : lights_)
+    {
+      const auto lightCalculator = LightCalculator(pLight.get(), pClosestShapeIntersector);
+      const auto &shadowRay = lightCalculator.getShadowRay();
+      const auto closestIntersectedShapeFinderForShadow = ClosestIntersectedShapeFinder(shapes_, shadowRay);
+
+      const auto &matProperties = pShape->getMateriaPropertiesAndAmbient();
+      const auto &intersectionPoint = pClosestShapeIntersector->getIntersectionPoint();
+      const auto distanceToLight = pLight->getDistanceToPoint(intersectionPoint);
+
+      if (closestIntersectedShapeFinderForShadow.isAnyOfTheShapesIntersectingWithRay())
+      {
+        const auto pClosestShapeToShadowRay = closestIntersectedShapeFinderForShadow.getClosestShapeIntersector();
+        const auto &closestIntersection = pClosestShapeToShadowRay->getIntersectionPoint();
+        const auto distanceToIntersectionPoint = intersectionPoint.distance(closestIntersection);
+
+        if (distanceToLight < distanceToIntersectionPoint)
+          color += pLight->getContributionOnObject(
+                     matProperties,
+                     ray.getUnitDirection(),
+                     pClosestShapeIntersector->getUnitNormalOfShapeAtIntersectionPoint(),
+                     shadowRay,
+                     distanceToLight);
+      }
+      else
+        color += pLight->getContributionOnObject(
+                    matProperties,
+                    ray.getUnitDirection(),
+                    pClosestShapeIntersector->getUnitNormalOfShapeAtIntersectionPoint(),
+                    shadowRay,
+                    distanceToLight);
+    }
   }
 
   return color;
@@ -169,19 +214,24 @@ void Scene::pushTransformation_()
   transformationStack_.push(transformationStack_.top());
 }
 
+void Scene::setOutputName(const std::string &outputName)
+{
+  saver_.setOutputName(outputName);
+}
+
 Scene::SceneSaver::SceneSaver(const std::string &inputFileName)
 {
-  const auto extensionLocation = inputFileName.find('.');
-
-  if (extensionLocation == inputFileName.npos)
-    outputName_ = inputFileName;
-  else
-    outputName_ = inputFileName.substr(0, extensionLocation);
+  setOutputName(inputFileName);
 }
 
 void Scene::SceneSaver::setOutputName(const std::string &outputName)
 {
-  outputName_ = outputName;
+  const auto extensionLocation = outputName.find('.');
+
+  if (extensionLocation == outputName.npos)
+    outputName_ = outputName;
+  else
+    outputName_ = outputName.substr(0, extensionLocation);
 }
 
 void Scene::SceneSaver::save(int width, int height, const std::vector<Color> &colors) const
@@ -197,24 +247,20 @@ ClosestIntersectedShapeFinder::ClosestIntersectedShapeFinder(
 {
   for (const auto &pShape : shapes)
   {
-    pClosestShapeIntersector_ = RayShapeIntersectorFactory::createIntersector(*pShape);
-    pClosestShapeIntersector_->calculateIntersectionPointWithRay(ray);
+    auto pShapeIntersector = RayShapeIntersectorFactory::createIntersector(*pShape);
+    pShapeIntersector->calculateIntersectionPointWithRay(ray);
 
-    if (pClosestShapeIntersector_->doesIntersectionPointExist())
-      updateClosestShapeIfNecessary_(pShape.get());
-  }
-}
-
-void ClosestIntersectedShapeFinder::updateClosestShapeIfNecessary_(const Shape *pShape)
-{
-  const auto distance = 
-    pClosestShapeIntersector_->getIntersectionPointDistanceToOrigin();
-
-  if (distance < closestIntersectionPointDistance_)
-  {
-    closestIntersectionPointDistance_ = distance;
-    pClosestShape_ = pShape;
-    isAnyOfTheShapesIntersectingWithRay_ = true;
+    if (pShapeIntersector->doesIntersectionPointExist())
+    {
+      const auto distance = pShapeIntersector->getIntersectionPointDistanceToOrigin();
+      if (distance < closestIntersectionPointDistance_)
+      {
+        closestIntersectionPointDistance_ = distance;
+        pClosestShape_ = pShape.get();
+        pClosestShapeIntersector_ = std::move(pShapeIntersector);
+        isAnyOfTheShapesIntersectingWithRay_ = true;
+      }
+    }
   }
 }
 
@@ -237,5 +283,20 @@ const RayShapeIntersector *ClosestIntersectedShapeFinder::getClosestShapeInterse
     throw std::runtime_error("Intersection does not exist!");
 
   return pClosestShapeIntersector_.get();
+}
+
+/* LightCalculator */
+
+LightCalculator::LightCalculator(const Light *pLight,
+                                 const RayShapeIntersector *pRayShapeIntersector) :
+  pLight_{pLight}
+{
+  const auto &intersectionPoint = pRayShapeIntersector->getIntersectionPoint();
+  shadowRay_ = pLight_->getRayTowardsLightFromPoint(intersectionPoint);
+}
+
+const Ray &LightCalculator::getShadowRay() const
+{
+  return shadowRay_;
 }
 } // End of namespace definition

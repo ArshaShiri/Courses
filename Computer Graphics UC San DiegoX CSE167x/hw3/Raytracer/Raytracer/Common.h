@@ -17,4 +17,11 @@ struct MateriaPropertiesAndAmbient
   float shininess;
 };
 
+struct Attenuation
+{
+  float constant;
+  float linear;
+  float quadratic;
+};
+
 const auto GEOMETRY_TOLERANCE = 1e-7;

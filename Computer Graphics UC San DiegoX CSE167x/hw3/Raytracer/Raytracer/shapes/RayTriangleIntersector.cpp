@@ -3,7 +3,10 @@
 RayTriangleIntersector::RayTriangleIntersector(const Triangle &triangle) :
   RayShapeIntersector{},
   triangle_{triangle}
-{}
+{
+  const auto normal = (triangle_.B() - triangle_.A()).cross(triangle_.C() - triangle_.A());
+  setUnitNormalOfShape_(normal.normalize());
+}
 
 void RayTriangleIntersector::calculateIntersectionPointWithRay(const Ray &ray)
 {
@@ -15,11 +18,11 @@ void RayTriangleIntersector::calculateIntersectionPointWithRay(const Ray &ray)
   // The intersection point of the plane and the given ray is located at:
   // t = (A.n - p0.n) / (P.n)
 
-  const auto unitNormal = triangle_.getUnitNormal();
+  const auto &unitNormal = getUnitNormalOfShapeAtIntersectionPoint();
 
   const auto &p1 = ray.getUnitDirection();
   const auto P1DotN = p1.dot(unitNormal);
-  const auto isRayParallelToTrianglePlane = P1DotN < GEOMETRY_TOLERANCE;
+  const auto isRayParallelToTrianglePlane = abs(P1DotN - 0.0f) < GEOMETRY_TOLERANCE;
 
   if (isRayParallelToTrianglePlane)
     return;

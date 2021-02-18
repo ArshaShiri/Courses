@@ -6,6 +6,7 @@
 class Ray
 {
 public:
+  Ray() = default;
   Ray(const Point3D &viewPoint, const Vector3D &direction);
   const Vector3D &getUnitDirection() const { return unitDirection_; }
   const Point3D &getViewPoint() const { return viewPoint_; }
