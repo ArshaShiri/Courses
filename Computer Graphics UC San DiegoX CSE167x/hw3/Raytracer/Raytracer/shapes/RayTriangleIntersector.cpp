@@ -10,6 +10,8 @@ RayTriangleIntersector::RayTriangleIntersector(const Triangle &triangle) :
 
 void RayTriangleIntersector::calculateIntersectionPointWithRay(const Ray &ray)
 {
+  resetIntersector();
+
   // The plane equation in which the triangle lies is:
   // P.n - A.n = 0, where n is unit normal, P is an arbitrary position point in the plane and A is 
   // the position vector of one of the corners of the triangle.

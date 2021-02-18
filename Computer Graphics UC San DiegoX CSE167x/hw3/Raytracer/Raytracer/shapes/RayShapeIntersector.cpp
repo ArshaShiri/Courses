@@ -28,6 +28,11 @@ const Vector3D &RayShapeIntersector::getUnitNormalOfShapeAtIntersectionPoint() c
   return unitNormal_;
 }
 
+void RayShapeIntersector::resetIntersector()
+{
+  intersectionPoint_ = std::nullopt;
+}
+
 void RayShapeIntersector::setIntersectionPoint_(const Point3D &point)
 {
   intersectionPoint_ = point;

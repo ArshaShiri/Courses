@@ -17,15 +17,17 @@ class ClosestIntersectedShapeFinder
 {
 public:
   ClosestIntersectedShapeFinder(
-    const std::vector<std::unique_ptr<const Shape>> &shapes, const Ray &ray);
+    const ShapeToShapIntersector &shapeToShapIntersector, const Ray &ray);
 
   bool isAnyOfTheShapesIntersectingWithRay() const;
   const Shape *getClosestShape() const;
-  const RayShapeIntersector *getClosestShapeIntersector() const;
+  const Point3D &getClosestIntersectionPoint() const;
+  const Vector3D &getUnitNormalAtIntersectionPoint() const;
 
 private:
   bool isAnyOfTheShapesIntersectingWithRay_;
-  std::unique_ptr<RayShapeIntersector> pClosestShapeIntersector_;
+  Point3D closestIntersectionPoint_;
+  Vector3D unitNormalAtIntersectionPoint_;
   const Shape *pClosestShape_;
   float closestIntersectionPointDistance_ = std::numeric_limits <float>::max();
 };
@@ -34,7 +36,7 @@ class LightCalculator
 {
 public:
   LightCalculator(const Light *pLight, 
-                  const RayShapeIntersector *pRayShapeIntersector);
+                  const Point3D &intersectionPoint);
 
   const Ray &getShadowRay() const;
 private:
@@ -54,7 +56,7 @@ void Scene::createSceneFromInputFile(const std::string &fileName)
 
 void Scene::render()
 {
-  // buildIntersectorMap_();
+  buildIntersectorMap_();
   for (auto h = 0; h < height_; ++h)
   {
     for (auto w = 0; w < width_; ++w)
@@ -71,7 +73,8 @@ void Scene::buildIntersectorMap_()
 {
   for (const auto &pShape : shapes_)
   {
-    intersectorMap_.try_emplace(pShape.get(), RayShapeIntersectorFactory::createIntersector(*pShape));
+    shapeToShapIntersector_.try_emplace(pShape.get(),
+                                        RayShapeIntersectorFactory::createIntersector(*pShape));
   }
 }
 
@@ -79,36 +82,35 @@ Color Scene::getColorOfPixel_(int pixelWidth, int pixelHeight) const
 {
   auto color = Color{};
   const auto ray = camera_.calculateRayThroughPixel(pixelWidth, pixelHeight);
-  const auto closestIntersectedShapeFinder = ClosestIntersectedShapeFinder(shapes_, ray);
+  const auto closestIntersectedShapeFinder = ClosestIntersectedShapeFinder(shapeToShapIntersector_, ray);
 
   if (closestIntersectedShapeFinder.isAnyOfTheShapesIntersectingWithRay())
   {
     const auto pShape = closestIntersectedShapeFinder.getClosestShape();
-    const auto pClosestShapeIntersector = closestIntersectedShapeFinder.getClosestShapeIntersector();
+    const auto &closestIntersection = closestIntersectedShapeFinder.getClosestIntersectionPoint();
     color = pShape->getAmbient() + pShape->getEmission();
 
     // All the light contributions:
     for (const auto &pLight : lights_)
     {
-      const auto lightCalculator = LightCalculator(pLight.get(), pClosestShapeIntersector);
+      const auto lightCalculator = LightCalculator(pLight.get(), closestIntersection);
       const auto &shadowRay = lightCalculator.getShadowRay();
-      const auto closestIntersectedShapeFinderForShadow = ClosestIntersectedShapeFinder(shapes_, shadowRay);
+      const auto closestIntersectedShapeFinderForShadow = ClosestIntersectedShapeFinder(shapeToShapIntersector_, shadowRay);
 
       const auto &matProperties = pShape->getMateriaPropertiesAndAmbient();
-      const auto &intersectionPoint = pClosestShapeIntersector->getIntersectionPoint();
-      const auto distanceToLight = pLight->getDistanceToPoint(intersectionPoint);
+      const auto distanceToLight = pLight->getDistanceToPoint(closestIntersection);
+      const auto &unitNormalAtIntersectionPoint = closestIntersectedShapeFinder.getUnitNormalAtIntersectionPoint();
 
       if (closestIntersectedShapeFinderForShadow.isAnyOfTheShapesIntersectingWithRay())
       {
-        const auto pClosestShapeToShadowRay = closestIntersectedShapeFinderForShadow.getClosestShapeIntersector();
-        const auto &closestIntersection = pClosestShapeToShadowRay->getIntersectionPoint();
-        const auto distanceToIntersectionPoint = intersectionPoint.distance(closestIntersection);
+        const auto &closestIntersection = closestIntersectedShapeFinderForShadow.getClosestIntersectionPoint();
+        const auto distanceToIntersectionPoint = closestIntersection.distance(closestIntersection);
 
         if (distanceToLight < distanceToIntersectionPoint)
           color += pLight->getContributionOnObject(
             matProperties,
             ray.getUnitDirection(),
-            pClosestShapeIntersector->getUnitNormalOfShapeAtIntersectionPoint(),
+            unitNormalAtIntersectionPoint,
             shadowRay,
             distanceToLight);
       }
@@ -116,7 +118,7 @@ Color Scene::getColorOfPixel_(int pixelWidth, int pixelHeight) const
         color += pLight->getContributionOnObject(
           matProperties,
           ray.getUnitDirection(),
-          pClosestShapeIntersector->getUnitNormalOfShapeAtIntersectionPoint(),
+          unitNormalAtIntersectionPoint,
           shadowRay,
           distanceToLight);
     }
@@ -251,12 +253,11 @@ void Scene::SceneSaver::save(int width, int height, const std::vector<Color> &co
 namespace
 {
 ClosestIntersectedShapeFinder::ClosestIntersectedShapeFinder(
-  const std::vector<std::unique_ptr<const Shape>> &shapes,
+  const ShapeToShapIntersector &shapeToShapIntersector,
   const Ray &ray) : isAnyOfTheShapesIntersectingWithRay_{false}
 {
-  for (const auto &pShape : shapes)
+  for (const auto &[pShape, pShapeIntersector] : shapeToShapIntersector)
   {
-    auto pShapeIntersector = RayShapeIntersectorFactory::createIntersector(*pShape);
     pShapeIntersector->calculateIntersectionPointWithRay(ray);
 
     if (pShapeIntersector->doesIntersectionPointExist())
@@ -265,8 +266,9 @@ ClosestIntersectedShapeFinder::ClosestIntersectedShapeFinder(
       if (distance < closestIntersectionPointDistance_)
       {
         closestIntersectionPointDistance_ = distance;
-        pClosestShape_ = pShape.get();
-        pClosestShapeIntersector_ = std::move(pShapeIntersector);
+        pClosestShape_ = pShape;
+        closestIntersectionPoint_ = pShapeIntersector->getIntersectionPoint();
+        unitNormalAtIntersectionPoint_ = pShapeIntersector->getUnitNormalOfShapeAtIntersectionPoint();
         isAnyOfTheShapesIntersectingWithRay_ = true;
       }
     }
@@ -286,21 +288,22 @@ const Shape *ClosestIntersectedShapeFinder::getClosestShape() const
   return pClosestShape_;
 }
 
-const RayShapeIntersector *ClosestIntersectedShapeFinder::getClosestShapeIntersector() const
+const Point3D &ClosestIntersectedShapeFinder::getClosestIntersectionPoint() const
 {
-  if (!isAnyOfTheShapesIntersectingWithRay())
-    throw std::runtime_error("Intersection does not exist!");
+  return closestIntersectionPoint_;
+}
 
-  return pClosestShapeIntersector_.get();
+const Vector3D &ClosestIntersectedShapeFinder::getUnitNormalAtIntersectionPoint() const
+{
+  return unitNormalAtIntersectionPoint_;
 }
 
 /* LightCalculator */
 
 LightCalculator::LightCalculator(const Light *pLight,
-                                 const RayShapeIntersector *pRayShapeIntersector) :
+                                 const Point3D &intersectionPoint) :
   pLight_{pLight}
 {
-  const auto &intersectionPoint = pRayShapeIntersector->getIntersectionPoint();
   shadowRay_ = pLight_->getRayTowardsLightFromPoint(intersectionPoint);
 }
 

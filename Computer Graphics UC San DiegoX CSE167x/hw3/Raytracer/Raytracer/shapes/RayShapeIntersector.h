@@ -19,6 +19,7 @@ public:
   virtual ~RayShapeIntersector() = default;
 
 protected:
+  void resetIntersector();
   void setIntersectionPoint_(const Point3D &point);
   void setIntersectionPointDistanceToOrigin_(float t);
   void setUnitNormalOfShape_(const Vector3D &unitNormal);
