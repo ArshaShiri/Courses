@@ -9,7 +9,7 @@
 
 namespace GLMWrapper
 {
-class GLMWrapper
+class GLM
 {
 public:
   static TransformationMatrix getScaled(

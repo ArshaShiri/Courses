@@ -3,18 +3,32 @@
 #include "../GLMWrapper.h"
 #include "RaySphereIntersector.h"
 
+namespace
+{
+class TransformedRayAccessor
+{
+public:
+  TransformedRayAccessor(const Ray &ray, const TransformationMatrix &matrix);
+  const Point3D &getViewPoint() const;
+  const Vector3D &getUnitDirection() const;
+
+private:
+  Ray transformedRay_;
+};
+} // End of namespace declaration
+
 RaySphereIntersector::RaySphereIntersector(const Sphere &sphere) : 
-  RayShapeIntersector{}, 
-  sphere_ {sphere}
+  RayShapeIntersector{},
+  sphere_ {sphere},
+  transformationMat_{sphere_.getTransformationMatrix()},
+  inverseTransform_{GLMWrapper::GLM::getInversed(transformationMat_)}
 {}
 
 void RaySphereIntersector::calculateIntersectionPointWithRay(const Ray &ray)
 {
   // We first transfer the ray via the inverse transformation assigned to the sphere.
   // We continue the calculation with the transformed ray.
-  const auto &transformationMat = sphere_.getTransformationMatrix();
-  const auto inverseTransform = GLMWrapper::GLMWrapper::getInversed(transformationMat);
-  const auto transformedRay = GLMWrapper::GLMWrapper::getTransformedRay(ray, inverseTransform);
+  const auto transformedRayAccessor = TransformedRayAccessor(ray, inverseTransform_);
 
   // The equation of a sphere with radius r is given by:
   // (p - C) . (p - C) - r * r = 0, P is an arbitrary position point on the sphere and c is the 
@@ -25,9 +39,38 @@ void RaySphereIntersector::calculateIntersectionPointWithRay(const Ray &ray)
   // t can be found by solving: 
   // t ^ 2 * (p1 . p1) + 2 * t * p1 . (p0 - C) + (p0 - C) . (p0 - C) - r ^ 2 = 0.
   // This quadratic equation can be simplified to: a * t ^ 2 + b * t + c. 
+  const auto &p0 = transformedRayAccessor.getViewPoint();
+  const auto &p1 = transformedRayAccessor.getUnitDirection();
+  const auto roots = calculateRoots_(p0, p1);
 
-  const auto &p0 = transformedRay.getViewPoint();
-  const auto &p1 = transformedRay.getUnitDirection();
+  if (roots == std::nullopt)
+    return;
+
+  const auto r1 = roots.value().first;
+  const auto r2 = roots.value().second;
+
+  const auto rootsAreNegative = (r1 < 0.0f) && (r2 < 0.0f);
+  const auto rootsAreEqual = abs(r1 - r2) < GEOMETRY_TOLERANCE;
+
+  if (rootsAreNegative || rootsAreEqual)
+    return;
+
+  const auto minRoot = std::min(r1, r2);
+  const auto smallestPositiveRoot = minRoot > 0.f ? minRoot : std::max(r1, r2);
+  const auto actualIntersectionPointAndNormal = 
+    getActualIntersectionPointAndNormal_(p0, p1, smallestPositiveRoot);
+
+  const auto &actualNormal = actualIntersectionPointAndNormal.second;
+  const auto &actualIntersectionPoint = actualIntersectionPointAndNormal.first;
+
+  setUnitNormalOfShape_(actualNormal.normalize());
+  setIntersectionPoint_(actualIntersectionPoint);
+  setIntersectionPointDistanceToOrigin_(actualIntersectionPoint.distance(ray.getViewPoint()));
+}
+
+std::optional<std::pair<float, float>> RaySphereIntersector::calculateRoots_(
+  const Point3D &p0, const Vector3D &p1) const
+{
   const auto &center = sphere_.getCenter();
   const auto radius = sphere_.getRadius();
 
@@ -43,7 +86,7 @@ void RaySphereIntersector::calculateIntersectionPointWithRay(const Ray &ray)
 
   // Complex roots
   if (discriminant < 0.0f)
-    return;
+    return std::nullopt;
 
   // Roots are calculated as:
   // sqrtDiscriminant = sqrt(discriminant)
@@ -54,29 +97,41 @@ void RaySphereIntersector::calculateIntersectionPointWithRay(const Ray &ray)
   const auto r1 = (-b + sqrtDiscriminant) / aDoubled;
   const auto r2 = (-b - sqrtDiscriminant) / aDoubled;
 
-  // Intersection is outside of the ray (in negative direction)
-  if (r1 < 0.0f && r2 < 0.0f)
-    return;
+  return std::make_pair(r1, r2);
+}
 
-  // Equal roots 
-  if (abs(r1 - r2) < GEOMETRY_TOLERANCE)
-    return;
-
-  const auto minRoot = std::min(r1, r2);
-  const auto smallestPositiveRoot = minRoot > 0.f ? minRoot : std::max(r1, r2);
+std::pair<Point3D, Vector3D> RaySphereIntersector::getActualIntersectionPointAndNormal_(
+  const Point3D &p0, const Vector3D &p1, float smallestPositiveRoot) const
+{
+  using namespace GLMWrapper;
 
   // The actual intersection point is calculated by transforming the intersection point of the 
   // transformed ray.
   const auto transformedIntersectionPoint = p0 + p1 * smallestPositiveRoot;
-  const auto actualIntersectionPoint = 
-    GLMWrapper::GLMWrapper::TransformPoint(transformationMat, transformedIntersectionPoint);
-  
-  const auto transformedNormal = transformedIntersectionPoint - center;
-  const auto actualNormal = 
-    GLMWrapper::GLMWrapper::TransformVector(inverseTransform.getTransposed(), transformedNormal);
+  const auto actualIntersectionPoint = GLM::TransformPoint(transformationMat_,
+                                                           transformedIntersectionPoint);
 
-  setUnitNormalOfShape_(actualNormal.normalize());
-  setIntersectionPoint_(actualIntersectionPoint);
-  setIntersectionPointDistanceToOrigin_(actualIntersectionPoint.distance(ray.getViewPoint()));
+  const auto transformedNormal = transformedIntersectionPoint - sphere_.getCenter();
+  const auto actualNormal = GLM::TransformVector(inverseTransform_.getTransposed(),
+                                                 transformedNormal);
+
+  return std::make_pair(actualIntersectionPoint, actualNormal);
 }
- 
+
+namespace
+{
+TransformedRayAccessor::TransformedRayAccessor(const Ray &ray, const TransformationMatrix &matrix)
+{
+  const auto transformedRay = GLMWrapper::GLM::getTransformedRay(ray, matrix);
+}
+
+const Point3D &TransformedRayAccessor::getViewPoint() const
+{
+  return transformedRay_.getViewPoint();
+}
+
+const Vector3D &TransformedRayAccessor::getUnitDirection() const
+{
+  return transformedRay_.getUnitDirection();
+}
+} // End of namespace definition

@@ -3,6 +3,7 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "Camera.h"
@@ -37,6 +38,9 @@ private:
     std::string outputName_;
   };
 
+  void buildIntersectorMap_();
+  Color getColorOfPixel_(int pixelWidth, int pixelHeight) const;
+
   friend class Parser;
 
   void setWindowSize_(int width, int height);
@@ -61,7 +65,6 @@ private:
   void setOutputName(const std::string &outputName);
 
   size_t getNumberOfVertices_() const;
-  Color getColorOfPixel_(int pixelWidth, int pixelHeight) const;
 
   // Private attributes
   int height_;
@@ -72,6 +75,7 @@ private:
 
   std::vector<std::unique_ptr<const Shape>> shapes_;
   std::vector<std::unique_ptr<const Light>> lights_;
+  std::unordered_map<const Shape*, std::unique_ptr<RayShapeIntersector>> intersectorMap_;
   TransformationStack transformationStack_;
   std::vector<Point3D> vertices_;
   std::vector<Color> colors_;

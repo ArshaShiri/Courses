@@ -52,6 +52,79 @@ void Scene::createSceneFromInputFile(const std::string &fileName)
   const auto parser = Parser(fileName, *this);
 }
 
+void Scene::render()
+{
+  // buildIntersectorMap_();
+  for (auto h = 0; h < height_; ++h)
+  {
+    for (auto w = 0; w < width_; ++w)
+      colors_.emplace_back(getColorOfPixel_(w, h));
+  }
+}
+
+void Scene::save() const
+{
+  saver_.save(width_, height_, colors_);
+}
+
+void Scene::buildIntersectorMap_()
+{
+  for (const auto &pShape : shapes_)
+  {
+    intersectorMap_.try_emplace(pShape.get(), RayShapeIntersectorFactory::createIntersector(*pShape));
+  }
+}
+
+Color Scene::getColorOfPixel_(int pixelWidth, int pixelHeight) const
+{
+  auto color = Color{};
+  const auto ray = camera_.calculateRayThroughPixel(pixelWidth, pixelHeight);
+  const auto closestIntersectedShapeFinder = ClosestIntersectedShapeFinder(shapes_, ray);
+
+  if (closestIntersectedShapeFinder.isAnyOfTheShapesIntersectingWithRay())
+  {
+    const auto pShape = closestIntersectedShapeFinder.getClosestShape();
+    const auto pClosestShapeIntersector = closestIntersectedShapeFinder.getClosestShapeIntersector();
+    color = pShape->getAmbient() + pShape->getEmission();
+
+    // All the light contributions:
+    for (const auto &pLight : lights_)
+    {
+      const auto lightCalculator = LightCalculator(pLight.get(), pClosestShapeIntersector);
+      const auto &shadowRay = lightCalculator.getShadowRay();
+      const auto closestIntersectedShapeFinderForShadow = ClosestIntersectedShapeFinder(shapes_, shadowRay);
+
+      const auto &matProperties = pShape->getMateriaPropertiesAndAmbient();
+      const auto &intersectionPoint = pClosestShapeIntersector->getIntersectionPoint();
+      const auto distanceToLight = pLight->getDistanceToPoint(intersectionPoint);
+
+      if (closestIntersectedShapeFinderForShadow.isAnyOfTheShapesIntersectingWithRay())
+      {
+        const auto pClosestShapeToShadowRay = closestIntersectedShapeFinderForShadow.getClosestShapeIntersector();
+        const auto &closestIntersection = pClosestShapeToShadowRay->getIntersectionPoint();
+        const auto distanceToIntersectionPoint = intersectionPoint.distance(closestIntersection);
+
+        if (distanceToLight < distanceToIntersectionPoint)
+          color += pLight->getContributionOnObject(
+            matProperties,
+            ray.getUnitDirection(),
+            pClosestShapeIntersector->getUnitNormalOfShapeAtIntersectionPoint(),
+            shadowRay,
+            distanceToLight);
+      }
+      else
+        color += pLight->getContributionOnObject(
+          matProperties,
+          ray.getUnitDirection(),
+          pClosestShapeIntersector->getUnitNormalOfShapeAtIntersectionPoint(),
+          shadowRay,
+          distanceToLight);
+    }
+  }
+
+  return color;
+}
+
 void Scene::setWindowSize_(int width, int height)
 {
   if ((width < 0) || (height < 0))
@@ -122,86 +195,22 @@ void Scene::addPointLight_(const Point3D &point, const Color &rgb, const Attenua
   lights_.emplace_back(LightFactory::createPointLight(point, rgb, attenuation));
 }
 
-void Scene::render()
-{
-  for (auto h = 0; h < height_; ++h)
-  {
-    for (auto w = 0; w < width_; ++w)
-      colors_.emplace_back(getColorOfPixel_(w, h));
-  }
-}
-
-void Scene::save() const
-{
-  saver_.save(width_, height_, colors_);
-}
-
-Color Scene::getColorOfPixel_(int pixelWidth, int pixelHeight) const
-{
-  auto color = Color{};
-  const auto ray = camera_.calculateRayThroughPixel(pixelWidth, pixelHeight);
-  const auto closestIntersectedShapeFinder = ClosestIntersectedShapeFinder(shapes_, ray);
-
-  if (closestIntersectedShapeFinder.isAnyOfTheShapesIntersectingWithRay())
-  {
-    const auto pShape = closestIntersectedShapeFinder.getClosestShape();
-    const auto pClosestShapeIntersector = closestIntersectedShapeFinder.getClosestShapeIntersector();
-    color = pShape->getAmbient() + pShape->getEmission();
-    
-     // All the light contributions:
-    for (const auto &pLight : lights_)
-    {
-      const auto lightCalculator = LightCalculator(pLight.get(), pClosestShapeIntersector);
-      const auto &shadowRay = lightCalculator.getShadowRay();
-      const auto closestIntersectedShapeFinderForShadow = ClosestIntersectedShapeFinder(shapes_, shadowRay);
-
-      const auto &matProperties = pShape->getMateriaPropertiesAndAmbient();
-      const auto &intersectionPoint = pClosestShapeIntersector->getIntersectionPoint();
-      const auto distanceToLight = pLight->getDistanceToPoint(intersectionPoint);
-
-      if (closestIntersectedShapeFinderForShadow.isAnyOfTheShapesIntersectingWithRay())
-      {
-        const auto pClosestShapeToShadowRay = closestIntersectedShapeFinderForShadow.getClosestShapeIntersector();
-        const auto &closestIntersection = pClosestShapeToShadowRay->getIntersectionPoint();
-        const auto distanceToIntersectionPoint = intersectionPoint.distance(closestIntersection);
-
-        if (distanceToLight < distanceToIntersectionPoint)
-          color += pLight->getContributionOnObject(
-                     matProperties,
-                     ray.getUnitDirection(),
-                     pClosestShapeIntersector->getUnitNormalOfShapeAtIntersectionPoint(),
-                     shadowRay,
-                     distanceToLight);
-      }
-      else
-        color += pLight->getContributionOnObject(
-                    matProperties,
-                    ray.getUnitDirection(),
-                    pClosestShapeIntersector->getUnitNormalOfShapeAtIntersectionPoint(),
-                    shadowRay,
-                    distanceToLight);
-    }
-  }
-
-  return color;
-}
-
 void Scene::addScale_(float sx, float sy, float sz)
 {
   auto &top = transformationStack_.top();
-  top = GLMWrapper::GLMWrapper::getScaled(top, sx, sy, sz);
+  top = GLMWrapper::GLM::getScaled(top, sx, sy, sz);
 }
 
 void Scene::addTranslation_(float tx, float ty, float tz)
 {
   auto &top = transformationStack_.top();
-  top = GLMWrapper::GLMWrapper::getTranslated(top, tx, ty, tz);
+  top = GLMWrapper::GLM::getTranslated(top, tx, ty, tz);
 }
 
 void Scene::addRotation_(const Vector3D &axis, float degrees)
 {
   auto &top = transformationStack_.top();
-  top = GLMWrapper::GLMWrapper::getRotated(top, axis, degrees);
+  top = GLMWrapper::GLM::getRotated(top, axis, degrees);
 }
 
 void Scene::popTransformation_()

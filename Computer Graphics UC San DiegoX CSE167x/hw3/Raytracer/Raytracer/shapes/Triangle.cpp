@@ -61,10 +61,10 @@ void Triangle::initializeVertices_(
 {
   const auto &transformationMatrix = getTransformationMatrix();
 
-  vertices_.at(0) = GLMWrapper::GLMWrapper::TransformPoint(transformationMatrix,
+  vertices_.at(0) = GLMWrapper::GLM::TransformPoint(transformationMatrix,
                                                            vertices.at(0));
-  vertices_.at(1) = GLMWrapper::GLMWrapper::TransformPoint(transformationMatrix,
+  vertices_.at(1) = GLMWrapper::GLM::TransformPoint(transformationMatrix,
                                                            vertices.at(1));
-  vertices_.at(2) = GLMWrapper::GLMWrapper::TransformPoint(transformationMatrix,
+  vertices_.at(2) = GLMWrapper::GLM::TransformPoint(transformationMatrix,
                                                            vertices.at(2));
 }

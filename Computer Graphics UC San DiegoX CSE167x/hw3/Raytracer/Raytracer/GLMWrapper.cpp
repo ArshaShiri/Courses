@@ -15,7 +15,7 @@ TransformationMatrix rightMultiply(const glm::mat4 &matrix, const glm::mat4 &mul
 
 namespace GLMWrapper
 {
-TransformationMatrix GLMWrapper::getScaled(
+TransformationMatrix GLM::getScaled(
   const TransformationMatrix &matrix, float sx, float sy, float sz)
 {
   auto scaledMat = glm::mat4(1.0);
@@ -26,7 +26,7 @@ TransformationMatrix GLMWrapper::getScaled(
   return rightMultiply(convertToMat4(matrix), scaledMat);
 }
 
-TransformationMatrix GLMWrapper::getTranslated(
+TransformationMatrix GLM::getTranslated(
   const TransformationMatrix &matrix, float tx, float ty, float tz)
 {
   auto translatedMat = glm::mat4(1.0);
@@ -37,7 +37,7 @@ TransformationMatrix GLMWrapper::getTranslated(
   return rightMultiply(convertToMat4(matrix), translatedMat);
 }
 
-TransformationMatrix GLMWrapper::getRotated(
+TransformationMatrix GLM::getRotated(
   const TransformationMatrix &matrix, const Vector3D &axis, float degrees)
 {
   const auto rad = glm::radians(degrees);
@@ -64,7 +64,7 @@ TransformationMatrix GLMWrapper::getRotated(
   return rightMultiply(convertToMat4(matrix), rotationMatrix);
 }
 
-Point3D GLMWrapper::TransformPoint(const TransformationMatrix &matrix, const Point3D &point)
+Point3D GLM::TransformPoint(const TransformationMatrix &matrix, const Point3D &point)
 {
   const auto convertedMat = convertToMat4(matrix);
   const auto convertedVec4 = glm::vec4{point.x(), point.y(), point.z(), 1.0f};
@@ -77,7 +77,7 @@ Point3D GLMWrapper::TransformPoint(const TransformationMatrix &matrix, const Poi
   return {newX, newY, newZ};
 }
 
-Vector3D GLMWrapper::TransformNormalVector(const TransformationMatrix &matrix, const Vector3D &vector)
+Vector3D GLM::TransformNormalVector(const TransformationMatrix &matrix, const Vector3D &vector)
 {
   // The translation parts of the transformation matrix do not affect the vector.
   const auto convertedMat = convertToMat4(matrix);
@@ -87,7 +87,7 @@ Vector3D GLMWrapper::TransformNormalVector(const TransformationMatrix &matrix, c
   return {transformedPoint.x, transformedPoint.y, transformedPoint.z};
 }
 
-Vector3D GLMWrapper::TransformVector(const TransformationMatrix &matrix, const Vector3D &vector)
+Vector3D GLM::TransformVector(const TransformationMatrix &matrix, const Vector3D &vector)
 {
   // The translation parts of the transformation matrix do not affect the vector.
   const auto convertedMat = convertToMat4(matrix);
@@ -97,13 +97,13 @@ Vector3D GLMWrapper::TransformVector(const TransformationMatrix &matrix, const V
   return {transformedPoint.x, transformedPoint.y, transformedPoint.z};
 }
 
-TransformationMatrix GLMWrapper::getInversed(const TransformationMatrix &matrix)
+TransformationMatrix GLM::getInversed(const TransformationMatrix &matrix)
 {
   const auto convertedMat = convertToMat4(matrix);
   return convertToTransformationMatrix(glm::inverse(convertedMat));
 }
 
-Ray GLMWrapper::getTransformedRay(const Ray &ray, const TransformationMatrix &matrix)
+Ray GLM::getTransformedRay(const Ray &ray, const TransformationMatrix &matrix)
 {
   const auto transformedViewPoint = TransformPoint(matrix, ray.getViewPoint());
   const auto transformedDirection = TransformVector(matrix, ray.getUnitDirection());
