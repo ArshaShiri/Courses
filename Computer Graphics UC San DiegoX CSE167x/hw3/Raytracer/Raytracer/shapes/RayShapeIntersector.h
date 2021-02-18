@@ -9,7 +9,7 @@ class RayShapeIntersector
 public:
   RayShapeIntersector() = default;
 
-  virtual void calculateIntersectionPointWithRay(const Ray &ray) = 0;
+  void calculateIntersectionPointWithRay(const Ray &ray);
 
   bool doesIntersectionPointExist() const;
   const Point3D &getIntersectionPoint() const;
@@ -19,12 +19,16 @@ public:
   virtual ~RayShapeIntersector() = default;
 
 protected:
-  void resetIntersector();
   void setIntersectionPoint_(const Point3D &point);
   void setIntersectionPointDistanceToOrigin_(float t);
   void setUnitNormalOfShape_(const Vector3D &unitNormal);
+  virtual void doCalculateIntersectionPointWithRay(const Ray &ray) = 0;
 
 private:
+  // Private methods
+  void resetIntersector_();
+
+  // Private attributes
   Vector3D unitNormal_;
   std::optional<Point3D> intersectionPoint_;
   float rayParameterAtIntersection_;

@@ -9,7 +9,9 @@ class RaySphereIntersector : public RayShapeIntersector
 {
 public:
   RaySphereIntersector(const Sphere &sphere);
-  void calculateIntersectionPointWithRay(const Ray &ray) override final;
+
+protected:
+  void doCalculateIntersectionPointWithRay(const Ray &ray) override final;
 
 private:
   // Private methods

@@ -24,10 +24,8 @@ RaySphereIntersector::RaySphereIntersector(const Sphere &sphere) :
   inverseTransform_{GLMWrapper::GLM::getInversed(transformationMat_)}
 {}
 
-void RaySphereIntersector::calculateIntersectionPointWithRay(const Ray &ray)
+void RaySphereIntersector::doCalculateIntersectionPointWithRay(const Ray &ray)
 {
-  resetIntersector();
-
   // We first transfer the ray via the inverse transformation assigned to the sphere.
   // We continue the calculation with the transformed ray.
   const auto transformedRayAccessor = TransformedRayAccessor(ray, inverseTransform_);

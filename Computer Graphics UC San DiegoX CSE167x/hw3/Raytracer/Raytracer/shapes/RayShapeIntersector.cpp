@@ -7,6 +7,12 @@ bool RayShapeIntersector::doesIntersectionPointExist() const
   return intersectionPoint_ != std::nullopt;
 }
 
+void RayShapeIntersector::calculateIntersectionPointWithRay(const Ray &ray)
+{
+  resetIntersector_();
+  doCalculateIntersectionPointWithRay(ray);
+}
+
 const Point3D &RayShapeIntersector::getIntersectionPoint() const
 {
   if (!doesIntersectionPointExist())
@@ -28,11 +34,6 @@ const Vector3D &RayShapeIntersector::getUnitNormalOfShapeAtIntersectionPoint() c
   return unitNormal_;
 }
 
-void RayShapeIntersector::resetIntersector()
-{
-  intersectionPoint_ = std::nullopt;
-}
-
 void RayShapeIntersector::setIntersectionPoint_(const Point3D &point)
 {
   intersectionPoint_ = point;
@@ -46,4 +47,9 @@ void RayShapeIntersector::setIntersectionPointDistanceToOrigin_(float t)
 void RayShapeIntersector::setUnitNormalOfShape_(const Vector3D &unitNormal)
 {
   unitNormal_ = unitNormal;
+}
+
+void RayShapeIntersector::resetIntersector_()
+{
+  intersectionPoint_ = std::nullopt;
 }
