@@ -5,10 +5,10 @@ RayTriangleIntersector::RayTriangleIntersector(const Triangle &triangle) :
   triangle_{triangle}
 {
   const auto normal = (triangle_.B() - triangle_.A()).cross(triangle_.C() - triangle_.A());
-  setUnitNormalOfShape_(normal.normalize());
+  unitNormal_ = normal.normalize();
 }
 
-void RayTriangleIntersector::doCalculateIntersectionPointWithRay(const Ray &ray)
+IntersectionInfo RayTriangleIntersector::getIntersectionInfo(const Ray &ray) const
 {
   // The plane equation in which the triangle lies is:
   // P.n - A.n = 0, where n is unit normal, P is an arbitrary position point in the plane and A is 
@@ -18,27 +18,29 @@ void RayTriangleIntersector::doCalculateIntersectionPointWithRay(const Ray &ray)
   // The intersection point of the plane and the given ray is located at:
   // t = (A.n - p0.n) / (P.n)
 
-  const auto &unitNormal = getUnitNormalOfShapeAtIntersectionPoint();
-
   const auto &p1 = ray.getUnitDirection();
-  const auto P1DotN = p1.dot(unitNormal);
+  const auto P1DotN = p1.dot(unitNormal_);
   const auto isRayParallelToTrianglePlane = abs(P1DotN - 0.0f) < GEOMETRY_TOLERANCE;
 
   if (isRayParallelToTrianglePlane)
-    return;
+    return {};
 
   const auto &p0 = ray.getViewPoint();
-  const auto t = (triangle_.A() - p0).dot(unitNormal) / p1.dot(unitNormal);
+  const auto t = (triangle_.A() - p0).dot(unitNormal_) / p1.dot(unitNormal_);
 
   const auto isIntersectionInNegativeDirectionOfRay = t < 0.0;
   if (isIntersectionInNegativeDirectionOfRay)
-    return;
+    return {};
 
   const auto intersectionPoint = p0 + p1 * t;
 
+  auto intersectionInfo = IntersectionInfo{};
   if (triangle_.isPointInTriangle(intersectionPoint))
   {
-    setIntersectionPoint_(intersectionPoint);
-    setIntersectionPointDistanceToOrigin_(intersectionPoint.distance(p0));
+    intersectionInfo.setIntersectionPoint_(intersectionPoint);
+    intersectionInfo.setUnitNormalOfShape_(unitNormal_);
+    intersectionInfo.setIntersectionPointDistanceToLookFrom_(intersectionPoint.distance(p0));
   }
+
+  return intersectionInfo;
 }

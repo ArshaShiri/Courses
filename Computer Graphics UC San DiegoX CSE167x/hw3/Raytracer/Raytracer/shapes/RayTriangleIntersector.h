@@ -10,9 +10,9 @@ class RayTriangleIntersector :  public RayShapeIntersector
 public:
   RayTriangleIntersector(const Triangle &triangle);
   
-protected:
-  void doCalculateIntersectionPointWithRay(const Ray &ray) override final;
+  IntersectionInfo getIntersectionInfo(const Ray &ray) const override final;
 
 private:
   const Triangle &triangle_;
+  Vector3D unitNormal_;
 };

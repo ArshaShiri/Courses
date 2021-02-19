@@ -1,36 +1,41 @@
+/*Base class for shapes that will support intersecting with a ray. */
+
 #pragma once
 
 #include <optional>
 
 #include "../Ray.h"
 
-class RayShapeIntersector
+class IntersectionInfo
 {
 public:
-  RayShapeIntersector() = default;
-
-  void calculateIntersectionPointWithRay(const Ray &ray);
-
+  IntersectionInfo() = default;
   bool doesIntersectionPointExist() const;
   const Point3D &getIntersectionPoint() const;
-  float getIntersectionPointDistanceToOrigin() const;
   const Vector3D &getUnitNormalOfShapeAtIntersectionPoint() const;
-
-  virtual ~RayShapeIntersector() = default;
-
-protected:
-  void setIntersectionPoint_(const Point3D &point);
-  void setIntersectionPointDistanceToOrigin_(float t);
-  void setUnitNormalOfShape_(const Vector3D &unitNormal);
-  virtual void doCalculateIntersectionPointWithRay(const Ray &ray) = 0;
+  float getIntersectionPointDistanceToLookFrom() const;
 
 private:
-  // Private methods
-  void resetIntersector_();
+  friend class RayTriangleIntersector;
+  friend class RaySphereIntersector;
+
+  void setIntersectionPoint_(const Point3D &point);
+  void setIntersectionPointDistanceToLookFrom_(float t);
+  void setUnitNormalOfShape_(const Vector3D &unitNormal);
 
   // Private attributes
   Vector3D unitNormal_;
   std::optional<Point3D> intersectionPoint_;
   float rayParameterAtIntersection_;
+};
+
+class RayShapeIntersector
+{
+public:
+  RayShapeIntersector() = default;
+
+  virtual IntersectionInfo getIntersectionInfo(const Ray &ray) const = 0;
+
+  virtual ~RayShapeIntersector() = default;
 };
 

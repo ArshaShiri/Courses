@@ -16,7 +16,8 @@
 #include "shapes/RayShapeIntersector.h"
 #include "shapes/Shape.h"
 
-using ShapeToShapIntersector = std::unordered_map<const Shape*, std::unique_ptr<RayShapeIntersector>>;
+using ShapeIntersectorMap = std::unordered_map<const Shape*, 
+                                               std::unique_ptr<const RayShapeIntersector>>;
 
 class Scene
 {
@@ -40,8 +41,10 @@ private:
     std::string outputName_;
   };
 
+  // Private methods
   void buildIntersectorMap_();
   Color getColorOfPixel_(int pixelWidth, int pixelHeight) const;
+  Color addContributionsOfLights_() const;
 
   friend class Parser;
 
@@ -77,7 +80,7 @@ private:
 
   std::vector<std::unique_ptr<const Shape>> shapes_;
   std::vector<std::unique_ptr<const Light>> lights_;
-  ShapeToShapIntersector shapeToShapIntersector_;
+  ShapeIntersectorMap shapeToShapIntersector_;
   TransformationStack transformationStack_;
   std::vector<Point3D> vertices_;
   std::vector<Color> colors_;

@@ -2,18 +2,12 @@
 #include "RayShapeIntersector.h"
 
 
-bool RayShapeIntersector::doesIntersectionPointExist() const
+bool IntersectionInfo::doesIntersectionPointExist() const
 {
   return intersectionPoint_ != std::nullopt;
 }
 
-void RayShapeIntersector::calculateIntersectionPointWithRay(const Ray &ray)
-{
-  resetIntersector_();
-  doCalculateIntersectionPointWithRay(ray);
-}
-
-const Point3D &RayShapeIntersector::getIntersectionPoint() const
+const Point3D &IntersectionInfo::getIntersectionPoint() const
 {
   if (!doesIntersectionPointExist())
     throw std::runtime_error("Intersection does not exist!");
@@ -21,7 +15,7 @@ const Point3D &RayShapeIntersector::getIntersectionPoint() const
   return intersectionPoint_.value();
 }
 
-float RayShapeIntersector::getIntersectionPointDistanceToOrigin() const
+float IntersectionInfo::getIntersectionPointDistanceToLookFrom() const
 {
   if (!doesIntersectionPointExist())
     throw std::runtime_error("Intersection does not exist!");
@@ -29,27 +23,22 @@ float RayShapeIntersector::getIntersectionPointDistanceToOrigin() const
   return rayParameterAtIntersection_;
 }
 
-const Vector3D &RayShapeIntersector::getUnitNormalOfShapeAtIntersectionPoint() const
+const Vector3D &IntersectionInfo::getUnitNormalOfShapeAtIntersectionPoint() const
 {
   return unitNormal_;
 }
 
-void RayShapeIntersector::setIntersectionPoint_(const Point3D &point)
+void IntersectionInfo::setIntersectionPoint_(const Point3D &point)
 {
   intersectionPoint_ = point;
 }
 
-void RayShapeIntersector::setIntersectionPointDistanceToOrigin_(float t)
+void IntersectionInfo::setIntersectionPointDistanceToLookFrom_(float t)
 {
   rayParameterAtIntersection_ = t;
 }
 
-void RayShapeIntersector::setUnitNormalOfShape_(const Vector3D &unitNormal)
+void IntersectionInfo::setUnitNormalOfShape_(const Vector3D &unitNormal)
 {
   unitNormal_ = unitNormal;
-}
-
-void RayShapeIntersector::resetIntersector_()
-{
-  intersectionPoint_ = std::nullopt;
 }

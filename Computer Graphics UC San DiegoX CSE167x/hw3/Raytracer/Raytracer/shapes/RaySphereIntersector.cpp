@@ -24,7 +24,7 @@ RaySphereIntersector::RaySphereIntersector(const Sphere &sphere) :
   inverseTransform_{GLMWrapper::GLM::getInversed(transformationMat_)}
 {}
 
-void RaySphereIntersector::doCalculateIntersectionPointWithRay(const Ray &ray)
+IntersectionInfo RaySphereIntersector::getIntersectionInfo(const Ray &ray) const
 {
   // We first transfer the ray via the inverse transformation assigned to the sphere.
   // We continue the calculation with the transformed ray.
@@ -44,7 +44,7 @@ void RaySphereIntersector::doCalculateIntersectionPointWithRay(const Ray &ray)
   const auto roots = calculateRoots_(p0, p1);
 
   if (roots == std::nullopt)
-    return;
+    return {};
 
   const auto r1 = roots.value().first;
   const auto r2 = roots.value().second;
@@ -53,19 +53,26 @@ void RaySphereIntersector::doCalculateIntersectionPointWithRay(const Ray &ray)
   const auto rootsAreEqual = abs(r1 - r2) < GEOMETRY_TOLERANCE;
 
   if (rootsAreNegative || rootsAreEqual)
-    return;
+    return {};
 
   const auto minRoot = std::min(r1, r2);
   const auto smallestPositiveRoot = minRoot > 0.f ? minRoot : std::max(r1, r2);
-  const auto actualIntersectionPointAndNormal = 
-    getActualIntersectionPointAndNormal_(p0, p1, smallestPositiveRoot);
+  const auto actualIntersectionPointAndNormal =  getActualIntersectionPointAndNormal_(
+                                                   p0, p1, smallestPositiveRoot);
 
   const auto &actualNormal = actualIntersectionPointAndNormal.second;
   const auto &actualIntersectionPoint = actualIntersectionPointAndNormal.first;
 
-  setUnitNormalOfShape_(actualNormal.normalize());
-  setIntersectionPoint_(actualIntersectionPoint);
-  setIntersectionPointDistanceToOrigin_(actualIntersectionPoint.distance(ray.getViewPoint()));
+  auto intersectionInfo = IntersectionInfo{};
+  intersectionInfo.setUnitNormalOfShape_(actualNormal.normalize());
+  intersectionInfo.setIntersectionPoint_(actualIntersectionPoint);
+
+  const auto actualIntersectionPointDistanceToLookFrom = 
+    actualIntersectionPoint.distance(ray.getViewPoint());
+  intersectionInfo.setIntersectionPointDistanceToLookFrom_(
+    actualIntersectionPointDistanceToLookFrom);
+
+  return intersectionInfo;
 }
 
 std::optional<std::pair<float, float>> RaySphereIntersector::calculateRoots_(
