@@ -3,10 +3,10 @@
 #pragma once
 
 #include <memory>
-#include <unordered_map>
 #include <vector>
 
 #include "Camera.h"
+#include "ClosestIntersectedShapeFinder.h"
 #include "Color.h"
 #include "Common.h"
 #include "Ray.h"
@@ -15,9 +15,6 @@
 #include "lights/Light.h"
 #include "shapes/RayShapeIntersector.h"
 #include "shapes/Shape.h"
-
-using ShapeIntersectorMap = std::unordered_map<const Shape*, 
-                                               std::unique_ptr<const RayShapeIntersector>>;
 
 class Scene
 {
@@ -42,9 +39,7 @@ private:
   };
 
   // Private methods
-  void buildIntersectorMap_();
-  Color getColorOfPixel_(int pixelWidth, int pixelHeight) const;
-  Color addContributionsOfLights_() const;
+  void addTheColorOfPixel_(int width, int height);
 
   friend class Parser;
 
@@ -79,8 +74,8 @@ private:
   bool cameraIsSet_;
 
   std::vector<std::unique_ptr<const Shape>> shapes_;
+  ClosestIntersectedShapeFinder closestIntersectedShapeFinder_;
   std::vector<std::unique_ptr<const Light>> lights_;
-  ShapeIntersectorMap shapeToShapIntersector_;
   TransformationStack transformationStack_;
   std::vector<Point3D> vertices_;
   std::vector<Color> colors_;
