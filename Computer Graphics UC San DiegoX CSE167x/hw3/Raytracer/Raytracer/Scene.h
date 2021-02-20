@@ -39,7 +39,7 @@ private:
   };
 
   // Private methods
-  void addTheColorOfPixel_(int width, int height);
+  void calculateAndStoreTheColorOfPixel_(int width, int height);
 
   friend class Parser;
 

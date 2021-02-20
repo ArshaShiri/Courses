@@ -71,6 +71,7 @@ IntersectionInfo RaySphereIntersector::getIntersectionInfo(const Ray &ray) const
     actualIntersectionPoint.distance(ray.getViewPoint());
   intersectionInfo.setIntersectionPointDistanceToLookFrom_(
     actualIntersectionPointDistanceToLookFrom);
+  intersectionInfo.setUnderlyingShape_(&sphere_);
 
   return intersectionInfo;
 }

@@ -15,7 +15,7 @@ const Point3D &IntersectionInfo::getIntersectionPoint() const
   return intersectionPoint_.value();
 }
 
-float IntersectionInfo::getIntersectionPointDistanceToLookFrom() const
+float IntersectionInfo::getIntersectionPointDistanceToOriginOfRay() const
 {
   if (!doesIntersectionPointExist())
     throw std::runtime_error("Intersection does not exist!");
@@ -26,6 +26,11 @@ float IntersectionInfo::getIntersectionPointDistanceToLookFrom() const
 const Vector3D &IntersectionInfo::getUnitNormalOfShapeAtIntersectionPoint() const
 {
   return unitNormal_;
+}
+
+const Shape *IntersectionInfo::getUnderlyingShape() const
+{
+  return underlyingShape_;
 }
 
 void IntersectionInfo::setIntersectionPoint_(const Point3D &point)
@@ -41,4 +46,9 @@ void IntersectionInfo::setIntersectionPointDistanceToLookFrom_(float t)
 void IntersectionInfo::setUnitNormalOfShape_(const Vector3D &unitNormal)
 {
   unitNormal_ = unitNormal;
+}
+
+void IntersectionInfo::setUnderlyingShape_(const Shape* underlyingShape)
+{
+  underlyingShape_ = underlyingShape;
 }

@@ -19,7 +19,7 @@ public:
                   const Ray &incomingRay,
                   ClosestIntersectedShapeFinder &closestIntersectedShapeFinder);
 
-  Color getLightsContributions() const;
+  Color getLightsContributions(const IntersectionInfo &intersectionInfo) const;
 
 private:
   const std::vector<std::unique_ptr<const Light>> &lights_;
@@ -45,7 +45,7 @@ void Scene::render()
   {
     for (auto w = 0; w < width_; ++w)
     {
-      addTheColorOfPixel_(w, h);
+      calculateAndStoreTheColorOfPixel_(w, h);
     }
   }
 }
@@ -55,24 +55,25 @@ void Scene::save() const
   saver_.save(width_, height_, colors_);
 }
 
-void Scene::addTheColorOfPixel_(int width, int height)
+void Scene::calculateAndStoreTheColorOfPixel_(int width, int height)
 {
   auto color = Color{};
 
   const auto ray = camera_.calculateRayThroughPixel(width, height);
-  closestIntersectedShapeFinder_.intersectRay(ray);
+  const auto intersectionInfo = closestIntersectedShapeFinder_.
+                                  getIntersectionInfoAtCloesestIntersectionPoint(ray);
 
   // We first see if the ray is intersecting any of the shapes.
-  if (closestIntersectedShapeFinder_.isAnyOfTheShapesIntersectingWithRay())
+  if (intersectionInfo.doesIntersectionPointExist())
   {
-    const auto pShape = closestIntersectedShapeFinder_.getClosestShape();
-    const auto &closestIntersection = closestIntersectedShapeFinder_.getClosestIntersectionPoint();
+    const auto pShape = intersectionInfo.getUnderlyingShape();
+    const auto &closestIntersection = intersectionInfo.getIntersectionPoint();
 
     // Base color for all the shapes
     color = pShape->getAmbient() + pShape->getEmission();
 
     auto lightCalculator = LightCalculator(lights_, ray, closestIntersectedShapeFinder_);
-    color += lightCalculator.getLightsContributions();
+    color += lightCalculator.getLightsContributions(intersectionInfo);
   }
 
   colors_.emplace_back(std::move(color));
@@ -212,42 +213,45 @@ LightCalculator::LightCalculator(const std::vector<std::unique_ptr<const Light>>
   closestIntersectedShapeFinder_{closestIntersectedShapeFinder}
 {}
 
-Color LightCalculator::getLightsContributions() const
+Color LightCalculator::getLightsContributions(const IntersectionInfo &intersectionInfo) const
 {
   auto color = Color{};
 
-  const auto pCurrentShape = closestIntersectedShapeFinder_.getClosestShape();
-  const auto &currentIntersection = closestIntersectedShapeFinder_.getClosestIntersectionPoint();
+  const auto pCurrentShape = intersectionInfo.getUnderlyingShape();
   const auto &shapeMatProperties = pCurrentShape->getMateriaPropertiesAndAmbient();
 
-  // All the light contributions:
+  // Copy the intersection point where the incoming ray hit the object and the unit normal at that
+  // location.
+  const auto currentIntersection = intersectionInfo.getIntersectionPoint();
+  const auto unitNormalAtIntersectionPoint = intersectionInfo.getUnitNormalOfShapeAtIntersectionPoint();
+
+  // Now calculate the contribution of all lights.
   for (const auto &pLight : lights_)
   {
-    const auto shadowRay = pLight->getRayTowardsLightFromPoint(currentIntersection);
-    closestIntersectedShapeFinder_.intersectRay(shadowRay);
-    const auto distanceToLight = pLight->getDistanceToPoint(currentIntersection);
-    const auto &unitNormalAtIntersectionPoint = closestIntersectedShapeFinder_.getUnitNormalAtIntersectionPoint();
+    const auto intersectionPointDistanceToLight = pLight->getDistanceToPoint(currentIntersection);
+    const auto shadowRay = pLight->getRayTowardsLightFromPoint(currentIntersection);    
+    const auto &shadowRayUnitDir = shadowRay.getUnitDirection();
+    const auto shapeProperties = ShapeProperties{shapeMatProperties,
+                                                 unitNormalAtIntersectionPoint,
+                                                 intersectionPointDistanceToLight};
+    const auto shadowRayIntersectionInfo = 
+      closestIntersectedShapeFinder_.getIntersectionInfoAtCloesestIntersectionPoint(shadowRay);
 
-    if (closestIntersectedShapeFinder_.isAnyOfTheShapesIntersectingWithRay())
+
+    if (shadowRayIntersectionInfo.doesIntersectionPointExist())
     {
-      const auto &closestIntersection = closestIntersectedShapeFinder_.getClosestIntersectionPoint();
+      const auto &closestIntersection = shadowRayIntersectionInfo.getIntersectionPoint();
       const auto distanceToIntersectionPoint = closestIntersection.distance(closestIntersection);
 
-      if (distanceToLight < distanceToIntersectionPoint)
-        color += pLight->getContributionOnObject(
-          shapeMatProperties,
-          incomingRay_.getUnitDirection(),
-          unitNormalAtIntersectionPoint,
-          shadowRay,
-          distanceToLight);
+      if (intersectionPointDistanceToLight < distanceToIntersectionPoint)
+        color += pLight->getContributionOnObject(shapeProperties,
+                                                 incomingRay_.getUnitDirection(),
+                                                 shadowRayUnitDir);
     }
     else
-      color += pLight->getContributionOnObject(
-        shapeMatProperties,
-        incomingRay_.getUnitDirection(),
-        unitNormalAtIntersectionPoint,
-        shadowRay,
-        distanceToLight);
+      color += pLight->getContributionOnObject(shapeProperties,
+                                               incomingRay_.getUnitDirection(),
+                                               shadowRayUnitDir);
   }
 
   return color;

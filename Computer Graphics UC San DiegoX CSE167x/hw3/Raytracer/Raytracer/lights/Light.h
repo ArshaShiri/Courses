@@ -7,16 +7,28 @@
 #include "../Ray.h"
 #include "../Vector3D.h"
 
+struct ShapeProperties
+{
+  ShapeProperties(const MateriaPropertiesAndAmbient &matProp, 
+                  const Vector3D &objectUnitNormal,
+                  float distanceToLight) : 
+    matProp{matProp},
+    objectUnitNormal{objectUnitNormal},
+    distanceToLight{distanceToLight}
+  {}
+
+  const MateriaPropertiesAndAmbient &matProp;
+  const Vector3D &objectUnitNormal;
+  float distanceToLight;
+};
+
 class Light
 {
 public:
   Light(const Color &rgb);
-  Color getContributionOnObject(
-    const MateriaPropertiesAndAmbient &matProp,
-    const Vector3D &incomingRayDir,
-    const Vector3D &objectUnitNormal,
-    const Ray &shadowRay,
-    float distanceToLight) const;
+  Color getContributionOnObject(const ShapeProperties &shapeProperties,
+                                const Vector3D &incomingRayUnitDir,
+                                const Vector3D &shadowRayUnitDir) const;
 
   virtual Ray getRayTowardsLightFromPoint(const Point3D &point) const = 0;
   virtual float getDistanceToPoint(const Point3D &point) const = 0;
@@ -27,15 +39,12 @@ protected:
 
 private:
   // Private methods
-  Color getDiffuseFactor_(const Color &diffuse,
-                          const Vector3D &objectUnitNormal,
-                          const Vector3D &lightDirection) const;
+  Color getDiffuseFactor_(const ShapeProperties &shapeProperties,
+                          const Vector3D &shadowRayUnitDir) const;
 
-  Color getSpecularFactor_(const Color &specular,
-                           float shininess,
-                           const Vector3D &objectUnitNormal,
+  Color getSpecularFactor_(const ShapeProperties &shapeProperties,
                            const Vector3D &incomingRayDirection,
-                           const Vector3D &lightDirection) const;
+                           const Vector3D &shadowRayUnitDir) const;
 
   // Private attributes
   Color color_;

@@ -40,6 +40,7 @@ IntersectionInfo RayTriangleIntersector::getIntersectionInfo(const Ray &ray) con
     intersectionInfo.setIntersectionPoint_(intersectionPoint);
     intersectionInfo.setUnitNormalOfShape_(unitNormal_);
     intersectionInfo.setIntersectionPointDistanceToLookFrom_(intersectionPoint.distance(p0));
+    intersectionInfo.setUnderlyingShape_(&triangle_);
   }
 
   return intersectionInfo;
