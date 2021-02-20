@@ -7,26 +7,9 @@
 #include "Parser.h"
 #include "Scene.h"
 
+#include "lights/LightCalculator.h"
 #include "lights/LightFactory.h"
 #include "shapes/ShapeFactory.h"
-
-namespace
-{
-class LightCalculator
-{
-public:
-  LightCalculator(const std::vector<std::unique_ptr<const Light>> &lights,
-                  const Ray &incomingRay,
-                  ClosestIntersectedShapeFinder &closestIntersectedShapeFinder);
-
-  Color getLightsContributions(const IntersectionInfo &intersectionInfo) const;
-
-private:
-  const std::vector<std::unique_ptr<const Light>> &lights_;
-  const Ray &incomingRay_;
-  ClosestIntersectedShapeFinder &closestIntersectedShapeFinder_;
-};
-} // End of namespace declaration
 
 Scene::Scene() : height_{0}, width_{0}, cameraIsSet_{false}
 {}
@@ -72,8 +55,8 @@ void Scene::calculateAndStoreTheColorOfPixel_(int width, int height)
     // Base color for all the shapes
     color = pShape->getAmbient() + pShape->getEmission();
 
-    auto lightCalculator = LightCalculator(lights_, ray, closestIntersectedShapeFinder_);
-    color += lightCalculator.getLightsContributions(intersectionInfo);
+    auto lightCalculator = LightCalculator(lights_, closestIntersectedShapeFinder_);
+    color += lightCalculator.getLightsContribution(ray.getUnitDirection(), intersectionInfo);
   }
 
   colors_.emplace_back(std::move(color));
@@ -202,58 +185,3 @@ void Scene::SceneSaver::save(int width, int height, const std::vector<Color> &co
 {
   FreeImage::FreeImageWrapper::saveImage(outputName_, width, height, colors);
 }
-
-namespace
-{
-LightCalculator::LightCalculator(const std::vector<std::unique_ptr<const Light>> &lights,
-                                 const Ray &incomingRay,
-                                 ClosestIntersectedShapeFinder &closestIntersectedShapeFinder) :
-  lights_{lights},
-  incomingRay_{incomingRay},
-  closestIntersectedShapeFinder_{closestIntersectedShapeFinder}
-{}
-
-Color LightCalculator::getLightsContributions(const IntersectionInfo &intersectionInfo) const
-{
-  auto color = Color{};
-
-  const auto pCurrentShape = intersectionInfo.getUnderlyingShape();
-  const auto &shapeMatProperties = pCurrentShape->getMateriaPropertiesAndAmbient();
-
-  // Copy the intersection point where the incoming ray hit the object and the unit normal at that
-  // location.
-  const auto currentIntersection = intersectionInfo.getIntersectionPoint();
-  const auto unitNormalAtIntersectionPoint = intersectionInfo.getUnitNormalOfShapeAtIntersectionPoint();
-
-  // Now calculate the contribution of all lights.
-  for (const auto &pLight : lights_)
-  {
-    const auto intersectionPointDistanceToLight = pLight->getDistanceToPoint(currentIntersection);
-    const auto shadowRay = pLight->getRayTowardsLightFromPoint(currentIntersection);    
-    const auto &shadowRayUnitDir = shadowRay.getUnitDirection();
-    const auto shapeProperties = ShapeProperties{shapeMatProperties,
-                                                 unitNormalAtIntersectionPoint,
-                                                 intersectionPointDistanceToLight};
-    const auto shadowRayIntersectionInfo = 
-      closestIntersectedShapeFinder_.getIntersectionInfoAtCloesestIntersectionPoint(shadowRay);
-
-
-    if (shadowRayIntersectionInfo.doesIntersectionPointExist())
-    {
-      const auto &closestIntersection = shadowRayIntersectionInfo.getIntersectionPoint();
-      const auto distanceToIntersectionPoint = closestIntersection.distance(closestIntersection);
-
-      if (intersectionPointDistanceToLight < distanceToIntersectionPoint)
-        color += pLight->getContributionOnObject(shapeProperties,
-                                                 incomingRay_.getUnitDirection(),
-                                                 shadowRayUnitDir);
-    }
-    else
-      color += pLight->getContributionOnObject(shapeProperties,
-                                               incomingRay_.getUnitDirection(),
-                                               shadowRayUnitDir);
-  }
-
-  return color;
-}
-} // End of namespace definition
