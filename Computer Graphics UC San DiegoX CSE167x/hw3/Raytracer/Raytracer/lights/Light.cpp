@@ -35,7 +35,6 @@ Color Light::getDiffuseFactor_(
   // N is the surface normal
   // L is the direction to the light
   const auto &diffuse = shapeProperties.matProp.diffuse;
-  const auto green = diffuse.getGreen();
   const auto rightTerm = std::max(shadowRayUnitDir.dot(shapeProperties.objectUnitNormal), 0.0f);
 
   return diffuse * rightTerm;

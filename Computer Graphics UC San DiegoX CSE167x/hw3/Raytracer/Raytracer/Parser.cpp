@@ -106,6 +106,7 @@ void Parser::initializeDefaultValues_()
   attenuation_.constant = 1.0f;
   attenuation_.linear = 0.0f;
   attenuation_.quadratic = 0.0f;
+  scene_.setMaxDepth_(5);
 }
 
 CommandType Parser::getCommandType_(const std::string &commandName) const
@@ -118,7 +119,7 @@ CommandType Parser::getCommandType_(const std::string &commandName) const
   if (commandName == "specular") return CommandType::Specular;
   if (commandName == "emission") return CommandType::Emission;
   if (commandName == "shininess") return CommandType::Shininess;
-  if (commandName == "attenuation ") return CommandType::Attenuation;
+  if (commandName == "attenuation") return CommandType::Attenuation;
 
   if (commandName == "maxverts") return CommandType::Maxverts;
   if (commandName == "vertex") return CommandType::Vertex;
@@ -134,7 +135,7 @@ CommandType Parser::getCommandType_(const std::string &commandName) const
   if (commandName == "pushTransform") return CommandType::PushTransform;
   if (commandName == "popTransform") return CommandType::PopTransform;
   if (commandName == "output") return CommandType::SetOutput;
-  if (commandName == "maxdepth ") return CommandType::SetOutput;
+  if (commandName == "maxdepth") return CommandType::Maxdepth;
 
   return CommandType::Unknown;
 }

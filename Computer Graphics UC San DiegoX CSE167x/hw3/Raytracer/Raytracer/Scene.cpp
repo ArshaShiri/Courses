@@ -58,11 +58,19 @@ void Scene::save() const
 
 void Scene::calculateAndStoreTheColorOfPixel_(int width, int height)
 {
+  const auto ray = camera_.calculateRayThroughPixel(width, height);
+  colors_.emplace_back(retrieveColorForRay_(ray, maxDepth_));
+}
+
+Color Scene::retrieveColorForRay_(const Ray &ray, int maxDepth)
+{
+  if (maxDepth == 0)
+    return{};
+
   auto color = Color{};
 
-  const auto ray = camera_.calculateRayThroughPixel(width, height);
   const auto intersectionInfo = closestIntersectedShapeFinder_.
-                                  getIntersectionInfoAtCloesestIntersectionPoint(ray);
+    getIntersectionInfoAtCloesestIntersectionPoint(ray);
 
   // We first see if the ray is intersecting any of the shapes.
   if (intersectionInfo.doesIntersectionPointExist())
@@ -75,9 +83,27 @@ void Scene::calculateAndStoreTheColorOfPixel_(int width, int height)
 
     auto lightCalculator = LightCalculator(lights_, closestIntersectedShapeFinder_);
     color += lightCalculator.getLightsContribution(ray.getUnitDirection(), intersectionInfo);
-  }
 
-  colors_.emplace_back(std::move(color));
+
+    const auto &specular = pShape->getSpecular();
+    const auto specularIsNonZero = specular.getRed() > 0.0f ||
+                                   specular.getGreen() > 0.0f ||
+                                   specular.getBlue() > 0.0f;
+    if (specularIsNonZero)
+    {
+      const auto &comingRayOrigin = ray.getViewPoint();
+      const auto &comingRayDir = ray.getUnitDirection();
+      const auto &normalAtIntersectionPoint = intersectionInfo.getUnitNormalOfShapeAtIntersectionPoint();
+      const auto reflectedRayDir = comingRayDir + normalAtIntersectionPoint * (-comingRayDir).dot(normalAtIntersectionPoint) * 2.0f;
+      const auto reflectedRayDirNormalized = reflectedRayDir.normalize();
+      const auto reflectedRayOrigin = closestIntersection + reflectedRayDirNormalized * 0.001f;
+
+      const auto reflectedRay = Ray(reflectedRayOrigin, reflectedRayDir);
+      color += specular * retrieveColorForRay_(reflectedRay, maxDepth - 1);
+    }
+  }
+  
+  return color;
 }
 
 void Scene::printProgress(int width, int height) const

@@ -40,6 +40,7 @@ private:
 
   // Private methods
   void calculateAndStoreTheColorOfPixel_(int width, int height);
+  Color retrieveColorForRay_(const Ray &ray, int maxDepth);
   void printProgress(int width, int height) const;
 
   friend class Parser;
