@@ -31,4 +31,3 @@ private:
   const std::vector<std::unique_ptr<const Light>> &lights_;
   const ClosestIntersectedShapeFinder &closestIntersectedShapeFinder_;
 };
-

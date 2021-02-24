@@ -40,6 +40,7 @@ private:
 
   // Private methods
   void calculateAndStoreTheColorOfPixel_(int width, int height);
+  void printProgress(int width, int height) const;
 
   friend class Parser;
 
@@ -63,12 +64,14 @@ private:
   void popTransformation_();
   void pushTransformation_();
   void setOutputName(const std::string &outputName);
+  void setMaxDepth_(int depth);
 
   size_t getNumberOfVertices_() const;
 
   // Private attributes
   int height_;
   int width_;
+  int maxDepth_;
 
   Camera camera_;
   bool cameraIsSet_;

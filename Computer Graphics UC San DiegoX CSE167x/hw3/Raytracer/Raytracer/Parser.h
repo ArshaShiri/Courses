@@ -16,6 +16,7 @@ enum class CommandType
   Specular,
   Emission,
   Shininess,
+  Attenuation,
   Maxverts,
   Vertex,
   DirectionalLight,
@@ -28,6 +29,7 @@ enum class CommandType
   PushTransform,
   PopTransform,
   SetOutput,
+  Maxdepth,
   Unknown
 };
 
@@ -55,6 +57,9 @@ private:
   void setDiffuse_(const std::vector<std::string> &args);
   void setSpecular_(const std::vector<std::string> &args);
   void setEmission_(const std::vector<std::string> &args);
+  void setShininess_(const std::vector<std::string> &args);
+  void setAttenuation_(const std::vector<std::string> &args);
+
   void addVertex_(const std::vector<std::string> &args);
   std::array<float, 3> getThreeFloatArgumentsOfTheCommand_(const std::vector<std::string> &args);
 
@@ -69,9 +74,9 @@ private:
   void pushTransformation_(const std::vector<std::string> &args);
   void popTransformation_(const std::vector<std::string> &args);
   void setOutput_(const std::vector<std::string> &args);
+  void setMaxDepth_(const std::vector<std::string> &args);
 
   void setMaxNumberOfVertieces_(const std::vector<std::string> &args);
-  void setShininess_(const std::vector<std::string> &args);
 
   // Private attributes
   Scene &scene_;

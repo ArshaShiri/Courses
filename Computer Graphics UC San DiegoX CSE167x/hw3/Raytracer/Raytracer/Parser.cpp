@@ -72,6 +72,7 @@ void Parser::parse_(
   case CommandType::Specular: setSpecular_(args); break;
   case CommandType::Emission: setEmission_(args); break;
   case CommandType::Shininess: setShininess_(args); break;
+  case CommandType::Attenuation: setAttenuation_(args); break;
 
   case CommandType::Maxverts: setMaxNumberOfVertieces_(args); break;
   case CommandType::Vertex: addVertex_(args); break;
@@ -87,6 +88,7 @@ void Parser::parse_(
   case CommandType::PushTransform: pushTransformation_(args); break;
   case CommandType::PopTransform: popTransformation_(args); break;
   case CommandType::SetOutput: setOutput_(args); break;
+  case CommandType::Maxdepth: setMaxDepth_(args); break;
 
   default:
     throw std::runtime_error("Unsupported command: " + commandName);
@@ -116,6 +118,7 @@ CommandType Parser::getCommandType_(const std::string &commandName) const
   if (commandName == "specular") return CommandType::Specular;
   if (commandName == "emission") return CommandType::Emission;
   if (commandName == "shininess") return CommandType::Shininess;
+  if (commandName == "attenuation ") return CommandType::Attenuation;
 
   if (commandName == "maxverts") return CommandType::Maxverts;
   if (commandName == "vertex") return CommandType::Vertex;
@@ -131,6 +134,7 @@ CommandType Parser::getCommandType_(const std::string &commandName) const
   if (commandName == "pushTransform") return CommandType::PushTransform;
   if (commandName == "popTransform") return CommandType::PopTransform;
   if (commandName == "output") return CommandType::SetOutput;
+  if (commandName == "maxdepth ") return CommandType::SetOutput;
 
   return CommandType::Unknown;
 }
@@ -182,6 +186,28 @@ void Parser::setSpecular_(const std::vector<std::string> &args)
 void Parser::setEmission_(const std::vector<std::string> &args)
 {
   currentMatProperties_.emission = getThreeFloatArgumentsOfTheCommand_(args);
+}
+
+void Parser::setShininess_(const std::vector<std::string> &args)
+{
+  // Command format:
+  // shininess s
+  const auto expectedArgsSize = 1;
+  checkArgsSize(args, "shininess", expectedArgsSize);
+
+  currentMatProperties_.shininess = std::stof(args.at(0));
+}
+
+void Parser::setAttenuation_(const std::vector<std::string> &args)
+{
+  // Command format:
+  // attenuation const linear quadratic
+  const auto expectedArgsSize = 3;
+  checkArgsSize(args, "attenuation", expectedArgsSize);
+
+  attenuation_.constant = std::stof(args.at(0));
+  attenuation_.linear = std::stof(args.at(1));
+  attenuation_.quadratic = std::stof(args.at(2));
 }
 
 void Parser::addVertex_(const std::vector<std::string> &args)
@@ -255,16 +281,6 @@ std::array<float, 3> Parser::getThreeFloatArgumentsOfTheCommand_(const std::vect
   return {std::stof(args.at(0)), std::stof(args.at(1)), std::stof(args.at(2))};
 }
 
-void Parser::setShininess_(const std::vector<std::string> &args)
-{
-  // Command format:
-  // shininess s
-  const auto expectedArgsSize = 1;
-  checkArgsSize(args, "Shininess", expectedArgsSize);
-
-  currentMatProperties_.shininess = std::stof(args.at(0));
-}
-
 void Parser::setMaxNumberOfVertieces_(const std::vector<std::string> &args)
 {
   // Command format:
@@ -326,6 +342,15 @@ void Parser::setOutput_(const std::vector<std::string> &args)
   const auto expectedArgsSize = 1;
   checkArgsSize(args, "setOutput ", expectedArgsSize);
   scene_.setOutputName(args.at(0));
+}
+
+void Parser::setMaxDepth_(const std::vector<std::string> &args)
+{
+  // Command format:
+  // popTransform 
+  const auto expectedArgsSize = 1;
+  checkArgsSize(args, "maddepth ", expectedArgsSize);
+  scene_.setMaxDepth_(stoi(args.at(0)));
 }
 
 namespace

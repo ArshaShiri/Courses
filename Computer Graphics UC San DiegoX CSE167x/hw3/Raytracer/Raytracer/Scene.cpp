@@ -1,4 +1,5 @@
 #include <array>
+#include <iostream>
 #include <stdexcept>
 #include <string>
 
@@ -10,6 +11,22 @@
 #include "lights/LightCalculator.h"
 #include "lights/LightFactory.h"
 #include "shapes/ShapeFactory.h"
+
+namespace
+{
+class ProgressPrinter
+{
+public:
+  ProgressPrinter(int width, int height);
+  void updateCurrentPixelNumber(int width, int height, int totalWidth);
+  void print();
+
+private:
+  const int totalNumberOfPixels_;
+  int previousProgress_;
+  int currentPixelNumber_;
+};
+} // End of namespace declaration
 
 Scene::Scene() : height_{0}, width_{0}, cameraIsSet_{false}
 {}
@@ -29,6 +46,7 @@ void Scene::render()
     for (auto w = 0; w < width_; ++w)
     {
       calculateAndStoreTheColorOfPixel_(w, h);
+      printProgress(w, h);
     }
   }
 }
@@ -60,6 +78,13 @@ void Scene::calculateAndStoreTheColorOfPixel_(int width, int height)
   }
 
   colors_.emplace_back(std::move(color));
+}
+
+void Scene::printProgress(int width, int height) const
+{
+  static auto printer = ProgressPrinter(width_, height_);
+  printer.updateCurrentPixelNumber(width, height, width_);
+  printer.print();
 }
 
 
@@ -101,7 +126,7 @@ void Scene::addTriangle_(const MateriaPropertiesAndAmbient &matProperties,
 {
   auto getTriangleVertices = 
     [this](const std::array<int, 3> &cornerNodeIndices)
-    {     
+    {
       auto p1 = vertices_.at(cornerNodeIndices.at(0));
       auto p2 = vertices_.at(cornerNodeIndices.at(1));
       auto p3 = vertices_.at(cornerNodeIndices.at(2));
@@ -166,6 +191,11 @@ void Scene::setOutputName(const std::string &outputName)
   saver_.setOutputName(outputName);
 }
 
+void Scene::setMaxDepth_(int depth)
+{
+  maxDepth_ = depth;
+}
+
 Scene::SceneSaver::SceneSaver(const std::string &inputFileName)
 {
   setOutputName(inputFileName);
@@ -185,3 +215,27 @@ void Scene::SceneSaver::save(int width, int height, const std::vector<Color> &co
 {
   FreeImage::FreeImageWrapper::saveImage(outputName_, width, height, colors);
 }
+
+namespace
+{
+ProgressPrinter::ProgressPrinter(int width, int height) : 
+  totalNumberOfPixels_{width * height},
+  currentPixelNumber_{0},
+  previousProgress_{0}
+{}
+
+void ProgressPrinter::updateCurrentPixelNumber(int width, int height, int totalWidth)
+{
+  currentPixelNumber_ = (height * totalWidth) + width;
+}
+
+void ProgressPrinter::print()
+{
+  const auto progress = (int)((float)currentPixelNumber_ / (float)totalNumberOfPixels_ * 100.0f);
+
+  if ((progress - previousProgress_) > 0)
+    std::cout << std::to_string(progress) + "%\n";
+
+  previousProgress_ = progress;
+}
+} // End of namespace definition
