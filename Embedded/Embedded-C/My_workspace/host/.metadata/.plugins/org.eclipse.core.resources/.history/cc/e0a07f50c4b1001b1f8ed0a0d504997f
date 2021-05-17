@@ -1,0 +1,23 @@
+/*
+ * main.c
+ *
+ *  Created on: May 10, 2021
+ *      Author: arsha
+ *
+ *
+ */
+
+#include<stdio.h>
+
+int maint(void)
+{
+  printf("Hello world\nm");
+
+  printf("Press 'Enter' to exit this application\n");
+
+  getchar();
+
+  return 0;
+}
+
+

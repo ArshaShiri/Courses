@@ -1,0 +1,62 @@
+2021-05-10 21:12:02,527 [INFO] Activator:170 - 
+
+
+2021-05-10 21:12:02,528 [INFO] Activator:171 - !SESSION log4j initialized
+2021-05-10 21:13:29,307 [INFO] Activator:170 - 
+
+
+2021-05-10 21:13:29,308 [INFO] Activator:171 - !SESSION log4j initialized
+2021-05-10 21:18:11,430 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] java.lang.StringIndexOutOfBoundsException: begin 0, end -1, length 0
+2021-05-10 21:18:11,430 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.String.checkBoundsBeginEnd(Unknown Source)
+2021-05-10 21:18:11,430 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.String.substring(Unknown Source)
+2021-05-10 21:18:11,431 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.utils.assembly.InstructionRecord.calcJumpInstructionDirect(InstructionRecord.java:201)
+2021-05-10 21:18:11,431 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.utils.assembly.InstructionRecord.isJumpInstructionDirect(InstructionRecord.java:159)
+2021-05-10 21:18:11,431 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.model.CallGraph.fromInstructions(CallGraph.java:65)
+2021-05-10 21:18:11,431 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:908)
+2021-05-10 21:18:11,431 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$15(StackAnalyzerView.java:1232)
+2021-05-10 21:18:11,431 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.Thread.run(Unknown Source)
+2021-05-10 21:18:11,432 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] java.lang.StringIndexOutOfBoundsException: begin 0, end -1, length 0
+2021-05-10 21:18:11,432 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.String.checkBoundsBeginEnd(Unknown Source)
+2021-05-10 21:18:11,432 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.String.substring(Unknown Source)
+2021-05-10 21:18:11,432 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.utils.assembly.InstructionRecord.calcJumpInstructionDirect(InstructionRecord.java:201)
+2021-05-10 21:18:11,432 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.utils.assembly.InstructionRecord.isJumpInstructionDirect(InstructionRecord.java:159)
+2021-05-10 21:18:11,432 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.model.CallGraph.fromInstructions(CallGraph.java:65)
+2021-05-10 21:18:11,433 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:908)
+2021-05-10 21:18:11,433 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$15(StackAnalyzerView.java:1232)
+2021-05-10 21:18:11,433 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.Thread.run(Unknown Source)
+2021-05-10 21:18:11,433 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] java.lang.StringIndexOutOfBoundsException: begin 0, end -1, length 0
+2021-05-10 21:18:11,434 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.String.checkBoundsBeginEnd(Unknown Source)
+2021-05-10 21:18:11,434 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.String.substring(Unknown Source)
+2021-05-10 21:18:11,434 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.utils.assembly.InstructionRecord.calcJumpInstructionDirect(InstructionRecord.java:201)
+2021-05-10 21:18:11,434 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.utils.assembly.InstructionRecord.isJumpInstructionDirect(InstructionRecord.java:159)
+2021-05-10 21:18:11,434 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.model.CallGraph.fromInstructions(CallGraph.java:65)
+2021-05-10 21:18:11,434 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:908)
+2021-05-10 21:18:11,435 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$15(StackAnalyzerView.java:1232)
+2021-05-10 21:18:11,435 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.Thread.run(Unknown Source)
+2021-05-10 21:18:11,435 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] java.lang.StringIndexOutOfBoundsException: begin 0, end -1, length 0
+2021-05-10 21:18:11,435 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.String.checkBoundsBeginEnd(Unknown Source)
+2021-05-10 21:18:11,436 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.String.substring(Unknown Source)
+2021-05-10 21:18:11,436 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.utils.assembly.InstructionRecord.calcJumpInstructionDirect(InstructionRecord.java:201)
+2021-05-10 21:18:11,436 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.utils.assembly.InstructionRecord.isJumpInstructionDirect(InstructionRecord.java:159)
+2021-05-10 21:18:11,437 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.model.CallGraph.fromInstructions(CallGraph.java:65)
+2021-05-10 21:18:11,437 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:908)
+2021-05-10 21:18:11,437 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$15(StackAnalyzerView.java:1232)
+2021-05-10 21:18:11,437 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.Thread.run(Unknown Source)
+2021-05-10 21:18:11,438 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] java.lang.StringIndexOutOfBoundsException: begin 0, end -1, length 0
+2021-05-10 21:18:11,438 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.String.checkBoundsBeginEnd(Unknown Source)
+2021-05-10 21:18:11,438 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.String.substring(Unknown Source)
+2021-05-10 21:18:11,439 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.utils.assembly.InstructionRecord.calcJumpInstructionDirect(InstructionRecord.java:201)
+2021-05-10 21:18:11,439 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.utils.assembly.InstructionRecord.isJumpInstructionDirect(InstructionRecord.java:159)
+2021-05-10 21:18:11,439 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.model.CallGraph.fromInstructions(CallGraph.java:65)
+2021-05-10 21:18:11,439 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:908)
+2021-05-10 21:18:11,439 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$15(StackAnalyzerView.java:1232)
+2021-05-10 21:18:11,440 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.Thread.run(Unknown Source)
+2021-05-10 21:18:11,440 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] java.lang.StringIndexOutOfBoundsException: begin 0, end -1, length 0
+2021-05-10 21:18:11,440 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.String.checkBoundsBeginEnd(Unknown Source)
+2021-05-10 21:18:11,440 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.String.substring(Unknown Source)
+2021-05-10 21:18:11,440 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.utils.assembly.InstructionRecord.calcJumpInstructionDirect(InstructionRecord.java:201)
+2021-05-10 21:18:11,440 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.utils.assembly.InstructionRecord.isJumpInstructionDirect(InstructionRecord.java:159)
+2021-05-10 21:18:11,441 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.model.CallGraph.fromInstructions(CallGraph.java:65)
+2021-05-10 21:18:11,441 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:908)
+2021-05-10 21:18:11,441 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$15(StackAnalyzerView.java:1232)
+2021-05-10 21:18:11,441 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 	at java.base/java.lang.Thread.run(Unknown Source)

@@ -1,0 +1,15 @@
+21:17:36 **** Incremental Build of configuration Debug for project TestProject ****
+make all 
+Building file: ../main.c
+Invoking: GCC C Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"main.d" -MT"main.o" -o "main.o" "../main.c"
+Finished building: ../main.c
+ 
+Building target: TestProject
+Invoking: GCC C Linker
+gcc  -o "TestProject" ./main.o   
+Finished building target: TestProject
+ 
+21:17:48 **** Incremental Build of configuration Debug for project TestProject ****
+make all 
+make: Nothing to be done for 'all'.
