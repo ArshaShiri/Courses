@@ -2,7 +2,7 @@ LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=linux
 activeLaunchTarget=null\:---
-configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:LEDOn Debug
+configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:LEDOn Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:PinRead
 eclipse.preferences.version=1
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Add\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Add\ Debug/activeLaunchTarget=null\:---
@@ -10,6 +10,7 @@ org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:HelloWorld\ Debug/activeLaunchM
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:HelloWorld\ Debug/activeLaunchTarget=null\:---
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:LEDOn\ Debug/activeLaunchMode=debug
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:LEDOn\ Debug/activeLaunchTarget=null\:---
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:PinRead/activeLaunchMode=run
 org.eclipse.launchbar.core.descriptorType.default\:Add\ Debug/activeLaunchMode=debug
 org.eclipse.launchbar.core.descriptorType.default\:Add\ Debug/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
 org.eclipse.launchbar.core.descriptorType.default\:HelloWorld\ Debug/activeLaunchMode=debug
