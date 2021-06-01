@@ -32,3 +32,63 @@ arm-none-eabi-size   LEDOn.elf
    1748	      8	   1568	   3324	    cfc	LEDOn.elf
 Finished building: default.size.stdout
  
+19:16:46 **** Incremental Build of configuration Debug for project LEDOn ****
+make -j16 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+../Src/main.c:24:4: warning: #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use." [-Wcpp]
+   24 |   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
+      |    ^~~~~~~
+arm-none-eabi-gcc -o "LEDOn.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/arsha/Repos/Courses/Embedded/Embedded-C/My_workspace/target/LEDOn/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="LEDOn.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: LEDOn.elf
+ 
+arm-none-eabi-objdump -h -S  LEDOn.elf  > "LEDOn.list"
+arm-none-eabi-objcopy  -O binary  LEDOn.elf  "LEDOn.bin"
+arm-none-eabi-size   LEDOn.elf 
+Finished building: LEDOn.list
+   text	   data	    bss	    dec	    hex	filename
+   1752	      8	   1568	   3328	    d00	LEDOn.elf
+ 
+Finished building: default.size.stdout
+ 
+Finished building: LEDOn.bin
+ 
+19:17:10 **** Incremental Build of configuration Debug for project LEDOn ****
+make -j16 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+../Src/main.c:24:4: warning: #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use." [-Wcpp]
+   24 |   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
+      |    ^~~~~~~
+arm-none-eabi-gcc -o "LEDOn.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/arsha/Repos/Courses/Embedded/Embedded-C/My_workspace/target/LEDOn/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="LEDOn.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: LEDOn.elf
+ 
+arm-none-eabi-objdump -h -S  LEDOn.elf  > "LEDOn.list"
+arm-none-eabi-objcopy  -O binary  LEDOn.elf  "LEDOn.bin"
+arm-none-eabi-size   LEDOn.elf 
+   text	   data	    bss	    dec	    hex	filename
+    812	      8	   1568	   2388	    954	LEDOn.elf
+Finished building: default.size.stdout
+Finished building: LEDOn.bin
+ 
+Finished building: LEDOn.list
+ 
+ 
+19:18:10 **** Incremental Build of configuration Debug for project LEDOn ****
+make -j16 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+../Src/main.c:24:4: warning: #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use." [-Wcpp]
+   24 |   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
+      |    ^~~~~~~
+arm-none-eabi-gcc -o "LEDOn.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/arsha/Repos/Courses/Embedded/Embedded-C/My_workspace/target/LEDOn/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="LEDOn.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: LEDOn.elf
+ 
+arm-none-eabi-objdump -h -S  LEDOn.elf  > "LEDOn.list"
+arm-none-eabi-objcopy  -O binary  LEDOn.elf  "LEDOn.bin"
+arm-none-eabi-size   LEDOn.elf 
+   text	   data	    bss	    dec	    hex	filename
+   1740	      8	   1568	   3316	    cf4	LEDOn.elf
+Finished building: default.size.stdout
+Finished building: LEDOn.bin
+ 
+ 
+Finished building: LEDOn.list
+ 

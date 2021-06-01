@@ -30,25 +30,25 @@ int main(void)
 	uint32_t *pPortDModeTypeRegister = (uint32_t*)0x40020C00;
 	uint32_t *pPortDOudRegister = (uint32_t*)0x40020C14;
 
-	// Enable the clock for GPIOD peripheral in the AHB1ENR
-	uint32_t valueOfRegister = *pClockControRegister;
-	valueOfRegister = valueOfRegister | 0x08; // Modify the third bit.
-	*pClockControRegister = valueOfRegister;
+	// Enable the clock for GPIOD peripheral in the AHB1ENR (Set the 3rd bit position)
+	*pClockControRegister |= (1 << 3);
+
 
 	// Configure the mode to output.
-
 	// Clear the 24th and 25th bit positions.
-	*pPortDModeTypeRegister &= 0xFCFFFFFF;
+	*pPortDModeTypeRegister &= ~(3 << 24);
 
 	// Set the 24th bit to 1
-	*pPortDModeTypeRegister |= 0x01000000;
+	*pPortDModeTypeRegister |= (1 << 24);
 
 	// Set the 12th bit of the output data register to make I/O pin 12 high.
-	*pPortDOudRegister |= 0x1000;
+	*pPortDOudRegister |= (1 << 12);
+
 
     /* Loop forever */
 	for(long long i = 0; i > -1; ++i)
 	{
+		// Add a very basic software LED toggle.
 	   if ((i % 10000) == 0)
 	     *pPortDOudRegister ^= 0x1000;
 
