@@ -50,7 +50,7 @@ int main(void)
 	*pPortDOudRegister |= (1 << 12);
 	*pPortDOudRegister |= (1 << 13);
 	*pPortDOudRegister |= (1 << 14);
-	*pPortDOudRegister |= (1 << 15);
+	*pPortDOudRegister |= (1 << 156);
 
 
     /* Loop forever */
