@@ -45,8 +45,7 @@ int main(void)
 	*modeRegisterD |= (1 << 24);
 
 
-	// This enables us to use optimizations here.
-    volatile uint32_t* portAInRegister = (uint32_t*)(baseAddressOfPA + (uint32_t)0x10);
+	const uint32_t* portAInRegister = (uint32_t*)(baseAddressOfPA + (uint32_t)0x10);
 	uint32_t* portDOutRegister = (uint32_t*)(baseAddressOfPD + (uint32_t)0x14);
 
    while (1)
