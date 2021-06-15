@@ -122,12 +122,9 @@ void init_systick_timer(uint32_t tick_hz)
 	// Enables the counter.
 	*p_sys_tick_control_and_status_register |= 1;
 
-	// The three operations above are equivalent to *p_sys_tick_control_and_status_register |= 7;
-
 	// Enable the systick
 }
 
 void SysTick_Handler(void)
 {
-
 }

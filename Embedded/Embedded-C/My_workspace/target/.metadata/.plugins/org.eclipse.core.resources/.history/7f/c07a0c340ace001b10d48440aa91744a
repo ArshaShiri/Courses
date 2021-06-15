@@ -21,7 +21,7 @@
 #include <stdio.h>
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
-#warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
+  #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
 // We allocate 1kb of stack to each task and the scheduler itself(total of 5kb)
@@ -40,24 +40,14 @@
 #define T4_STACK_START          ( (T3_STACK_START) - (SIZE_TASK_STACK) )
 #define SCHEDULER_STACK_START   ( (T4_STACK_START) - (SIZE_TASK_STACK) )
 
-// We want an exception occurring in each millisecond which then triggers the context switch.
-// This means, a clock of 1kHZ
-#define TICK_HZ                 1000U
-
-#define HSI_CLOCK               16000000U
-#define SYSTICK_TIME_CLK        HSI_CLOCK
-
 void task1_handler(void);
 void task2_handler(void);
 void task3_handler(void);
 void task4_handler(void);
 
-void init_systick_timer(uint32_t tick_hz);
-
 int main(void)
 {
-	init_systick_timer(TICK_HZ);
-
+    /* Loop forever */
 	for(;;);
 }
 
@@ -91,43 +81,4 @@ void task4_handler(void)
 	{
 		printf("This is task4\n");
 	}
-}
-
-void init_systick_timer(uint32_t tick_hz)
-{
-	uint32_t count_value = SYSTICK_TIME_CLK / tick_hz - 1;
-
-	// SVR
-	uint32_t *p_sys_tick_reload_vlue_register = (uint32_t *) 0xE000E014;
-
-	// SCSR
-	uint32_t *p_sys_tick_control_and_status_register = (uint32_t *) 0xE000E010;
-
-
-	// Clear the value of SVR register (only 24 bits are valid)
-	*p_sys_tick_reload_vlue_register &= ~(0x00FFFFFFFF);
-
-
-	// Load the value in SVR register.
-	*p_sys_tick_reload_vlue_register |= count_value;
-
-	// Do some settings
-
-	// Enable systik exception request.
-	*p_sys_tick_control_and_status_register |= (1 << 1);
-
-	// Indicates the clock source, processor clock source.
-	*p_sys_tick_control_and_status_register |= (1 << 2);
-
-	// Enables the counter.
-	*p_sys_tick_control_and_status_register |= 1;
-
-	// The three operations above are equivalent to *p_sys_tick_control_and_status_register |= 7;
-
-	// Enable the systick
-}
-
-void SysTick_Handler(void)
-{
-
 }

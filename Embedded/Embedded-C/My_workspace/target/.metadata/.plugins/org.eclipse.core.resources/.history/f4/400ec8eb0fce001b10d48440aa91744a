@@ -113,16 +113,15 @@ void init_systick_timer(uint32_t tick_hz)
 
 	// Do some settings
 
-	// Enable systik exception request.
-	*p_sys_tick_control_and_status_register |= (1 << 1);
-
-	// Indicates the clock source, processor clock source.
-	*p_sys_tick_control_and_status_register |= (1 << 2);
-
-	// Enables the counter.
-	*p_sys_tick_control_and_status_register |= 1;
-
-	// The three operations above are equivalent to *p_sys_tick_control_and_status_register |= 7;
+//	// Enable systik exception request.
+//	*p_sys_tick_control_and_status_register |= (1 << 1);
+//
+//	// Indicates the clock source, processor clock source.
+//	*p_sys_tick_control_and_status_register |= (1 << 2);
+//
+//	// Enables the counter.
+//	*p_sys_tick_control_and_status_register |= 1;
+	*p_sys_tick_control_and_status_register |= 7;
 
 	// Enable the systick
 }

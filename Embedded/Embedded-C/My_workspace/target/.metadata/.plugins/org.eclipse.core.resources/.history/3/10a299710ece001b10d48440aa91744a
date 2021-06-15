@@ -100,9 +100,6 @@ void init_systick_timer(uint32_t tick_hz)
 	// SVR
 	uint32_t *p_sys_tick_reload_vlue_register = (uint32_t *) 0xE000E014;
 
-	// SCSR
-	uint32_t *p_sys_tick_control_and_status_register = (uint32_t *) 0xE000E010;
-
 
 	// Clear the value of SVR register (only 24 bits are valid)
 	*p_sys_tick_reload_vlue_register &= ~(0x00FFFFFFFF);
@@ -111,23 +108,7 @@ void init_systick_timer(uint32_t tick_hz)
 	// Load the value in SVR register.
 	*p_sys_tick_reload_vlue_register |= count_value;
 
-	// Do some settings
+    // Do some settings
 
-	// Enable systik exception request.
-	*p_sys_tick_control_and_status_register |= (1 << 1);
-
-	// Indicates the clock source, processor clock source.
-	*p_sys_tick_control_and_status_register |= (1 << 2);
-
-	// Enables the counter.
-	*p_sys_tick_control_and_status_register |= 1;
-
-	// The three operations above are equivalent to *p_sys_tick_control_and_status_register |= 7;
-
-	// Enable the systick
-}
-
-void SysTick_Handler(void)
-{
-
+    // Enable the systick
 }

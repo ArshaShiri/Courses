@@ -1,9 +1,9 @@
-20:18:22 **** Incremental Build of configuration Debug for project task_scheduler ****
+21:22:06 **** Incremental Build of configuration Debug for project task_scheduler ****
 make -j16 all 
 arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
-../Src/main.c:24:4: warning: #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use." [-Wcpp]
-   24 |   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
-      |    ^~~~~~~
+../Src/main.c:24:2: warning: #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use." [-Wcpp]
+   24 | #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
+      |  ^~~~~~~
 arm-none-eabi-gcc -o "task_scheduler.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/arsha/Repos/Courses/Embedded/Embedded-C/My_workspace/target/task_scheduler/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_scheduler.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: task_scheduler.elf
  
@@ -11,7 +11,72 @@ arm-none-eabi-objdump -h -S  task_scheduler.elf  > "task_scheduler.list"
 arm-none-eabi-objcopy  -O binary  task_scheduler.elf  "task_scheduler.bin"
 arm-none-eabi-size   task_scheduler.elf 
    text	   data	    bss	    dec	    hex	filename
-    676	      8	   1568	   2252	    8cc	task_scheduler.elf
+    808	      8	   1568	   2384	    950	task_scheduler.elf
+Finished building: default.size.stdout
+Finished building: task_scheduler.bin
+ 
+Finished building: task_scheduler.list
+ 
+ 
+21:24:46 **** Incremental Build of configuration Debug for project task_scheduler ****
+make -j16 all 
+arm-none-eabi-size   task_scheduler.elf 
+   text	   data	    bss	    dec	    hex	filename
+    808	      8	   1568	   2384	    950	task_scheduler.elf
+Finished building: default.size.stdout
+ 
+21:27:08 **** Incremental Build of configuration Debug for project task_scheduler ****
+make -j16 all 
+arm-none-eabi-size   task_scheduler.elf 
+   text	   data	    bss	    dec	    hex	filename
+    808	      8	   1568	   2384	    950	task_scheduler.elf
+Finished building: default.size.stdout
+ 
+21:27:21 **** Incremental Build of configuration Debug for project task_scheduler ****
+make -j16 all 
+arm-none-eabi-size   task_scheduler.elf 
+   text	   data	    bss	    dec	    hex	filename
+    808	      8	   1568	   2384	    950	task_scheduler.elf
+Finished building: default.size.stdout
+ 
+21:27:57 **** Incremental Build of configuration Debug for project task_scheduler ****
+make -j16 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+../Src/main.c:24:2: warning: #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use." [-Wcpp]
+   24 | #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
+      |  ^~~~~~~
+../Src/main.c: In function 'init_systick_timer':
+../Src/main.c:104:12: warning: unused variable 'p_sys_tick_control_and_status_register' [-Wunused-variable]
+  104 |  uint32_t *p_sys_tick_control_and_status_register = (uint32_t *) 0xE000E010;
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "task_scheduler.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/arsha/Repos/Courses/Embedded/Embedded-C/My_workspace/target/task_scheduler/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_scheduler.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_scheduler.elf
+ 
+arm-none-eabi-objdump -h -S  task_scheduler.elf  > "task_scheduler.list"
+arm-none-eabi-objcopy  -O binary  task_scheduler.elf  "task_scheduler.bin"
+arm-none-eabi-size   task_scheduler.elf 
+   text	   data	    bss	    dec	    hex	filename
+    772	      8	   1568	   2348	    92c	task_scheduler.elf
+Finished building: default.size.stdout
+Finished building: task_scheduler.bin
+ 
+ 
+Finished building: task_scheduler.list
+ 
+21:28:35 **** Incremental Build of configuration Debug for project task_scheduler ****
+make -j16 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F407G_DISC1 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+../Src/main.c:24:2: warning: #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use." [-Wcpp]
+   24 | #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
+      |  ^~~~~~~
+arm-none-eabi-gcc -o "task_scheduler.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/arsha/Repos/Courses/Embedded/Embedded-C/My_workspace/target/task_scheduler/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_scheduler.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_scheduler.elf
+ 
+arm-none-eabi-objdump -h -S  task_scheduler.elf  > "task_scheduler.list"
+arm-none-eabi-objcopy  -O binary  task_scheduler.elf  "task_scheduler.bin"
+arm-none-eabi-size   task_scheduler.elf 
+   text	   data	    bss	    dec	    hex	filename
+    784	      8	   1568	   2360	    938	task_scheduler.elf
 Finished building: default.size.stdout
 Finished building: task_scheduler.bin
  
