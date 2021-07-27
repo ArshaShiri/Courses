@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value="baseAddressOfPA"/>
+		<item key="selection" value="task_de"/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
-			<item value="portAInRegister"/>
-			<item value="0x40023830"/>
-			<item value="baseAddressOfPA"/>
-			<item value="uint32_t* modeRegisterA = (uint32_t*)baseAddressOfPA;"/>
-			<item value="uint32_t* modeRegisterA = (uint32_t*)baseAddre1ssOfPA;"/>
-			<item value="0x40023800"/>
-			<item value="copy the data segment"/>
-			<item value="Reset_Handler"/>
-			<item value="reset_"/>
-			<item value="_write"/>
+			<item value="task_de"/>
+			<item value="task_"/>
+			<item value="task"/>
+			<item value="delay"/>
+			<item value="update_next_task"/>
+			<item value="update"/>
+			<item value="pICSR"/>
+			<item value="task_dela"/>
+			<item value="SysTick_Handler"/>
+			<item value="T1_STACK_START"/>
+			<item value="init_tasks_control_block"/>
+			<item value="write"/>
+			<item value="BX"/>
+			<item value="push"/>
+			<item value="ffff"/>
 		</list>
 		<list key="replacehistory">
 		</list>
