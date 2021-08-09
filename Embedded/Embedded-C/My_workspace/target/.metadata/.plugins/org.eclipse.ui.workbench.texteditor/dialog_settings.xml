@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value="Clock"/>
+		<item key="selection" value="RESET"/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="reset"/>
+			<item value="GPIO_PinMode"/>
+			<item value="temp"/>
+			<item value="2 * pGPIOHandle-&gt;GPIO_PinConfig.GPIO_PinNumber"/>
+			<item value="pGPIOHandle"/>
 			<item value="clock"/>
 			<item value="APB1ENR"/>
 			<item value="PCLK_EN"/>
@@ -18,11 +23,6 @@
 			<item value="APB1PERIPH_BASEADDR"/>
 			<item value="AHB1PERIPH_BASE_ADDRESS"/>
 			<item value="BASEADDR"/>
-			<item value="task_de"/>
-			<item value="task_"/>
-			<item value="task"/>
-			<item value="delay"/>
-			<item value="update_next_task"/>
 		</list>
 		<list key="replacehistory">
 			<item value="PERIPHERAL_CLOCK_ENABLE"/>

@@ -35,6 +35,64 @@ typedef struct
 
 } GPIO_Handle_t;
 
+/*
+ * @GPIO_PIN_NUMBERS
+ * GPIO pin numbers
+ */
+#define GPIO_PIN_NO_0  				0
+#define GPIO_PIN_NO_1  				1
+#define GPIO_PIN_NO_2  				2
+#define GPIO_PIN_NO_3  				3
+#define GPIO_PIN_NO_4  				4
+#define GPIO_PIN_NO_5  				5
+#define GPIO_PIN_NO_6  				6
+#define GPIO_PIN_NO_7  				7
+#define GPIO_PIN_NO_8  				8
+#define GPIO_PIN_NO_9  				9
+#define GPIO_PIN_NO_10  			10
+#define GPIO_PIN_NO_11 				11
+#define GPIO_PIN_NO_12  			12
+#define GPIO_PIN_NO_13 				13
+#define GPIO_PIN_NO_14 				14
+#define GPIO_PIN_NO_15 				15
+
+/*
+ * @GPIO_PIN_MODES
+ * GPIO pin possible modes
+ */
+#define GPIO_MODE_IN 		0
+#define GPIO_MODE_OUT 		1
+#define GPIO_MODE_ALTFN 	2
+#define GPIO_MODE_ANALOG 	3
+
+// Interrupt mode when the pin is input mode.
+#define GPIO_MODE_INPUT_FALLING_EDGE     							4
+#define GPIO_MODE_INPUT_RISING_EDGE                                 5
+#define GPIO_MODE_INPUT_RISING_FALLING_EDGE_TRIGGER                 6
+
+/*
+ * GPIO pin possible output types
+ */
+#define GPIO_OP_TYPE_PUSH_PULL    0
+#define GPIO_OP_TYPE_OPEN_DRAIN   1
+
+/*
+ * @GPIO_PIN_SPEED
+ * GPIO pin possible output speeds
+ */
+#define GPIO_SPEED_LOW			0
+#define GPIO_SPEED_MEDIUM		1
+#define GPIO_SPEED_FAST			2
+#define GPOI_SPEED_HIGH			3
+
+/*
+ * GPIO pin pull up AND pull down configuration macros
+ */
+#define GPIO_NO_PULLUP_PULLDOWN   		0
+#define GPIO_PIN_PULLUP					1
+#define GPIO_PIN_PUSHDOWN				2
+
+
 
 /******************************************************************************************
  *								APIs supported by this driver
@@ -44,7 +102,7 @@ typedef struct
 /*
  * Peripheral Clock setup
  */
-void GPIO_PeriClockControl(GPIO_RegisterDefinition_t *pGPIOx, uint8_t EnorDi);
+void GPIO_PeriClockControl(GPIO_RegisterDefinition_t *pGPIOx, uint8_t EnableOrDisable);
 
 /*
  * Init and De-init

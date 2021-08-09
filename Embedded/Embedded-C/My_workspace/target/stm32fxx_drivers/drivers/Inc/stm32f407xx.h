@@ -145,14 +145,14 @@ typedef struct
  */
 
 #define GPIOA  				((GPIO_RegisterDefinition_t*)GPIO_A_BASE_ADDRESS)
-#define GPIOB  				((GPIO_RegisterDefinition_t*)GPIO_A_BASE_ADDRESS)
-#define GPIOC  				((GPIO_RegisterDefinition_t*)GPIO_A_BASE_ADDRESS)
-#define GPIOD  				((GPIO_RegisterDefinition_t*)GPIO_A_BASE_ADDRESS)
-#define GPIOE  				((GPIO_RegisterDefinition_t*)GPIO_A_BASE_ADDRESS)
-#define GPIOF  				((GPIO_RegisterDefinition_t*)GPIO_A_BASE_ADDRESS)
-#define GPIOG  				((GPIO_RegisterDefinition_t*)GPIO_A_BASE_ADDRESS)
-#define GPIOH  				((GPIO_RegisterDefinition_t*)GPIO_A_BASE_ADDRESS)
-#define GPIOI  				((GPIO_RegisterDefinition_t*)GPIO_A_BASE_ADDRESS)
+#define GPIOB  				((GPIO_RegisterDefinition_t*)GPIO_B_BASE_ADDRESS)
+#define GPIOC  				((GPIO_RegisterDefinition_t*)GPIO_C_BASE_ADDRESS)
+#define GPIOD  				((GPIO_RegisterDefinition_t*)GPIO_D_BASE_ADDRESS)
+#define GPIOE  				((GPIO_RegisterDefinition_t*)GPIO_E_BASE_ADDRESS)
+#define GPIOF  				((GPIO_RegisterDefinition_t*)GPIO_F_BASE_ADDRESS)
+#define GPIOG  				((GPIO_RegisterDefinition_t*)GPIO_G_BASE_ADDRESS)
+#define GPIOH  				((GPIO_RegisterDefinition_t*)GPIO_H_BASE_ADDRESS)
+#define GPIOI  				((GPIO_RegisterDefinition_t*)GPIO_I_BASE_ADDRESS)
 
 #define RCC 				((RCC_RRegisterDefinition_t*)RCC_BASE_ADDRESS)
 
@@ -221,6 +221,21 @@ typedef struct
 /*
  * Clock Disable Macros for SYSCFG peripheral
  */
+
+/*
+ *  Macros to reset GPIOx peripherals
+ */
+// Set to one and then set back to zero to reset.
+// To do while is a trick to have two statements in one macro.
+#define GPIOA_REG_RESET()               do{ (RCC->AHB1RSTR |= (1 << 0)); (RCC->AHB1RSTR &= ~(1 << 0)); }while(0)
+#define GPIOB_REG_RESET()               do{ (RCC->AHB1RSTR |= (1 << 1)); (RCC->AHB1RSTR &= ~(1 << 1)); }while(0)
+#define GPIOC_REG_RESET()               do{ (RCC->AHB1RSTR |= (1 << 2)); (RCC->AHB1RSTR &= ~(1 << 2)); }while(0)
+#define GPIOD_REG_RESET()               do{ (RCC->AHB1RSTR |= (1 << 3)); (RCC->AHB1RSTR &= ~(1 << 3)); }while(0)
+#define GPIOE_REG_RESET()               do{ (RCC->AHB1RSTR |= (1 << 4)); (RCC->AHB1RSTR &= ~(1 << 4)); }while(0)
+#define GPIOF_REG_RESET()               do{ (RCC->AHB1RSTR |= (1 << 5)); (RCC->AHB1RSTR &= ~(1 << 5)); }while(0)
+#define GPIOG_REG_RESET()               do{ (RCC->AHB1RSTR |= (1 << 6)); (RCC->AHB1RSTR &= ~(1 << 6)); }while(0)
+#define GPIOH_REG_RESET()               do{ (RCC->AHB1RSTR |= (1 << 7)); (RCC->AHB1RSTR &= ~(1 << 7)); }while(0)
+#define GPIOI_REG_RESET()               do{ (RCC->AHB1RSTR |= (1 << 8)); (RCC->AHB1RSTR &= ~(1 << 8)); }while(0)
 
 //some generic macros
 
