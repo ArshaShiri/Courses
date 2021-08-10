@@ -1,3 +1,5 @@
+"Src/led_button.o"
+"Src/led_toggle.o"
 "Src/main.o"
 "Src/syscalls.o"
 "Src/sysmem.o"
