@@ -19,7 +19,12 @@ map = folium.Map(location=[38.58, -99.09], zoom_start=6, tiles="Stamen Terrain")
 featureGroup = folium.FeatureGroup(name="My Map")
 
 for lt, ln, el in zip(latitude, longitude, elevations):
-    featureGroup.add_child(folium.Marker(location=[lt, ln], popup="Elevation: " + str(el) + "m", icon=folium.Icon(color=getColorBasedOnElevation(el))))
+    featureGroup.add_child(folium.CircleMarker(location=[lt, ln],
+                                               radius=6,
+                                               popup="Elevation: " + str(el) + "m",
+                                               fill_color=getColorBasedOnElevation(el),
+                                               color="grey",
+                                               fill_opacity=0.7))
     
 map.add_child(featureGroup)
 map.save("map.html")
