@@ -19,18 +19,21 @@ from tkinter import *
 import Backend
 
 def getSelectedRow(event):
-    global selectedTupple
-    index = listBox.curselection()[0]
-    selectedTupple = listBox.get(index)
+    try:
+        global selectedTupple
+        index = listBox.curselection()[0]
+        selectedTupple = listBox.get(index)
 
-    entry1.delete(0, END)
-    entry1.insert(END, selectedTupple[1])
-    entry2.delete(0, END)
-    entry2.insert(END, selectedTupple[2])
-    entry3.delete(0, END)
-    entry3.insert(END, selectedTupple[3])
-    entry4.delete(0, END)
-    entry4.insert(END, selectedTupple[4])            
+        entry1.delete(0, END)
+        entry1.insert(END, selectedTupple[1])
+        entry2.delete(0, END)
+        entry2.insert(END, selectedTupple[2])
+        entry3.delete(0, END)
+        entry3.insert(END, selectedTupple[3])
+        entry4.delete(0, END)
+        entry4.insert(END, selectedTupple[4])
+    except IndexError:
+        pass  
 
 def viewCommand():
     listBox.delete(0, END)
