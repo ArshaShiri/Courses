@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;stm32fxx_drivers/drivers/Src/stm32f407xx_spi_driver.cpp&apos; to &apos;stm32f407xx_spi_driver.c&apos;" description="Rename resource &apos;stm32f407xx_spi_driver.cpp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="drivers/Src/stm32f407xx_spi_driver.cpp" name="stm32f407xx_spi_driver.c" stamp="1630523500103" updateReferences="true"/>
+</session>

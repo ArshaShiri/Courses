@@ -5,10 +5,13 @@
  *      Author: arsha
  */
 
+#include <stddef.h>
 #include <stdint.h>
 
 #ifndef INC_STM32F407XX_H_
 #define INC_STM32F407XX_H_
+
+#define __weak __attribute__((weak))
 
 /**********************************START:Processor Specific Details **********************************/
 /*
@@ -74,6 +77,22 @@
 #define GPIO_H_BASE_ADDRESS									(AHB1_PERIPH_BASE_ADDRESS + 0x1C00)
 #define GPIO_I_BASE_ADDRESS									(AHB1_PERIPH_BASE_ADDRESS + 0x2000)
 #define RCC_BASE_ADDRESS									(AHB1_PERIPH_BASE_ADDRESS + 0x3800)
+
+/*
+ * Base addresses of peripherals which are hanging on APB1 bus
+ * TODO : Complete for all other peripherals
+ */
+#define I2C1_BASE_ADDRESS						(APB1_PERIPH_BASE_ADDRESS + 0x5400)
+#define I2C2_BASE_ADDRESS						(APB1_PERIPH_BASE_ADDRESS + 0x5800)
+#define I2C3_BASE_ADDRESS						(APB1_PERIPH_BASE_ADDRESS + 0x5C00)
+
+#define SPI2_BASE_ADDRESS						(APB1_PERIPH_BASE_ADDRESS + 0x3800)
+#define SPI3_BASE_ADDRESS						(APB1_PERIPH_BASE_ADDRESS + 0x3C00)
+
+#define USART2_BASE_ADDRESS						(APB1_PERIPH_BASE_ADDRESS + 0x4400)
+#define USART3_BASE_ADDRESS						(APB1_PERIPH_BASE_ADDRESS + 0x4800)
+#define UART4_BASE_ADDRESS						(APB1_PERIPH_BASE_ADDRESS + 0x4C00)
+#define UART5_BASE_ADDRESS						(APB1_PERIPH_BASE_ADDRESS + 0x5000)
 
 /*
  * Base addresses of peripherals which are hanging on APB1 bus
@@ -183,6 +202,22 @@ typedef struct
 }EXTI_RegDef_t;
 
 /*
+ * peripheral register definition structure for SPI
+ */
+typedef struct
+{
+	volatile uint32_t CR1;        /*!< TODO,     										Address offset: 0x00 */
+	volatile uint32_t CR2;        /*!< TODO,     										Address offset: 0x04 */
+	volatile uint32_t SR;         /*!< TODO,     										Address offset: 0x08 */
+	volatile uint32_t DR;         /*!< TODO,     										Address offset: 0x0C */
+	volatile uint32_t CRCPR;      /*!< TODO,     										Address offset: 0x10 */
+	volatile uint32_t RXCRCR;     /*!< TODO,     										Address offset: 0x14 */
+	volatile uint32_t TXCRCR;     /*!< TODO,     										Address offset: 0x18 */
+	volatile uint32_t I2SCFGR;    /*!< TODO,     										Address offset: 0x1C */
+	volatile uint32_t I2SPR;      /*!< TODO,     										Address offset: 0x20 */
+} SPI_RegDef_t;
+
+/*
  * peripheral register definition structure for SYSCFG
  */
 typedef struct
@@ -214,6 +249,16 @@ typedef struct
 #define RCC 				((RCC_RRegisterDefinition_t*)RCC_BASE_ADDRESS)
 #define EXTI				((EXTI_RegDef_t*)EXTI_BASE_ADDRESS)
 #define SYSCFG				((SYSCFG_RegDef_t*)SYSCFG_BASE_ADDRESS)
+
+#define SPI1  				((SPI_RegDef_t*)SPI1_BASE_ADDRESS)
+#define SPI2  				((SPI_RegDef_t*)SPI2_BASE_ADDRESS)
+#define SPI3  				((SPI_RegDef_t*)SPI3_BASE_ADDRESS)
+
+#define I2C1  				((I2C_RegDef_t*)I2C1_BASEADDR)
+#define I2C2  				((I2C_RegDef_t*)I2C2_BASEADDR)
+#define I2C3  				((I2C_RegDef_t*)I2C3_BASEADDR)
+
+
 /*
  * Clock Enable Macros for GPIOx peripherals
  */
@@ -311,6 +356,20 @@ typedef struct
 								        (x == GPIOH) ? 7 :\
 								        (x == GPIOI) ? 8 : 0)
 
+/*
+ * IRQ(Interrupt Request) Numbers of STM32F407x MCU
+ * NOTE: update these macros with valid values according to your MCU
+ * TODO: You may complete this list for other peripherals
+ */
+
+#define IRQ_NO_EXTI0 		6
+#define IRQ_NO_EXTI1 		7
+#define IRQ_NO_EXTI2 		8
+#define IRQ_NO_EXTI3 		9
+#define IRQ_NO_EXTI4 		10
+#define IRQ_NO_EXTI9_5 		23
+#define IRQ_NO_EXTI15_10 	40
+
 //some generic macros
 
 #define ENABLE 				1
@@ -321,5 +380,51 @@ typedef struct
 #define GPIO_PIN_RESET      RESET
 #define FLAG_RESET          RESET
 #define FLAG_SET 			SET
+
+/******************************************************************************************
+ *Bit position definitions of SPI peripheral
+ ******************************************************************************************/
+/*
+ * Bit position definitions SPI_CR1
+ */
+#define SPI_CR1_CPHA     				 0
+#define SPI_CR1_CPOL      				 1
+#define SPI_CR1_MSTR     				 2
+#define SPI_CR1_BR   					 3
+#define SPI_CR1_SPE     				 6
+#define SPI_CR1_LSBFIRST   			 	 7
+#define SPI_CR1_SSI     				 8
+#define SPI_CR1_SSM      				 9
+#define SPI_CR1_RXONLY      		 	10
+#define SPI_CR1_DFF     			 	11
+#define SPI_CR1_CRCNEXT   			 	12
+#define SPI_CR1_CRCEN   			 	13
+#define SPI_CR1_BIDIOE     			 	14
+#define SPI_CR1_BIDIMODE      			15
+
+/*
+ * Bit position definitions SPI_CR2
+ */
+#define SPI_CR2_RXDMAEN		 			0
+#define SPI_CR2_TXDMAEN				 	1
+#define SPI_CR2_SSOE				 	2
+#define SPI_CR2_FRF						4
+#define SPI_CR2_ERRIE					5
+#define SPI_CR2_RXNEIE				 	6
+#define SPI_CR2_TXEIE					7
+
+
+/*
+ * Bit position definitions SPI_SR
+ */
+#define SPI_SR_RXNE						0
+#define SPI_SR_TXE				 		1
+#define SPI_SR_CHSIDE				 	2
+#define SPI_SR_UDR					 	3
+#define SPI_SR_CRCERR				 	4
+#define SPI_SR_MODF					 	5
+#define SPI_SR_OVR					 	6
+#define SPI_SR_BSY					 	7
+#define SPI_SR_FRE					 	8
 
 #endif /* INC_STM32F407XX_H_ */

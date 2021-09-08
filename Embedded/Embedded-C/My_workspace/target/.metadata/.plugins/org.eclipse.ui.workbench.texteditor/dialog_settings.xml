@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value="RESET"/>
+		<item key="selection" value="Clock Enable Macros for SPIx peripheralsbu"/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
-			<item value="NVIC_ISER0"/>
-			<item value="reset"/>
-			<item value="EXTI_BASE_ADDRESS"/>
-			<item value="ase addresses of peripherals which are hanging on APB2 bus"/>
-			<item value="EXTI_BASEADDR"/>
-			<item value="RCC"/>
-			<item value="pullup_"/>
-			<item value="push"/>
-			<item value="output"/>
-			<item value="GPIO_PinOPType"/>
-			<item value="GPIO_PinMode"/>
-			<item value="temp"/>
-			<item value="2 * pGPIOHandle-&gt;GPIO_PinConfig.GPIO_PinNumber"/>
-			<item value="pGPIOHandle"/>
-			<item value="clock"/>
+			<item value="Clock Enable Macros for SPIx peripheralsbu"/>
+			<item value="SPI_SSIConfig"/>
+			<item value="SPI_PeripheralControl"/>
+			<item value="GPIO pin pull up AND pull down configuration macros"/>
+			<item value="GPIO pin possible output types"/>
+			<item value="GPIO_Handle_t"/>
+			<item value="handle"/>
+			<item value="SPI_GetFlagStatus"/>
+			<item value="SPI_SR_TXE"/>
+			<item value="SPI_SSM_EN"/>
+			<item value="Bit position definitions of SPI peripheral"/>
+			<item value="SPI2_BASE_ADDRESS"/>
+			<item value="spi1_base_"/>
+			<item value="spi1_base"/>
+			<item value="spi"/>
 		</list>
 		<list key="replacehistory">
 			<item value="PERIPHERAL_CLOCK_ENABLE"/>
